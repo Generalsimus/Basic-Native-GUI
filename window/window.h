@@ -14,12 +14,26 @@
 #include <string>
 #include <stddef.h>
 
+
 class Window {
 public:
     Window(const std::string &title, int width, int height);
+
+    int width;
+    int height;
+
+
+    SkBitmap skBitmap;
+    SkCanvas skCanvas;
+
+    BITMAPINFO biteMap;
+
+    HWND hwnd;
+
+    void print() {
+/*this->skCanvas.*/
+    };
 };
-
-
 
 
 #endif //CUDA_NEU_WINDOW_H

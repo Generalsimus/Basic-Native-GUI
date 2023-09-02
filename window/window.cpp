@@ -10,52 +10,77 @@
 #include "include/core/SkPath.h"
 #include <string>
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "utils.cpp"
 
-BITMAPINFO CreateBitmapInfoEEE(SkBitmap *bitmap) {
-    BITMAPINFO bmi;
-    memset(&bmi, 0, sizeof(bmi));
-    bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biWidth = bitmap->width();
-    bmi.bmiHeader.biHeight = -bitmap->height(); // top-down image
-    bmi.bmiHeader.biPlanes = 1;
-    bmi.bmiHeader.biBitCount = 32;
-    bmi.bmiHeader.biCompression = BI_RGB;
-    bmi.bmiHeader.biSizeImage = 0;
-
-    return bmi;
-};
+void draw(SkCanvas *canvas) {
+    canvas->save();
+    canvas->translate(SkIntToScalar(128), SkIntToScalar(128));
+    canvas->rotate(SkIntToScalar(45));
+    SkRect rect = SkRect::MakeXYWH(-90.5f, -90.5f, 181.0f, 181.0f);
+    SkPaint paint;
+    paint.setColor(SK_ColorBLUE);
+    canvas->drawRect(rect, paint);
+    canvas->restore();
+}
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+
+    Window *window = (Window *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
+
+
     switch (msg) {
         case WM_PAINT: {
+            printf("WM_PAINT\n");
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
+
             RECT rect;
             GetWindowRect(hwnd, &rect);
 
-            int width = rect.right - rect.left;
-            int height = rect.bottom - rect.top;
+            window->width = rect.right - rect.left;
+            window->height = rect.bottom - rect.top;
 
 
-            // Get window dimensions
-            auto surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(width, height));
+//            window->surface = window->surface->makeSurface(window->width, window->height);
 
-            SkCanvas *canvas = surface->getCanvas();
+            /*SkCanvas *canvas = window->surface->getCanvas();*/
+/*
+            draw(canvas);
+
+
 
 
             SkBitmap bitmap;
-            bitmap.allocPixels(surface->imageInfo());
-
-            SkASSERT(bitmap.width() * bitmap.bytesPerPixel() == bitmap.rowBytes());
+            bitmap.allocPixels(window->surface->imageInfo());
 
 
-            BITMAPINFO bmi = CreateBitmapInfoEEE(&bitmap);
+            draw(canvas);*/
 
-            SetDIBitsToDevice(hdc, 0, 0, width, height, 0, 0, 0, height, bitmap.getPixels(), &bmi, DIB_RGB_COLORS);
+            SkBitmap skBitmap;
+            skBitmap.allocN32Pixels(800, 600);  // Width and height of the bitmap
+            SkCanvas canvas(skBitmap);
+
+            // Draw something on the SkCanvas (for example, a red rectangle)
+            SkPaint paint;
+            paint.setColor(SK_ColorRED);
+            canvas.drawRect(SkRect::MakeXYWH(100, 100, 200, 200), paint);
+            /* BITMAPINFO bmi = CreateBitmapInfo(&bitmap);*/
+            const void *pixels = skBitmap.getPixels();
 
 
+            BITMAPINFO bmi = CreateBitmapInfo(&skBitmap);
 
 
+            SetDIBitsToDevice(hdc, 0, 0, skBitmap.width(), skBitmap.height(),
+                              0, 0, 0, skBitmap.height(), pixels, &bmi, DIB_RGB_COLORS);
+
+            // Release the HDC
+            //  ReleaseDC(NULL, hdc);
+            /*  SetDIBitsToDevice(hdc, 0, 0, window->width, window->height, 0, 0, 0, window->height , bitmap.getPixels(),
+                                &bmi, DIB_RGB_COLORS);
+  */
 
 
             // Clean up
@@ -63,39 +88,42 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             return 0;
         }
         case WM_CLOSE:
+            printf("WM_CLOSE\n");
             DestroyWindow(hwnd);
             return 0;
         case WM_DESTROY:
+            printf("WM_DESTROY\n");
+
             PostQuitMessage(0);
             return 0;
         default:
+            //printf("Received message: 0x%X\n", msg);
+
             return DefWindowProc(hwnd, msg, wParam, lParam);
     }
 };
 
-
-Window:: Window(const std::string &title, int width, int height) {
+Window::Window(const std::string &title, int width, int height): width(width), height(height) {
 
     // Register window class
-    // Register window class
-    WNDCLASS wc = {0};
-    wc.lpfnWndProc = WndProc;
-    wc.hInstance = GetModuleHandle(NULL);
-    wc.hbrBackground = (HBRUSH) (COLOR_BACKGROUND);
-    wc.lpszClassName = title.c_str();
-    RegisterClass(&wc);
+    WNDCLASS wc = CreateWNDCLASS(title, WndProc);
 
 
     // Create window
-    HWND hwnd = CreateWindow(title.c_str(), title.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 800,
-                             600, NULL, NULL, wc.hInstance, NULL);
+    hwnd = CreateWindow(title.c_str(), title.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width,
+                             height, NULL, NULL, wc.hInstance, NULL);
 
-
-    printf("RUNNN\n");
     if (!hwnd) {
-        printf("RET\n");
-    return;
+        printf("CreateWindow() ERROR\n");
+        return;
     }
+
+
+
+
+
+    SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR) this);
+    RegisterTouchWindow(hwnd, 0);
 
     ShowWindow(hwnd, SW_SHOW);
 
@@ -105,5 +133,4 @@ Window:: Window(const std::string &title, int width, int height) {
         DispatchMessage(&msg);
     }
 
-  //  return msg.wParam;
 };

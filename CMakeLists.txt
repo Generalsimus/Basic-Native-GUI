@@ -4,13 +4,13 @@ project(cuda_neu CUDA)
 set(CMAKE_CUDA_STANDARD 17)
 
 
-add_executable(cuda_neu main.cpp)
+add_executable(cuda_neu main.cu
+        layer.cpp
+        layer.h)
 
 set_target_properties(cuda_neu PROPERTIES
         CUDA_SEPARABLE_COMPILATION ON)
  
-
-
 
  
 add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
