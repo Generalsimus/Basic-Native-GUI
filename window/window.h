@@ -14,25 +14,25 @@
 #include <string>
 #include <stddef.h>
 
+typedef bool (*MouseMoveFuncType)(int x, int y);
 
 class Window {
+private:
+    MouseMoveFuncType mouseMoveCain;
 public:
     Window(const std::string &title, int width, int height);
 
     int width;
     int height;
 
+/*
+    SkBitmap bitmap;
+    SkCanvas canvas;
+*/
 
-    SkBitmap skBitmap;
-    SkCanvas skCanvas;
+   void refreshFrame();
 
-    BITMAPINFO biteMap;
 
-    HWND hwnd;
-
-    void print() {
-/*this->skCanvas.*/
-    };
 };
 
 

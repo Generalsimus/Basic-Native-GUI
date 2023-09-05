@@ -5,8 +5,11 @@ set(CMAKE_CUDA_STANDARD 17)
 
 
 add_executable(cuda_neu main.cu
-        layer.cpp
-        layer.h)
+        window/win/winWindow.cpp
+        window/win/winWindow.h
+        gui/element.cpp
+        gui/element.h
+)
 
 set_target_properties(cuda_neu PROPERTIES
         CUDA_SEPARABLE_COMPILATION ON)

@@ -1,12 +1,21 @@
-#include "./window/window.cpp"
+#include "./window/win/winWindow.cpp"
+#include "./gui/element.cpp"
 
 
+int main() {
+
+    Element mainElement = Element(
+            Element(
+                    Element(
+                            Element(),
+                            Element(),
+                            Element()
+                    )
+            )
+    );
+
+    winWindow window = winWindow("My Custom Window", 900, 600);
 
 
-
-int main(){
-
-    Window window("My Custom Window", 900, 922);
-
-    return  0;
-}
+    return 0;
+};
