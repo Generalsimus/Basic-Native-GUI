@@ -1,6 +1,7 @@
 
 
-BITMAPINFO CreateBitmapInfo(SkBitmap *bitmap, int width, int height) {
+
+BITMAPINFO CreateBitmapInfo(int width, int height) {
     BITMAPINFO bmi;
     memset(&bmi, 0, sizeof(bmi));
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -15,9 +16,21 @@ BITMAPINFO CreateBitmapInfo(SkBitmap *bitmap, int width, int height) {
 };
 
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM  wParam,  LPARAM lParam) {
+typedef void (*SetEventActiveStatus)(bool status);
 
-    Window *window = (Window *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
+template<typename CallMe>
+using AddEventCallBackType = SetEventActiveStatus (*)(CallMe callBack);
+
+
+typedef void (*OnPaintEventType)();
+
+//AddEventCallBackType<OnPaintEventType> addEventListener = CreateEventChain<OnPaintEventType>();
+
+
+
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+
+    winWindow *window = (winWindow *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
 
     switch (msg) {
@@ -32,48 +45,53 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM  wParam,  LPARAM lParam) {
             window->width = rect.right - rect.left;
             window->height = rect.bottom - rect.top;
 
+            //  sk_sp<SkSurface>* surf = window->surface;
 
-            SkBitmap skBitmap;
-            skBitmap.allocN32Pixels(window->width, window->height);  // Width and height of the bitmap
-            printf("WORK");
-            SkCanvas canvas(skBitmap);
+            SkCanvas *canvas = window->surface->getCanvas();
+
+
 
             // Draw something on the SkCanvas (for example, a red rectangle)
             SkPaint paint;
             paint.setColor(SK_ColorRED);
-            canvas.drawRect(SkRect::MakeXYWH(100, 100, 200, 200), paint
-            );
-
-            const void *pixels = skBitmap.getPixels();
-
-/*            HCURSOR customCursor = LoadCursor(NULL, IDC_ARROW); // Replace with your custom cursor
-
-            // Change the cursor
-            SetCursor(customCursor);
-            SendMessage(hwnd, WM_SETCURSOR, (WPARAM) hwnd, MAKELPARAM(HTCLIENT, WM_MOUSEMOVE));*/
+            canvas->drawRect(SkRect::MakeXYWH(100, 100, 200, 200), paint);
 
 
-            BITMAPINFO bmi = CreateBitmapInfo(&skBitmap, window->width, window->height);
+            //  SkPixmap pixels = window->pixels;
+
+            //  surf->peekPixels(&pixels);
+
+
+            BITMAPINFO bmi = CreateBitmapInfo(window->width, window->height);
 
             // Release the HDC
-            SetDIBitsToDevice(hdc,0, 0, window->width, window->height, 0, 0, 0, window->height, pixels, &bmi, DIB_RGB_COLORS);
+            SetDIBitsToDevice(hdc, 0, 0, window->width, window->height, 0, 0, 0, window->height, window->pixelsAddr,
+                              &bmi, DIB_RGB_COLORS);
 
 
             // Clean up
             EndPaint(hwnd, &ps);
             return 0;
         };
+        case WM_LBUTTONDOWN: {
+            printf("WM_LBUTTONDOWN");
+
+
+            window->dispatchTouchEvent(LOWORD(lParam), HIWORD(lParam));
+
+            return 0;
+        }
         case WM_MOUSELEAVE: {
             printf("WM_MOUSELEAVE\n");
 
 
             return 0;
         };
-        case WM_MOUSEHOVER: {
-            printf("WM_MOUSEHOVER\n");
+            /*  case WM_MOUSEHOVER: {
+                  printf("WM_MOUSEHOVER\n");
 
-            return 0;
-        };
+                  return 0;
+              };*/
         case WM_SETFOCUS:
             printf("WM_SETFOCUS\n");
             return 0;
@@ -85,9 +103,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM  wParam,  LPARAM lParam) {
 
             HCURSOR customCursor2 = LoadCursor(NULL, IDC_ARROW); // Replace with your custom cursor
 
-             // Change the cursor
+            // Change the cursor
             SetCursor(customCursor2);
-            SendMessage(hwnd, WM_SETCURSOR, (WPARAM)hwnd, MAKELPARAM(HTCLIENT, WM_MOUSEMOVE));
+            SendMessage(hwnd, WM_SETCURSOR, (WPARAM) hwnd, MAKELPARAM(HTCLIENT, WM_MOUSEMOVE));
 
             // Change the cursor when the mouse moves
             TRACKMOUSEEVENT tme;
@@ -108,24 +126,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM  wParam,  LPARAM lParam) {
 
             PostQuitMessage(0);
             return 0;
-       /* case WM_CREATE: {
-            printf("WM_CREATE\n");
+            /* case WM_CREATE: {
+                 printf("WM_CREATE\n");
 
-            TRACKMOUSEEVENT mouseEvt;
-            ZeroMemory(&mouseEvt,
-                       sizeof(TRACKMOUSEEVENT));
+                 TRACKMOUSEEVENT mouseEvt;
+                 ZeroMemory(&mouseEvt,
+                            sizeof(TRACKMOUSEEVENT));
 
-            mouseEvt.
-                    cbSize = sizeof(TRACKMOUSEEVENT);
-            mouseEvt.
-                    dwFlags = TME_LEAVE | TME_NONCLIENT;
-//mouseEvt.dwHoverTime = HOVER_DEFAULT;
-            mouseEvt.hwndTrack = hwnd;
+                 mouseEvt.
+                         cbSize = sizeof(TRACKMOUSEEVENT);
+                 mouseEvt.
+                         dwFlags = TME_LEAVE | TME_NONCLIENT;
+     //mouseEvt.dwHoverTime = HOVER_DEFAULT;
+                 mouseEvt.hwndTrack = hwnd;
 
-            TrackMouseEvent(&mouseEvt);
+                 TrackMouseEvent(&mouseEvt);
 
-            return 0;
-        };*/
+                 return 0;
+             };*/
         default:
 //printf("Received message: 0x%X\n", msg);
 
@@ -134,7 +152,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM  wParam,  LPARAM lParam) {
 };
 
 
-WNDCLASS CreateWNDCLASS(const std::string &title ) {
+WNDCLASS CreateWNDCLASS(const std::string &title) {
     WNDCLASS wc = {0};
     wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
     wc.lpfnWndProc = WndProc;
@@ -148,3 +166,29 @@ WNDCLASS CreateWNDCLASS(const std::string &title ) {
     return wc;
 };
 
+
+void CreateWindowsWindows(const std::string &title, int width, int height, winWindow *window) {
+    WNDCLASS wc = CreateWNDCLASS(title);
+    HWND hwnd = CreateWindow(title.c_str(), title.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width,
+                             height, NULL, NULL, wc.hInstance, NULL);
+
+
+    if (!hwnd) {
+        printf("CreateWindow() ERROR\n");
+        return;
+    }
+    window->hwnd = hwnd;
+    SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR) window);
+    RegisterTouchWindow(hwnd, 0);
+
+    ShowWindow(hwnd, SW_SHOW);
+
+    MSG msg;
+
+    while (GetMessage(&msg, hwnd, 0, 0)) {
+        //PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE)/**/
+        //std::cout << "Async lambda function running.222" << std::endl;
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    };
+}

@@ -1,14 +1,10 @@
 cmake_minimum_required(VERSION 3.26)
 project(cuda_neu CUDA)
 
-set(CMAKE_CUDA_STANDARD 17)
+set(CMAKE_CUDA_STANDARD 20)
 
 
 add_executable(cuda_neu main.cu
-        window/win/winWindow.cpp
-        window/win/winWindow.h
-        gui/element.cpp
-        gui/element.h
 )
 
 set_target_properties(cuda_neu PROPERTIES

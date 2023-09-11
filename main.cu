@@ -4,18 +4,18 @@
 
 int main() {
 
-    Element mainElement = Element(
-            Element(
-                    Element(
-                            Element(),
-                            Element(),
-                            Element()
-                    )
-            )
+    Element *mainElement3233 = new Element(
+            new Element(),
+            new Element()
     );
 
-    winWindow window = winWindow("My Custom Window", 900, 600);
 
+    printf("EEEEE");
+    winWindow window("My Custom Window", 900, 600);
 
+    printf("eeerrrrrrrrrrtttttttttttttttttt");
+    window.addTouchEvent([](int x, int y) {
+        printf("\nCLICKED: x: %d, y: %d \n", x, y);
+    });
     return 0;
 };

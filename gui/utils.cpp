@@ -3,11 +3,11 @@
 #include <iostream>
 
 template<typename T>
-T* AddArrayElement(T* array, int size, T element)
+T* AddArrayElement(T* array, int size, const T& element)
 {
     // Create a new array with increased size
     int newSize = size + 1;
-    T* newArray = (T*)malloc(newSize * sizeof(T));
+    T* newArray = new T[newSize];
 
     // Copy existing elements to the new array
     for (int i = 0; i < size; i++)
@@ -15,11 +15,12 @@ T* AddArrayElement(T* array, int size, T element)
         newArray[i] = array[i];
     }
 
-    // Append the new element
+    // Copy the new element
     newArray[size] = element;
 
-    // Free the memory of the old array
-    free(array);
+    // Delete the old array if it was dynamically allocated
+    delete[] array;
+
 
     return newArray;
 }

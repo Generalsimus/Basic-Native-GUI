@@ -7,35 +7,46 @@
 #include <windows.h>
 #include "utils.cpp"
 
-winWindow::winWindow(const std::string &title, int width, int height): Window(title, width, height) {
-    printf("RUN winWindow");
+std::vector<std::future<void>> futures;
+
+
+winWindow::winWindow(const std::string &title, int width, int height) : Window(title, width, height) {
+    printf("\nRUN winWindow\n");
     this->width = width;
     this->height = height;
+    ///////////////////////////
 
-    // Register window class
-    WNDCLASS wc = CreateWNDCLASS(title);
+    SkPixmap pixels;
 
+    surface->peekPixels(&pixels);
 
-    // Create window
-    HWND hwnd = CreateWindow(title.c_str(), title.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width,
-                             height, NULL, NULL, wc.hInstance, NULL);
+    pixelsAddr = pixels.addr();
 
-    if (!hwnd) {
-        printf("CreateWindow() ERROR\n");
-        return;
-    }
+    bmi = CreateBitmapInfo(width, height);
 
 
-    SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR) this);
-    RegisterTouchWindow(hwnd, 0);
+    /////////////////////
+    // CreateWindowsWindows(title,width,height, this);
+    auto self = this;
 
-    ShowWindow(hwnd, SW_SHOW);
+    /// futures.push_back(std::async(std::launch::async, ));
+    /*std::async(std::launch::async,[&title, &width, &height, &self]{
+        printf("RUN ASWWWWWWWWWWWWWWWWWWWWW\n");
+        CreateWindowsWindows(title, width, height, self);
+        printf("RUN ASWWWWWVVVVVVVVVVVVVVVV\n");
+    });*/
+     this->asyncCall([&title, &width, &height, &self]{
+         printf("RUN ASWWWWWWWWWWWWWWWWWWWWW\n");
+         CreateWindowsWindows(title, width, height, self);
+         printf("RUN ASWWWWWVVVVVVVVVVVVVVVV\n");
+     });
 
 
-    MSG msg;
-    while (GetMessage(&msg, NULL, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
+    printf("\nASYNC WINDOWWWWWWWWWWWWWWW\n");
 
+};
+
+
+void winWindow::refreshFrame() {
+    printf("refreshFrame");
 };

@@ -11,35 +11,49 @@
 #include <string>
 #include <stddef.h>
 
-class Element;
 
-using DrawChainType = std::function<void(Element *)>;
+class Element;
+class Window;
+
+using DrawChainType = std::function<void(Element *, Window*)>;
 
 class Element {
 private:
+
     int x;
     int y;
     int width;
     int height;
-    // using EventCallback = std::function<void()>;
-    Element *children;
-    int childCount;
-    std::optional<Window> window;
-    Element *parent;
+
+
+
     DrawChainType drawChain;
 
 
 public:
+    Element *parent;
+    Element *children;
+    int childCount;
+    Window *window;
+
     Element *addDrawStyles(DrawChainType callBackStyleChain);
 
-    Element *addChildElement(Element *child);
 
-    Element(Element const &first);
+
+    Element *addChildElement();
+    template<typename... Chi>
+    Element *addChildElement(Element *child, Chi... rest);
+
+
+
     Element();
     template<typename... Args>
-    explicit Element(Element first, Args... rest);
+    explicit Element(Element* first, Args... rest);
 
 
+    void drawMe(){
+        return ;
+    }
 };
 
 

@@ -6,32 +6,39 @@
 #define CUDA_NEU_WINDOW_H
 
 #include <windows.h>
+#include "./event.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkSurface.h"
 #include "include/core/SkPaint.h"
 #include "include/core/SkBitmap.h"
 #include "include/core/SkPath.h"
 #include <string>
-#include <stddef.h>
+#include <cstddef>
+#include <cstdlib>
+#include "../gui/element.h"
 
-typedef bool (*MouseMoveFuncType)(int x, int y);
 
-class Window {
+class Window : public Event {
 private:
-    MouseMoveFuncType mouseMoveCain;
+//    MouseMoveFuncType mouseMoveCain;
 public:
-    Window(const std::string &title, int width, int height);
+    sk_sp<SkSurface> surface;
+
+
+    int id;
 
     int width;
     int height;
 
-/*
-    SkBitmap bitmap;
-    SkCanvas canvas;
-*/
+    Element *mainElement;
 
-   void refreshFrame();
+    void setMainElement(Element *element);
 
+    virtual void refreshFrame();
+    // decltype(CreateEventChain<OnPaintEventType>()) addOnPaintEvent;
+
+protected:
+    Window(const std::string &title, int width, int height);
 
 };
 
