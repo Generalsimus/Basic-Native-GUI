@@ -17,5 +17,8 @@ int main() {
     window.addTouchEvent([](int x, int y) {
         printf("\nCLICKED: x: %d, y: %d \n", x, y);
     });
+
+
+    window.awaitAll();
     return 0;
 };
