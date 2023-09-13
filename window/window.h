@@ -15,31 +15,21 @@
 #include <string>
 #include <cstddef>
 #include <cstdlib>
-#include "../gui/element.h"
+#include "element.h"
 
 
-class Window : public Event {
+class Window : public Element {
 private:
-//    MouseMoveFuncType mouseMoveCain;
+
 public:
     sk_sp<SkSurface> surface;
-
-
     int id;
 
-    int width;
-    int height;
-
-    Element *mainElement;
-
-    void setMainElement(Element *element);
 
     virtual void refreshFrame();
-    // decltype(CreateEventChain<OnPaintEventType>()) addOnPaintEvent;
 
 protected:
     Window(const std::string &title, int width, int height);
-
 };
 
 

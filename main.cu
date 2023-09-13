@@ -1,16 +1,16 @@
 #include "./window/win/winWindow.cpp"
-#include "./gui/element.cpp"
+#include "window/element.cpp"
 
 
 int main() {
 
-    Element *mainElement3233 = new Element(
+    Element* mainElement3233 = new Element(
             new Element(),
             new Element()
     );
 
 
-    printf("EEEEE");
+  /*  printf("EEEEE");
     winWindow window("My Custom Window", 900, 600);
 
     printf("eeerrrrrrrrrrtttttttttttttttttt");
@@ -18,7 +18,11 @@ int main() {
         printf("\nCLICKED: x: %d, y: %d \n", x, y);
     });
 
+    window.addTouchEvent([](int x, int y) {
+        printf("\nAAAA: x: %d, y: %d \n", x, y);
+    });
 
-    window.awaitAll();
+
+    window.awaitAll();*/
     return 0;
 };

@@ -12,41 +12,23 @@
 
 using TouchEventType = std::function<void(int, int)>;
 
-class AsyncManager {
-public:
-    // Add an asynchronous task to the group
-    template<typename Func, typename... Args>
-    void AddTask(Func&& func, Args&&... args) {
-        std::lock_guard<std::mutex> lock(mutex_);
-        tasks_.emplace_back(std::async(std::launch::async, std::forward<Func>(func), std::forward<Args>(args)...));
-    }
-
-    // Await all tasks in the group
-    void AwaitAll() {
-        for (auto& task : tasks_) {
-            task.wait();
-        }
-    }
-
-private:
-    std::vector<std::future<void>> tasks_;
-    std::mutex mutex_;
-};
 
 class Event {
 
 private:
-    TouchEventType *TouchEventChain = nullptr;
+    TouchEventType TouchEventChain = nullptr;
 
 
     std::vector<std::future<void>> tasks_;
     std::mutex mutex_;
-
+//
+//    Event *children;
+//    int childCount;
 
 public:
 
     template<typename Func, typename... Args>
-    void addAsyncTask(Func&& func, Args&&... args);
+    void addAsyncTask(Func &&func, Args &&... args);
 
     void awaitAll();
 
@@ -58,6 +40,11 @@ public:
 
 protected:
     Event();
+
+    template<typename ChainFuncType>
+    void addChainFunction(ChainFuncType &chainFunc, ChainFuncType callBack, bool callAsync = true);
+    template<typename ChainFunc, typename... Args>
+    void dispatchChainFunction(ChainFunc &chainFunc, Args &&... args);
 
 };
 

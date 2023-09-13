@@ -41,9 +41,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             RECT rect;
             GetWindowRect(hwnd, &rect);
-
+/*
             window->width = rect.right - rect.left;
-            window->height = rect.bottom - rect.top;
+            window->height = rect.bottom - rect.top;*/
 
             //  sk_sp<SkSurface>* surf = window->surface;
 
@@ -62,11 +62,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             //  surf->peekPixels(&pixels);
 
 
-            BITMAPINFO bmi = CreateBitmapInfo(window->width, window->height);
-
+           // BITMAPINFO bmi = window->bmi;
+            window->WinSetDIBitsToDevice(hdc);
             // Release the HDC
-            SetDIBitsToDevice(hdc, 0, 0, window->width, window->height, 0, 0, 0, window->height, window->pixelsAddr,
-                              &bmi, DIB_RGB_COLORS);
+//            SetDIBitsToDevice(hdc, 0, 0, window->width, window->height, 0, 0, 0, window->height, window->pixelsAddr,
+//                              &bmi, DIB_RGB_COLORS);
 
 
             // Clean up
@@ -77,7 +77,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             printf("WM_LBUTTONDOWN");
 
 
-            window->dispatchTouchEvent(LOWORD(lParam), HIWORD(lParam));
+//            window->dispatchTouchEvent(LOWORD(lParam), HIWORD(lParam));
 
             return 0;
         }

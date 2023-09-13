@@ -5,21 +5,30 @@
 #include <string>
 
 
-template<typename CallBeckFunction>
-void CreateFunctionChain(CallBeckFunction *chainMemoryAddr, CallBeckFunction addChainCallBack) {
-    printf("CreateFunctionChain()\n");
 
-    printf("CreateFunctionChain 1\n");
-    CallBeckFunction currentChainFunc = *chainMemoryAddr;
-    printf("CreateFunctionChain 2\n");
+#include <assert.h>
+#include <stdio.h>
+#include <iostream>
 
-    auto newCHainCallBack = [&currentChainFunc, &addChainCallBack]<typename... ARGS>(ARGS &&... args) {
-        currentChainFunc(std::forward<ARGS>(args)...);
-        addChainCallBack(std::forward<ARGS>(args)...);
-    };
-    printf("CreateFunctionChain 3\n");
+template<typename T>
+T* AddArrayElement(T* array, int size, const T& element)
+{
+    // Create a new array with increased size
+    int newSize = size + 1;
+    T* newArray = new T[newSize];
 
-    *chainMemoryAddr = newCHainCallBack;
+    // Copy existing elements to the new array
+    for (int i = 0; i < size; i++)
+    {
+    //    newArray[i] = array[i];
+    }
 
-    printf("CreateFunctionChain 4\n");
-};
+    // Copy the new element
+    newArray[size] = element;
+
+    // Delete the old array if it was dynamically allocated
+    delete[] array;
+
+
+    return newArray;
+}

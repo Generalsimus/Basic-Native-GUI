@@ -13,7 +13,7 @@
 
 int idAs = 0;
 
-Window::Window(const std::string &title, int width, int height): Event(), mainElement(nullptr) {
+Window::Window(const std::string &title, int width, int height) : Element() {
     printf("\nRUN Window\n");
 
     this->surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(width, height));
@@ -23,10 +23,6 @@ Window::Window(const std::string &title, int width, int height): Event(), mainEl
     printf("\n WINDOW ID: %d \n", this->id);
 }
 
-void Window::setMainElement(Element *element) {
-    *mainElement = *element;
-    element->window = this;
-}
 
 void Window::refreshFrame() {
 

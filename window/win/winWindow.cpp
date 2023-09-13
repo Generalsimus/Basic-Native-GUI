@@ -33,7 +33,10 @@ winWindow::winWindow(const std::string &title, int width, int height) : Window(t
         CreateWindowsWindows(title, width, height, self);
         printf("RUN ASWWWWWVVVVVVVVVVVVVVVV\n");
     });*/
-     this->addAsyncTask(CreateWindowsWindows, title, width, height, self);
+
+//     this->addAsyncTask(CreateWindowsWindows, title, width, height, self);
+
+
 //    this->addAsyncTask([&title, &width, &height, &self] {
 //        printf("RUN ASWWWWWWWWWWWWWWWWWWWWW\n");
 //        CreateWindowsWindows(title, width, height, self);
@@ -49,4 +52,10 @@ winWindow::winWindow(const std::string &title, int width, int height) : Window(t
 
 void winWindow::refreshFrame() {
     printf("refreshFrame");
+}
+
+void winWindow::WinSetDIBitsToDevice(HDC hdc) {
+
+    SetDIBitsToDevice(hdc, 0, 0, this->width, this->height, 0, 0, 0, this->height, this->pixelsAddr,
+                      &bmi, DIB_RGB_COLORS);
 };
