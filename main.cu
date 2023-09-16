@@ -1,28 +1,31 @@
-#include "./window/win/winWindow.cpp"
 #include "window/element.cpp"
-
+#include "./window/win/winWindow.cpp"
 
 int main() {
 
-    Element* mainElement3233 = new Element(
+    auto mainElement3233 = new Element(
             new Element(),
             new Element()
     );
 
 
-  /*  printf("EEEEE");
+    printf("EEEEE");
     winWindow window("My Custom Window", 900, 600);
 
     printf("eeerrrrrrrrrrtttttttttttttttttt");
-    window.addTouchEvent([](int x, int y) {
+    window.addEvent("touchDown", [](Element *element, int x, int y) {
         printf("\nCLICKED: x: %d, y: %d \n", x, y);
     });
 
-    window.addTouchEvent([](int x, int y) {
+    window.addEvent("touchDown", [](Element *element, int x, int y) {
         printf("\nAAAA: x: %d, y: %d \n", x, y);
     });
+    window.dispatchEvent("touchDown", 1, 2);
+//    window.addTouchEvent([](Element* element, int x, int y) {
+//        printf("\nAAAA: x: %d, y: %d \n", x, y);
+//    });
 
 
-    window.awaitAll();*/
+    window.awaitAll();
     return 0;
 };

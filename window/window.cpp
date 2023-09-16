@@ -1,7 +1,6 @@
 //
 // Created by PC on 8/31/2023.
 //
-#include "event.cpp"
 #include "window.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkSurface.h"

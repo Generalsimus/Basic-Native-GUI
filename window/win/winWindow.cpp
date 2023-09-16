@@ -24,25 +24,10 @@ winWindow::winWindow(const std::string &title, int width, int height) : Window(t
 
 
     /////////////////////
-    // CreateWindowsWindows(title,width,height, this);
-    auto self = this;
 
     /// futures.push_back(std::async(std::launch::async, ));
-    /*std::async(std::launch::async,[&title, &width, &height, &self]{
-        printf("RUN ASWWWWWWWWWWWWWWWWWWWWW\n");
-        CreateWindowsWindows(title, width, height, self);
-        printf("RUN ASWWWWWVVVVVVVVVVVVVVVV\n");
-    });*/
+    this->addAsyncTask(CreateWindowsWindows, title, width, height, this);
 
-//     this->addAsyncTask(CreateWindowsWindows, title, width, height, self);
-
-
-//    this->addAsyncTask([&title, &width, &height, &self] {
-//        printf("RUN ASWWWWWWWWWWWWWWWWWWWWW\n");
-//        CreateWindowsWindows(title, width, height, self);
-//        printf("RUN ASWWWWWVVVVVVVVVVVVVVVV\n");
-//    });
-    /*this->asyncCall();*/
 
 
     printf("\nASYNC WINDOWWWWWWWWWWWWWWW\n");

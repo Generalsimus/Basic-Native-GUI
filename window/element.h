@@ -5,21 +5,22 @@
 #ifndef CUDA_NEU_ELEMENT_H
 #define CUDA_NEU_ELEMENT_H
 
-#include "window.h"
-#include "../../../../../Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.36.32532/include/functional"
-#include "../../../../../Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/um/Windows.h"
-#include "../../../../../Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.36.32532/include/string"
-#include "../../../../../Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/ucrt/stddef.h"
+#include "functional"
+#include "Windows.h"
+#include "string"
+#include <cstddef>
+#include <vector>
+#include <future>
+#include <map>
+#include <any>
 
 
 class Element;
 
-class Window;
+using TouchEventType = std::function<void(Element *, int, int)>;
 
-using DrawChainType = std::function<void(Element *, Window *)>;
-
-class Element : public Event {
-protected:
+class Element {
+public:
 
     int x;
     int y;
@@ -27,13 +28,12 @@ protected:
     int height;
 
 
-public:
     Element *parent;
-    Element *children;
-    int childCount;
- //   Window *window;
+    std::vector<Element *> children;
 
-    Element *addDrawStyles(DrawChainType callBackStyleChain);
+
+
+    Element *addDrawStyles();
 
 
     Element *addChildElement();
@@ -46,6 +46,64 @@ public:
 
     template<typename... Args>
     explicit Element(Element *first, Args... rest);
+
+    // EVENTS START
+    Element *addTouchEvent();
+
+    template<typename... Args>
+    Element *addTouchEvent(TouchEventType firstCallBack, Args... rest);
+
+    void dispatchTouchEvent(int x, int y);
+    // EVENTS END
+
+    template<typename Func, typename... Args>
+    void addAsyncTask(Func &&func, Args &&... args);
+
+    void awaitAll();
+
+
+
+
+//    std::map<std::string, std::vector<void (*)(int)> > events;
+
+//    template <typename... Args>
+//    using EventChainCallbackFunc = std::function<void(Args...)>;
+
+    // Store event listeners with std::variant for different argument types
+    std::map<std::string, std::any> events;
+
+
+
+//    std::map<std::string,std::function<void(*)()>> events;
+
+//    std::map<std::string, std::function<void()>> events;
+
+//    std::function<void()> eventsChain;
+
+//    template<typename CallBackFunc>
+//    void addEvent(const std::string &name, CallBackFunc callBack);
+
+    template<typename CallBackFunc>
+    void addEvent(const std::string &name, CallBackFunc callBack);
+
+    template<typename CallBackFunc, typename... Args>
+    void dispatchEvent(const std::string &name, Args &&... args);
+
+private:
+    // EVENTS CHAIN START
+    TouchEventType TouchEventChain = nullptr;
+    // EVENTS CHAIN END
+    std::vector<std::future<void>> tasks_;
+    std::mutex mutex_;
+
+
+protected:
+
+    template<typename ChainFuncType>
+    void addChainFunction(ChainFuncType &chainFunc, ChainFuncType callBack, bool callAsync = true);
+
+    template<typename ChainFunc, typename... Args>
+    void dispatchChainFunction(ChainFunc &chainFunc, Args &&... args);
 
 
     void drawMe() {

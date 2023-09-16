@@ -6,7 +6,6 @@
 #define CUDA_NEU_WINDOW_H
 
 #include <windows.h>
-#include "./event.h"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkSurface.h"
 #include "include/core/SkPaint.h"

@@ -62,7 +62,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             //  surf->peekPixels(&pixels);
 
 
-           // BITMAPINFO bmi = window->bmi;
+            // BITMAPINFO bmi = window->bmi;
             window->WinSetDIBitsToDevice(hdc);
             // Release the HDC
 //            SetDIBitsToDevice(hdc, 0, 0, window->width, window->height, 0, 0, 0, window->height, window->pixelsAddr,
@@ -77,7 +77,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             printf("WM_LBUTTONDOWN");
 
 
-//            window->dispatchTouchEvent(LOWORD(lParam), HIWORD(lParam));
+            window->dispatchTouchEvent(LOWORD(lParam), HIWORD(lParam));
 
             return 0;
         }

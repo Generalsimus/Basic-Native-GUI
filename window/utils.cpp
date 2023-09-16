@@ -20,7 +20,7 @@ T* AddArrayElement(T* array, int size, const T& element)
     // Copy existing elements to the new array
     for (int i = 0; i < size; i++)
     {
-    //    newArray[i] = array[i];
+       newArray[i] = array[i];
     }
 
     // Copy the new element
