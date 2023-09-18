@@ -79,6 +79,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             window->dispatchTouchEvent(LOWORD(lParam), HIWORD(lParam));
 
+//            window->dispatchEvent("touchDown", 23, 44);
+            window->dispatchEvent("touchDown", LOWORD(lParam), HIWORD(lParam));
             return 0;
         }
         case WM_MOUSELEAVE: {

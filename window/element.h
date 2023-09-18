@@ -14,6 +14,8 @@
 #include <map>
 #include <any>
 
+template<typename... Args>
+using EEEEEEEE = std::function<void(Args &&...)>;
 
 class Element;
 
@@ -30,7 +32,6 @@ public:
 
     Element *parent;
     std::vector<Element *> children;
-
 
 
     Element *addDrawStyles();
@@ -56,51 +57,34 @@ public:
     void dispatchTouchEvent(int x, int y);
     // EVENTS END
 
-    template<typename Func, typename... Args>
-    void addAsyncTask(Func &&func, Args &&... args);
+    template<class Func, typename... Args>
+    void addAsyncTask(Func &&func, Args... args);
 
     void awaitAll();
 
 
-
-
-//    std::map<std::string, std::vector<void (*)(int)> > events;
-
-//    template <typename... Args>
-//    using EventChainCallbackFunc = std::function<void(Args...)>;
-
-    // Store event listeners with std::variant for different argument types
-    std::map<std::string, std::any> events;
-
-
-
-//    std::map<std::string,std::function<void(*)()>> events;
-
-//    std::map<std::string, std::function<void()>> events;
-
-//    std::function<void()> eventsChain;
-
-//    template<typename CallBackFunc>
-//    void addEvent(const std::string &name, CallBackFunc callBack);
-
     template<typename CallBackFunc>
-    void addEvent(const std::string &name, CallBackFunc callBack);
+    Element *addEvent(const std::string &name, const CallBackFunc &callBack, bool callAsync = true);
 
-    template<typename CallBackFunc, typename... Args>
-    void dispatchEvent(const std::string &name, Args &&... args);
+
+    template<typename... Args>
+    Element *dispatchEvent(const std::string &name, Args &&... args);
 
 private:
-    // EVENTS CHAIN START
-    TouchEventType TouchEventChain = nullptr;
-    // EVENTS CHAIN END
+
+
+    // EVENTS MaP START
+    std::map<std::string, std::any> events;
+    // EVENTS MaP END
     std::vector<std::future<void>> tasks_;
     std::mutex mutex_;
 
 
 protected:
 
-    template<typename ChainFuncType>
-    void addChainFunction(ChainFuncType &chainFunc, ChainFuncType callBack, bool callAsync = true);
+    template<typename CallBackFunction>
+    void addChainFunction(CallBackFunction &chainFunc, CallBackFunction callBack, bool startFromNewPoint = false,
+                          bool callAsync = true);
 
     template<typename ChainFunc, typename... Args>
     void dispatchChainFunction(ChainFunc &chainFunc, Args &&... args);

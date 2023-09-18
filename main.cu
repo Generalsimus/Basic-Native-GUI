@@ -16,11 +16,12 @@ int main() {
     window.addEvent("touchDown", [](Element *element, int x, int y) {
         printf("\nCLICKED: x: %d, y: %d \n", x, y);
     });
-
-    window.addEvent("touchDown", [](Element *element, int x, int y) {
+    auto eeee = [](Element *element, int x, int y) {
         printf("\nAAAA: x: %d, y: %d \n", x, y);
-    });
-    window.dispatchEvent("touchDown", 1, 2);
+    };
+    window.addEvent("touchDown", eeee);
+
+//    window.dispatchEvent("touchDown", 1, 2);
 //    window.addTouchEvent([](Element* element, int x, int y) {
 //        printf("\nAAAA: x: %d, y: %d \n", x, y);
 //    });
