@@ -57,25 +57,18 @@ public:
     void dispatchTouchEvent(int x, int y);
     // EVENTS END
 
-    template<class Func, typename... Args>
-    void addAsyncTask(Func &&func, Args... args);
+    template<typename Func, typename... Args>
+    void addAsyncTask(Func &&func, Args &&... args);
 
     void awaitAll();
 
 
-    template<typename CallBackFunc>
-    Element *addEvent(const std::string &name, const CallBackFunc &callBack, bool callAsync = true);
-
-
-    template<typename... Args>
-    Element *dispatchEvent(const std::string &name, Args &&... args);
-
 private:
 
 
-    // EVENTS MaP START
-    std::map<std::string, std::any> events;
-    // EVENTS MaP END
+    // EVENTS CHAIN START
+    TouchEventType TouchEventChain = nullptr;
+    // EVENTS CHAIN END
     std::vector<std::future<void>> tasks_;
     std::mutex mutex_;
 

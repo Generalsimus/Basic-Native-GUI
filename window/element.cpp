@@ -54,31 +54,68 @@ void Element::addChainFunction(CallBackFunction &chainFunc, CallBackFunction cal
                                bool callAsync) {
     printf("\nRUN addChainFunction()\n");
 
+
     auto self = this;
     if (startFromNewPoint) {
+//        auto currentCallBack = std::move(callBack);
         if (callAsync) {
-//            auto currentTouchEventChain = std::function(callBack);
-            chainFunc = [&callBack, &self]<typename... Args>(Args... args) {
-//                callBack(std::forward<Args>(args)...);
+            chainFunc = [callBack, &self]<typename... Args>(Args ... args) {
+//                std::unique_lock<std::mutex> lock(self->mutex_);
+//                currentCallBack(std::forward<Args>(args)...);
                 self->addAsyncTask(callBack, std::forward<Args>(args)...);
+//                self->tasks_.emplace_back(std::async(std::launch::async, callBack, std::forward<Args>(args)...));
             };
         } else {
+//            chainFunc = std::move(callBack);
             chainFunc = std::move(callBack);
         }
     } else {
-        auto currentTouchEventChain = std::move(chainFunc);
+        auto currentChainFunc = std::move(chainFunc);
+
+
+        auto currentCallBack =std::forward<CallBackFunction>(callBack);
+//                std::move(callBack);
         if (callAsync) {
-            chainFunc = [currentTouchEventChain, callBack]<typename... Args>(Args ... args) {
-                currentTouchEventChain(std::forward<Args>(args)...);
-                callBack(std::forward<Args>(args)...);
+            chainFunc = [currentChainFunc, currentCallBack, &self]<typename... Args>(Args  ... args) {
+                currentChainFunc(std::forward<Args>(args)...);
+//                callBack(std::forward<Args>(args)...);
+//                std::lock_guard<std::mutex> lock(self- >mutex_);
+//.std::forward<CallBackFunction>(callBack)
+                self->addAsyncTask(currentCallBack, std::forward<Args>(args)...);
+//                self->tasks_.emplace_back(std::async(std::launch::async, callBack, std::forward<Args>(args)...));
             };
         } else {
-            chainFunc = [currentTouchEventChain, callBack, &self]<typename... Args>(Args... args) {
-                currentTouchEventChain(std::forward<Args>(args)...);
-                self->addAsyncTask(callBack, std::forward<Args>(args)...);
+            chainFunc = [currentChainFunc, callBack]<typename... Args>(Args &&... args) {
+                currentChainFunc(std::forward<Args>(args)...);
+                callBack(std::forward<Args>(args)...);
             };
+
         }
     }
+    return;
+//    if (startFromNewPoint) {
+//        if (callAsync) {
+//            chainFunc = [&callBack, &self]<typename... Args>(Args &&... args) {
+////                callBack(std::forward<Args>(args)...);
+//                self->addAsyncTask(callBack, std::forward<Args>(args)...);
+//            };
+//        } else {
+//            chainFunc = std::move(callBack);
+//        }
+//    } else {
+//        auto currentTouchEventChain = std::move(chainFunc);
+//        if (callAsync) {
+//            chainFunc = [currentTouchEventChain, callBack]<typename... Args>(Args &&... args) {
+//                currentTouchEventChain(std::forward<Args>(args)...);
+//                callBack(std::forward<Args>(args)...);
+//            };
+//        } else {
+//            chainFunc = [currentTouchEventChain, callBack, &self]<typename... Args>(Args &&... args) {
+//                currentTouchEventChain(std::forward<Args>(args)...);
+//                self->addAsyncTask(callBack, std::forward<Args>(args)...);
+//            };
+//        }
+//    }
 
 }
 
@@ -99,97 +136,36 @@ template<typename... Args>
 Element *Element::addTouchEvent(TouchEventType firstCallBack, Args... rest) {
     printf("RUN Element() WITH CHILD\n");
 
-//    addChainFunction(TouchEventChain, firstCallBack);
+    addChainFunction(TouchEventChain, firstCallBack, TouchEventChain == nullptr, true);
+    return this;
     return addTouchEvent(rest...);
 }
 
 
 void Element::dispatchTouchEvent(int windowX, int windowY) {
     printf("RUN dispatchTouchEvent() X:%d \n", windowX);
-    if ((windowX > this->x) && (windowX < (this->x + this->width)) && (windowY > this->y) &&
-        (windowY < (this->y + this->height))) {
-//        dispatchChainFunction(TouchEventChain, this, windowX, windowY);
+//    if ((windowX > this->x) && (windowX < (this->x + this->width)) && (windowY > this->y) &&
+//        (windowY < (this->y + this->height))) {
+    dispatchChainFunction(TouchEventChain, this, windowX, windowY);
 
-        for (auto &child: children) {
-            child->dispatchTouchEvent(windowX, windowY);
-        }
-    }
+//        for (auto &child: children) {
+//            child->dispatchTouchEvent(windowX, windowY);
+//        }
+//    }
 
 }
 
 
-template<class Func, typename... Args>
-void Element::addAsyncTask(Func &&func, Args ... args) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    tasks_.emplace_back(std::async(std::launch::async, std::forward<Func>(func), std::forward<Args>(args)...));
+template<typename Func, typename... Args>
+void Element::addAsyncTask(Func &&func, Args &&... args) {
+//    std::lock_guard<std::mutex> lock(mutex_);
+//    self->tasks_.emplace_back(std::async(std::launch::async, func, std::forward<Args>(args)...));
+    this->tasks_.emplace_back(std::async(std::launch::async, std::forward<Func>(func), std::forward<Args>(args)...));
 }
+
 
 void Element::awaitAll() {
     for (auto &task: tasks_) {
         task.wait();
     }
-}
-
-#include <functional>
-
-template<typename ...Args>
-auto FUCRR(std::function<void(Args...)> ss) {
-    return ss;
-}
-
-//int main()
-//{
-//    foo([](int, int) { return true; });
-//}
-template<typename CallBackFunc>
-Element *Element::addEvent(const std::string &name, const CallBackFunc &callBack, bool callAsync) {
-    printf("\nRUN addEvent()\n");
-//
-    if (auto eventCallBack = events.find(name); eventCallBack != events.end()) {
-        printf("\nRUN addEvent IF()\n");
-//        auto callBackFn = std::function(callBack);
-//        auto newChain = std::any_cast<decltype(callBackFn)>(eventCallBack->second);
-//
-//        addChainFunction(newChain, std::function(callBack), false, callAsync);
-//        this->events.emplace(name, std::any(newChain));
-
-    } else {
-        printf("\nRUN addEvent ELSE()\n");
-
-        auto callBackFn = std::function(callBack);
-//        auto newChain = std::function(callBack);
-//        auto newChain =  std::function(callBack);
-        decltype(callBackFn) newChain = nullptr;
-        addChainFunction(newChain, std::function(callBack), true, callAsync);
-        this->events.emplace(name, std::any(newChain));
-
-    }
-    printf("\nRUN addEvent ENT()\n");
-    return this;
-}
-
-template<class... Args>
-Element *Element::dispatchEvent(const std::string &name, Args &&... args) {
-    printf("\nRUN dispatchEvent() \n");
-
-//    auto eventCallBack = events.find(name);
-//    std::any_cast<std::function<void(Element *, Args...)>>(eventCallBack->second)(this,
-//                                                                                  std::forward<Args>(args)...);
-    if (auto eventCallBack = events.find(name); eventCallBack != events.end()) {
-
-        try {
-            std::any_cast<std::function<void(Element *, Args...)>>(eventCallBack->second)(this,
-                                                                                          std::forward<Args>(args)...);
-        }
-        catch (const std::bad_any_cast &e) {
-            std::cout << "EVENT PASSED WRONG ARGUMENTS" << std::endl;
-        }
-    } else {
-        std::cout << "EVENT NOT EXISTS" << std::endl;
-    }
-
-
-    printf("\nRUN YYYYYYYYYYYYYYYYYY()\n");
-
-    return this;
 }
