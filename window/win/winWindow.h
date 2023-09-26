@@ -21,6 +21,7 @@ public:
     const void *pixelsAddr;
     BITMAPINFO bmi;
 
+
     winWindow(const std::string &title, int width, int height);
 
     void refreshFrame() override;

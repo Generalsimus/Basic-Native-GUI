@@ -28,12 +28,18 @@ typedef void (*OnPaintEventType)();
 
 
 
+
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     winWindow *window = (winWindow *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
 
     switch (msg) {
+        case WH_KEYBOARD_LL: {
+            printf("WH_KEYBOARD_LL\n");
+
+            return 0;
+        }
         case WM_PAINT: {
             printf("WM_PAINT\n");
             PAINTSTRUCT ps;
@@ -73,25 +79,68 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             EndPaint(hwnd, &ps);
             return 0;
         };
-        case WM_LBUTTONDOWN: {
-            printf("WM_LBUTTONDOWN");
-
-
-            window->dispatchTouchEvent(LOWORD(lParam), HIWORD(lParam));
-
+//////////////////////////////
+        case WM_LBUTTONDOWN:
+            window->dispatchTouchDownEvent(LOWORD(lParam), HIWORD(lParam), 0);
+            return 0;
+        case WM_MBUTTONDOWN:
+            window->dispatchTouchDownEvent(LOWORD(lParam), HIWORD(lParam), 1);
+            return 0;
+        case WM_RBUTTONDOWN:
+            window->dispatchTouchDownEvent(LOWORD(lParam), HIWORD(lParam), 2);
+            return 0;
+        case WM_XBUTTONDOWN:
+            window->dispatchTouchDownEvent(LOWORD(lParam), HIWORD(lParam), 2 + GET_XBUTTON_WPARAM(wParam));
+            return 0;
+//////////////////////////////
+        case WM_LBUTTONUP:
+            window->dispatchTouchUpEvent(LOWORD(lParam), HIWORD(lParam), 0);
+            return 0;
+        case WM_MBUTTONUP:
+            window->dispatchTouchUpEvent(LOWORD(lParam), HIWORD(lParam), 1);
+            return 0;
+        case WM_RBUTTONUP:
+            window->dispatchTouchUpEvent(LOWORD(lParam), HIWORD(lParam), 2);
+            return 0;
+        case WM_XBUTTONUP:
+            window->dispatchTouchUpEvent(LOWORD(lParam), HIWORD(lParam), 2 + GET_XBUTTON_WPARAM(wParam));
+            return 0;
+//        case WM_KEYDOWN:
+//            printf("WM_KEYDOWN\n");
+//            return 0;
+//        case WM_CHAR:
+            // Handle character input event (e.g., typed characters)
+        case WM_KEYDOWN:
+            printf("WM_KEYDOWN  \n");
+            // Handle keydown event
+            window->dispatchKeyDownEvent(static_cast<int>(wParam));
+            return 0;
+        case WM_KEYUP: {
+            printf("WM_KEYUP  \n");
+            // Handle keydown event
+//            wchar_t wstr = static_cast<wchar_t>(wParam);
+////            printf("WRITE: %s \n", static_cast<wchar_t>(wParam));
+//            std::wstring wideStr(1, wstr);
+//
+//            // Convert std::wstring to std::string
+//            std::string str(wideStr.begin(), wideStr.end());
+//
+//            printf("str::str::str: %s \n", str.c_str());
+//            std::wcout << L"Console Output: " << wstr << std::endl;
+            window->dispatchKeyUpEvent(static_cast<int>(wParam));
             return 0;
         }
         case WM_MOUSELEAVE: {
             printf("WM_MOUSELEAVE\n");
-
+            window->dispatchTouchLeaveEvent();
 
             return 0;
         };
-            /*  case WM_MOUSEHOVER: {
-                  printf("WM_MOUSEHOVER\n");
-
-                  return 0;
-              };*/
+//            /*  case WM_MOUSEHOVER: {
+//                  printf("WM_MOUSEHOVER\n");
+//
+//                  return 0;
+//              };*/
         case WM_SETFOCUS:
             printf("WM_SETFOCUS\n");
             return 0;
@@ -101,16 +150,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         case WM_MOUSEMOVE: {
             // printf("WM_MOUSEMOVE\n");
 
-            HCURSOR customCursor2 = LoadCursor(NULL, IDC_ARROW); // Replace with your custom cursor
+            window->dispatchTouchMovieEvent(LOWORD(lParam), HIWORD(lParam));
+//            return 0;
+
+////////////////////////////////////
+//            HCURSOR customCursor2 = LoadCursor(NULL, IDC_ARROW); // Replace with your custom cursor
 
             // Change the cursor
-            SetCursor(customCursor2);
-            SendMessage(hwnd, WM_SETCURSOR, (WPARAM) hwnd, MAKELPARAM(HTCLIENT, WM_MOUSEMOVE));
+//            SetCursor(customCursor2);
+//            SendMessage(hwnd, WM_SETCURSOR, (WPARAM) hwnd, MAKELPARAM(HTCLIENT, WM_MOUSEMOVE));
+////////////////////////////////////
 
             // Change the cursor when the mouse moves
             TRACKMOUSEEVENT tme;
             tme.cbSize = sizeof(TRACKMOUSEEVENT);
-            tme.dwFlags = TME_HOVER | TME_LEAVE;
+            tme.dwFlags = TME_LEAVE;
             tme.dwHoverTime = 1; //How long the mouse has to be in the window to trigger a hover event.
             tme.hwndTrack = hwnd;
             TrackMouseEvent(&tme);
@@ -186,7 +240,6 @@ void CreateWindowsWindows(const std::string &title, int width, int height, winWi
     MSG msg;
 
     while (GetMessage(&msg, hwnd, 0, 0)) {
-        //PeekMessage(&msg, hwnd, 0, 0, PM_REMOVE)/**/
         //std::cout << "Async lambda function running.222" << std::endl;
         TranslateMessage(&msg);
         DispatchMessage(&msg);

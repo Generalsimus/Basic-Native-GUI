@@ -25,9 +25,7 @@ winWindow::winWindow(const std::string &title, int width, int height) : Window(t
 
     /////////////////////
 
-    /// futures.push_back(std::async(std::launch::async, ));
     this->addAsyncTask(CreateWindowsWindows, title, width, height, this);
-
 
 
     printf("\nASYNC WINDOWWWWWWWWWWWWWWW\n");
