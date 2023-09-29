@@ -18,11 +18,11 @@
 
 class winWindow : public Window {
 public:
-    const void *pixelsAddr;
+//    const void *pixelsAddr;
     BITMAPINFO bmi;
 
 
-    winWindow(const std::string &title, int width, int height);
+    winWindow(const std::string &title, float width, float height);
 
     void refreshFrame() override;
 

@@ -9,10 +9,10 @@
 #include <future>
 
 class AsyncTaskController {
-private:
-    std::vector <std::future<void>> tasks_
-    std::mutex mutex_;
 
+private:
+    std::vector<std::future<void>> tasks_;
+    std::mutex mutex_;
 public:
 
     template<typename Func, typename... Args>
@@ -20,9 +20,10 @@ public:
 
     void awaitAll();
 
-    AsyncTaskController* CreateAsyncGroup();
+    void awaitStartEndAt(int start, int end);
 
-}
+    auto CreateAwaitGroup();
+};
 
 
 #endif //CUDA_NEU_ASYNCTASKCONTROLLER_H

@@ -21,14 +21,20 @@ class Window : public Element {
 private:
 
 public:
+    SkPixmap pixels;
     sk_sp<SkSurface> surface;
-    int id;
-
 
     virtual void refreshFrame();
 
+
+
 protected:
-    Window(const std::string &title, int width, int height);
+    Window(const std::string &title, float width, float height);
+
+    void ss() {
+//        auto originalSurfacesa = SkImageInfo::MakeN32Premul(width, height));
+//        originalSurfacesa.
+    }
 };
 
 

@@ -6,7 +6,7 @@
 class Element;
 
 template<typename... Args>
-using EventDefaultType = std::function<void(Element *, Args... args)>;
+using EventDefaultType = std::function<void(Element*, Args... args)>;
 
 /// Touch EVENTS //
 using TouchMoveEventType = EventDefaultType<int, int>;
@@ -30,4 +30,11 @@ using KeyEventType = KeyEvent;
 
 
 /// Draw EVENTS //
-using DrawEventType = EventDefaultType<SkCanvas>;
+using DrawEventType = EventDefaultType<SkCanvas *, SkPaint *>;
+
+
+/// Set Paints EVENTS //
+using SetPaintsEventType = EventDefaultType<>;
+
+/// Resize EVENTS//
+using ResizeEventType = EventDefaultType<float, float>;

@@ -8,17 +8,17 @@
 #include "utils.cpp"
 
 
-winWindow::winWindow(const std::string &title, int width, int height) : Window(title, width, height) {
+winWindow::winWindow(const std::string &title, float width, float height) : Window(title, width, height) {
     printf("\nRUN winWindow\n");
     this->width = width;
     this->height = height;
     ///////////////////////////
 
-    SkPixmap pixels;
+//    SkPixmap pixels;
 
-    surface->peekPixels(&pixels);
+//    surface->peekPixels(&pixels);/
 
-    pixelsAddr = pixels.addr();
+//    pixelsAddr = pixels.addr();
 
     bmi = CreateBitmapInfo(width, height);
 
@@ -27,11 +27,23 @@ winWindow::winWindow(const std::string &title, int width, int height) : Window(t
 
     this->addAsyncTask(CreateWindowsWindows, title, width, height, this);
 
+    auto self = this;
+    this->addResizeEvent([self](Element *element, float width, float height) {
+//        SkPixmap pixels;
 
+//        surface->peekPixels(&pixels);
+
+//        pixelsAddr = pixels.addr();
+
+        self->bmi = CreateBitmapInfo(static_cast<int>(width), static_cast<int>(height));
+    });
     printf("\nASYNC WINDOWWWWWWWWWWWWWWW\n");
 
 };
 
+//winWindow::winWindow(const std::string &title, float width, float height) {
+//
+//};
 
 void winWindow::refreshFrame() {
     printf("refreshFrame");
@@ -39,6 +51,7 @@ void winWindow::refreshFrame() {
 
 void winWindow::WinSetDIBitsToDevice(HDC hdc) {
 
-    SetDIBitsToDevice(hdc, 0, 0, this->width, this->height, 0, 0, 0, this->height, this->pixelsAddr,
+//    printf("\nღღღღღღღღღღღღღღღღღღღღღღღ: width: %.2f, height: %.2f \n", this->width, this->height);
+    SetDIBitsToDevice(hdc, 0, 0, this->width, this->height, 0, 0, 0, this->height, this->pixels.addr(),
                       &bmi, DIB_RGB_COLORS);
-};
+}

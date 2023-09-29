@@ -42,43 +42,40 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         case WM_PAINT: {
             printf("WM_PAINT\n");
+
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
 
-            RECT rect;
-            GetWindowRect(hwnd, &rect);
-/*
-            window->width = rect.right - rect.left;
-            window->height = rect.bottom - rect.top;*/
+//            RECT rect;
+//            GetWindowRect(hwnd, &rect);
 
-            //  sk_sp<SkSurface>* surf = window->surface;
 
             SkCanvas *canvas = window->surface->getCanvas();
 
-
-
-            // Draw something on the SkCanvas (for example, a red rectangle)
+            // Draw something on the SkCanvas
             SkPaint paint;
-            paint.setColor(SK_ColorRED);
-            canvas->drawRect(SkRect::MakeXYWH(100, 100, 200, 200), paint);
 
+            auto awaitProcess = window->CreateAwaitGroup();
+            window->dispatchDrawEvent(canvas, &paint);
+            awaitProcess();
 
-            //  SkPixmap pixels = window->pixels;
-
-            //  surf->peekPixels(&pixels);
-
-
-            // BITMAPINFO bmi = window->bmi;
             window->WinSetDIBitsToDevice(hdc);
-            // Release the HDC
-//            SetDIBitsToDevice(hdc, 0, 0, window->width, window->height, 0, 0, 0, window->height, window->pixelsAddr,
-//                              &bmi, DIB_RGB_COLORS);
-
 
             // Clean up
             EndPaint(hwnd, &ps);
             return 0;
         };
+        case WM_SIZING: {
+            printf("WM_SIZING\n");
+
+            RECT *rect2 = reinterpret_cast<RECT *>(lParam);
+
+            auto awaitProcess = window->CreateAwaitGroup();
+            window->dispatchResizeEvent(static_cast<float>(rect2->right - rect2->left), static_cast<float>(rect2->bottom - rect2->top));
+            awaitProcess();
+
+            return 0;
+        }
 //////////////////////////////
         case WM_LBUTTONDOWN:
             window->dispatchTouchDownEvent(LOWORD(lParam), HIWORD(lParam), 0);
@@ -150,7 +147,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         case WM_MOUSEMOVE: {
             // printf("WM_MOUSEMOVE\n");
 
-            window->dispatchTouchMovieEvent(LOWORD(lParam), HIWORD(lParam));
+            window->dispatchTouchMoveEvent(LOWORD(lParam), HIWORD(lParam));
+
 //            return 0;
 
 ////////////////////////////////////
@@ -221,12 +219,13 @@ WNDCLASS CreateWNDCLASS(const std::string &title) {
 };
 
 
-void CreateWindowsWindows(const std::string &title, int width, int height, winWindow *window) {
+void CreateWindowsWindows(const std::string &title, float width, float height, winWindow *window) {
     WNDCLASS wc = CreateWNDCLASS(title);
-    HWND hwnd = CreateWindow(title.c_str(), title.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, width,
-                             height, NULL, NULL, wc.hInstance, NULL);
+    HWND hwnd = CreateWindow(title.c_str(), title.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+                             static_cast<int>(width),
+                             static_cast<int>(height), NULL, NULL, wc.hInstance, NULL);
 
-
+//    static_cast<int>(width) static_cast<int>(width)
     if (!hwnd) {
         printf("CreateWindow() ERROR\n");
         return;
@@ -240,8 +239,11 @@ void CreateWindowsWindows(const std::string &title, int width, int height, winWi
     MSG msg;
 
     while (GetMessage(&msg, hwnd, 0, 0)) {
+
+        auto awaitProcess = window->CreateAwaitGroup();
         //std::cout << "Async lambda function running.222" << std::endl;
         TranslateMessage(&msg);
         DispatchMessage(&msg);
+        awaitProcess();
     };
 }

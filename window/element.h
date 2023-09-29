@@ -14,7 +14,7 @@
 #include "include/core/SkPaint.h"
 #include "include/core/SkCanvas.h"
 #include "./eventsType.h"
-#include "asyncTaskController.h"
+#include "./asyncTaskController.h"
 
 
 class Element : public AsyncTaskController {
@@ -45,70 +45,92 @@ public:
     template<typename... Args>
     explicit Element(Element *first, Args... rest);
 
-    /// START ASYNC CONTROLLERS //
-
-
-    void CreateAsyncGroup();
-    /// END ASYNC CONTROLLERS //
-
     /// START ADD PAINT FIGuRES //
-//    template<typename Func, typename... Args>
-    void addShapes() {
+    template<typename PaintFunction, typename... Args>
+    Element *setPaints(PaintFunction paintCallback, Args... args) {
+        dispatchSetPaintsEvent();
 
-    }
+        SetEachPainters(paintCallback, std::forward<Args>(args)...);
+
+        return this;
+    };
     /// End ADD PAINT FIGuRES //
 
     /// EVENTS LIST //////////////////////////////////////////////////
     /// TOUCH MOVIE
-    Element *addTouchMovieEvent(TouchMoveEventType &&callBack);
 
-    Element *dispatchTouchMovieEvent(int windowX, int windowY, bool isAsync = true, bool useTouchOverChild = true);
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addTouchMoveEvent(TouchMoveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+
+    Element *dispatchTouchMoveEvent(int windowX, int windowY, bool isAsync = true, bool useTouchOverChild = true);
 
     /// TOUCH OVER
-    Element *addTouchOverEvent(TouchOverEventType &&callBack);
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addTouchOverEvent(TouchOverEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     Element *dispatchTouchOverEvent();
 
     /// TOUCH LEAVE
-    Element *addTouchLeaveEvent(TouchLeaveEventType &&callBack);
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     Element *dispatchTouchLeaveEvent();
 
     /// TOUCH DOWN
-    Element *addTouchDownEvent(TouchDownEventType &&callBack);
+
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addTouchDownEvent(TouchDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     Element *dispatchTouchDownEvent(int windowX, int windowY, int typeIndex);
 
     /// TOUCH UP
-    Element *addTouchUpEvent(TouchUpEventType &&firstCallBack);
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addTouchUpEvent(TouchUpEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     Element *dispatchTouchUpEvent(int windowX, int windowY, int typeIndex);
 
     /// TOUCH
-    Element *addTouchEvent(TouchEventType &&firstCallBack);
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addTouchEvent(TouchEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     Element *dispatchTouchEvent(int windowX, int windowY, int typeIndex);
 
     /// KEY DOWN
-    Element *addKeyDownEvent(KeyDownEventType &&callBack);
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addKeyDownEvent(KeyDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     Element *dispatchKeyDownEvent(int keyIndex);
 
     /// KEY Up
-    Element *addKeyUpEvent(KeyUpEventType &&callBack);
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addKeyUpEvent(KeyUpEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     Element *dispatchKeyUpEvent(int keyIndex);
 
     /// KEY
-    Element *addKeyEvent(KeyUpEventType &&callBack);
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addKeyEvent(KeyEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     Element *dispatchKeyEvent(int keyIndex);
 
     /// Draw
-    Element *addDrawEvent(DrawEventType &&callBack);
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-    Element *dispatchDrawEvent(SkCanvas canvas);
-    /// Draw
+    Element *dispatchDrawEvent(SkCanvas *canvas, SkPaint *paint);
+
+    /// Set Paints
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addSetPaintsEvent(SetPaintsEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+
+    Element *dispatchSetPaintsEvent();
+
+    /// RESIZE ELEMENT
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addResizeEvent(ResizeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+
+    Element *dispatchResizeEvent(float windowWidth, float windowHeight);
+
     /// EVENTS LIST END /////////////////////////////////////////////////
 
 
@@ -129,6 +151,13 @@ private:
     KeyDownEventType KeyDownEventChain = nullptr;
     KeyUpEventType KeyUpEventChain = nullptr;
     KeyEventType KeyEventChain = nullptr;
+
+    DrawEventType DrawEventChain = nullptr;
+
+    SetPaintsEventType SetPaintsEventChain = nullptr;
+
+    ResizeEventType ResizeEventChain = nullptr;
+
     /// EVENTS CHAIN END
 
 
@@ -136,13 +165,22 @@ private:
     /// START EVENT VARIABLES
     bool isMouseOver = false;
     /// END EVENT VARIABLES
-    SkPaint paint;
 
+    /// START DRAWER PRIVATE OPTIONS  //
+
+
+    void SetEachPainters();
+    template<typename PaintFunction, typename... Args>
+    void SetEachPainters(PaintFunction paintCallback, Args... args);
+    /// END DRAWER PRIVATE OPTIONS  //
 
 protected:
 
-    template<typename CallBackFunction>
-    void addChainFunction(CallBackFunction &chainFunc, CallBackFunction &callBack, bool startFromNewPoint = false,
+
+    template<typename CallBackFunction, typename RemoveEventCallBack>
+    void addChainFunction(CallBackFunction &chainFunc, CallBackFunction &callBack,
+                          RemoveEventCallBack &removeChainFunction = nullptr,
+                          bool startFromNewPoint = false,
                           bool callAsync = true);
 
 //    template<typename ChainFunc, typename... Args>
@@ -154,53 +192,8 @@ protected:
 
     void drawMe() {
         return;
-    }
-};
-
-//addBackGround
-//addStyleBackgroundEvent();
-//addStyleBackgroundEvent();
-auto Box(float widthParcentSize, float parcentSize) {
-    return []() {
-//        SkRect contentRect = SkRect::MakeLTRB(50.0f, 50.0f, 350.0f, 150.0f);
     };
 };
 
-//auto BackgroundColor(SkColor color) {
-//    return [](SkCanvas *canvas, SkPaint paint) {
-////        paint.setColor(SK_ColorBLACK);
-////        SkPaint paint;
-//        paint.setColor(SK_ColorRED);
-////        canvas->drawRect(SkRect::MakeXYWH(100, 100, 200, 200), paint);
-//
-//    };
-//}
-//
-//auto BoxPX(int Width, int height) {
-//    return [](Element *element, SkCanvas *canvas, const SkPaint &paint) {
-////        paint.setColor(SK_ColorBLACK);
-////        SkPaint paint;
-////        paint.setColor(SK_ColorRED);
-////        element->x
-////        element->y
-////        element->width
-////        element->height
-//        canvas->drawRect(SkRect::MakeXYWH(element->x, element->y, element->width, element->height), paint);
-//
-//    }
-//}
-//
-//auto BoxPX(int Width, int height) {
-//    return [](Element *parent, Element *element, SkCanvas *canvas, const SkPaint &paint) {
-////        paint.setColor(SK_ColorBLACK);
-////        SkPaint paint;
-////        paint.setColor(SK_ColorRED);
-////        element->x
-////        element->y
-////        element->width
-////        element->height
-//        canvas->drawRect(SkRect::MakeXYWH(element->x, element->y, element->width, element->height), paint);
-//
-//    }
-//}
+
 #endif //CUDA_NEU_ELEMENT_H
