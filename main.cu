@@ -15,7 +15,7 @@ int main() {
     winWindow window("My Custom Window", 900.0f, 600.0f);
 
     printf("eeerrrrrrrrrrtttttttttttttttttt");
-    window.setPaints(FullBox( ));
+    window.setPaints(FullBox());
 //    window.setPaints(DrawBox(20, 10));
 
 //    window.addTouchDownEvent([](Element *element, int x, int y, int typeIndex) {

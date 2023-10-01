@@ -7,27 +7,53 @@
 #include "./events.cpp"
 #include "./asyncTaskController.cpp"
 
-Element *Element::addChildElement() {
+void Element::replaceChild(int replaceAtIndex, Element *newChild) {
+    if (replaceAtIndex >= 0 && replaceAtIndex < children.size()) {
+        auto oldValue = children[replaceAtIndex];
+        children[replaceAtIndex] = newChild;
+        this->dispatchReplaceChildEvent(replaceAtIndex, oldValue, newChild);
+    } else {
+        std::cout << "Invalid index." << std::endl;
+    }
+}
+
+void Element::removeChild(int startIndex, int removeCount) {
+    int endIndex = startIndex + removeCount;
+    // Check if the indices are valid
+    if (startIndex >= 0 && endIndex >= startIndex && endIndex < children.size()) {
+        // Calculate iterators for the elements to remove
+        auto firstToRemove = children.begin() + startIndex;
+        auto lastToRemove = children.begin() + endIndex + 1; // Add 1 to include the element at endIndex
+
+        // Erase the elements between startIndex and endIndex
+        children.erase(firstToRemove, lastToRemove);
+    } else {
+        // Handle the case where the indices are invalid
+        std::cout << "Invalid indices." << std::endl;
+    }
+    this->dispatchRemoveChildEvent(startIndex, removeCount);
+}
+
+Element *Element::addChild() {
     return this;
 };
 
 template<typename... Chi>
-Element *Element::addChildElement(Element *child, Chi... rest) {
-    printf("RUN addChildElement\n");
-
+Element *Element::addChild(Element *child, Chi... rest) {
+    printf("RUN addChild\n");
 
     this->children.push_back(child);
 
-    child->parent = this;
+    this->dispatchAddChildEvent(child);
 
-
-    return this->addChildElement(rest...);
+    return this->addChild(rest...);
 };
 
 Element::Element() : x(0), y(0) {
     printf("RUN Element() NO CHILD\n");
     this->InitCustomEventListeners();
 };
+
 
 void Element::InitCustomEventListeners() {
     int downTypeNum = -1;
@@ -54,8 +80,8 @@ Element::Element(Element *first, Args... rest):x(0), y(0) {
     printf("RUN Element() WITH CHILD\n");
 
 
-    addChildElement(first);
-    addChildElement(rest...);
+    addChild(first);
+    addChild(rest...);
 }
 
 
@@ -152,6 +178,7 @@ bool Element::PositionIsOver(int windowX, int windowY) {
 void Element::SetEachPainters() {
 
 };
+
 template<typename PaintFunction, typename... Args>
 void Element::SetEachPainters(PaintFunction paintCallback, Args... args) {
     paintCallback(this);

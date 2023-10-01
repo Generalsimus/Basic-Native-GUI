@@ -26,15 +26,18 @@ public:
     float height;
 
 
-    Element *parent;
+//    Element *parent;
     /// START CHILD OPTIONS //
     std::vector<Element *> children;
 
-
-    Element *addChildElement();
+    Element *addChild();
 
     template<typename... Chi>
-    Element *addChildElement(Element *child, Chi... rest);
+    Element *addChild(Element *child, Chi... rest);
+
+    void replaceChild(int replaceAtIndex, Element *newChild);
+
+    void removeChild(int startIndex, int removeCount = 1);
 
     /// END CHILD OPTIONS //
     bool PositionIsOver(int x, int y);
@@ -131,6 +134,28 @@ public:
 
     Element *dispatchResizeEvent(float windowWidth, float windowHeight);
 
+    /// ADD CHILD
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addAddChildEvent(AddChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+
+    Element *dispatchAddChildEvent(Element *newChild);
+
+    /// REMOVE CHILD
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+
+    Element *dispatchRemoveChildEvent(int removeIndex, int count = 1);
+
+
+    /// REPLACE CHILD
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Element *
+    addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+
+    Element *dispatchReplaceChildEvent(int replaceIndex, Element *oldChild, Element *newChild);
+
+
+
     /// EVENTS LIST END /////////////////////////////////////////////////
 
 
@@ -158,6 +183,9 @@ private:
 
     ResizeEventType ResizeEventChain = nullptr;
 
+    AddChildEventType AddChildEventChain = nullptr;
+    RemoveChildEventType RemoveChildEventChain = nullptr;
+    ReplaceChildEventType ReplaceChildEventChain = nullptr;
     /// EVENTS CHAIN END
 
 
@@ -170,6 +198,7 @@ private:
 
 
     void SetEachPainters();
+
     template<typename PaintFunction, typename... Args>
     void SetEachPainters(PaintFunction paintCallback, Args... args);
     /// END DRAWER PRIVATE OPTIONS  //

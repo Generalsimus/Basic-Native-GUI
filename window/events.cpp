@@ -249,4 +249,42 @@ Element *Element::dispatchResizeEvent(float width, float height) {
     return this;
 };
 
+
+/// ADD CHILD
+template<typename RemoveEventCallBack>
+Element *Element::addAddChildEvent(AddChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+
+    addChainFunction(AddChildEventChain, callBack, removeEventCallBack, AddChildEventChain == nullptr, true);
+    return this;
+};
+
+Element *Element::dispatchAddChildEvent(Element *newChild) {
+    dispatchChainFunction(AddChildEventChain, this, newChild);
+    return this;
+};
+
+/// REMOVE CHILD
+template<typename RemoveEventCallBack>
+Element *Element::addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+    addChainFunction(RemoveChildEventChain, callBack, removeEventCallBack, RemoveChildEventChain == nullptr, true);
+    return this;
+};
+
+Element *Element::dispatchRemoveChildEvent(int removeIndex, int count) {
+    dispatchChainFunction(RemoveChildEventChain, this, removeIndex, count);
+    return this;
+};
+
+
+/// REPLACE CHILD
+template<typename RemoveEventCallBack>
+Element *Element::addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+    addChainFunction(ReplaceChildEventChain, callBack, removeEventCallBack, ReplaceChildEventChain == nullptr, true);
+    return this;
+};
+
+Element *Element::dispatchReplaceChildEvent(int replaceIndex, Element *oldChild, Element *newChild) {
+    dispatchChainFunction(ReplaceChildEventChain, this, replaceIndex, oldChild, newChild);
+    return this;
+};
 /////////////////////////////////////////////////////////////////////////////////////////////////////
