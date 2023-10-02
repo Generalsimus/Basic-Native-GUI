@@ -1,11 +1,11 @@
 
 /// EVENTS LIST ////////////////////////////////////////////////////////////////////////////////////////
 
-#include "element.h"
+#include "elementView.h"
 
 /// TOUCH OVER //
 template<typename RemoveEventCallBack>
-Element *Element::addTouchOverEvent(TouchOverEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addTouchOverEvent(TouchOverEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     printf("RUN addTouchOverEvent()");
 //    auto rem = std::function([]() {});
     addChainFunction(TouchOverEventChain, callBack, removeEventCallBack, TouchOverEventChain == nullptr, false);
@@ -13,7 +13,7 @@ Element *Element::addTouchOverEvent(TouchOverEventType &&callBack, RemoveEventCa
     return this;
 }
 
-Element *Element::dispatchTouchOverEvent() {
+ElementView *ElementView::dispatchTouchOverEvent() {
     if (!this->isMouseOver) {
         printf("RUN dispatchTouchOverEvent() \n");
         this->isMouseOver = true;
@@ -30,7 +30,7 @@ Element *Element::dispatchTouchOverEvent() {
 
 /// TOUCH LEAVE //
 template<typename RemoveEventCallBack>
-Element *Element::addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     printf("RUN addTouchOverEvent()");
 
     addChainFunction(TouchLeaveEventChain, callBack, removeEventCallBack, TouchLeaveEventChain == nullptr, true);
@@ -39,7 +39,7 @@ Element *Element::addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEvent
     return this;
 }
 
-Element *Element::dispatchTouchLeaveEvent() {
+ElementView *ElementView::dispatchTouchLeaveEvent() {
     printf("RUN dispatchTouchLeaveEvent()\n");
     if (this->isMouseOver) {
         this->isMouseOver = false;
@@ -54,7 +54,7 @@ Element *Element::dispatchTouchLeaveEvent() {
 
 /// TOUCH MOVE //
 template<typename RemoveEventCallBack>
-Element *Element::addTouchMoveEvent(TouchMoveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addTouchMoveEvent(TouchMoveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     printf("RUN addTouchDownEvent()");
 
     addChainFunction(TouchMoveEventChain, callBack, removeEventCallBack, TouchMoveEventChain == nullptr, true);
@@ -63,7 +63,7 @@ Element *Element::addTouchMoveEvent(TouchMoveEventType &&callBack, RemoveEventCa
 }
 
 
-Element *Element::dispatchTouchMoveEvent(int windowX, int windowY, bool isAsync, bool useTouchOverChild) {
+ElementView *ElementView::dispatchTouchMoveEvent(int windowX, int windowY, bool isAsync, bool useTouchOverChild) {
 //    printf("RUN dispatchTouchDownEvent() X:%d, Y: %d \n", windowX, windowY);
 
     if (PositionIsOver(windowX, windowY)) {
@@ -79,7 +79,7 @@ Element *Element::dispatchTouchMoveEvent(int windowX, int windowY, bool isAsync,
 
 /// TOUCH DOWN //
 template<typename RemoveEventCallBack>
-Element *Element::addTouchDownEvent(TouchDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addTouchDownEvent(TouchDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     printf("RUN addTouchDownEvent()");
 
     addChainFunction(TouchDownEventChain, callBack, removeEventCallBack, TouchDownEventChain == nullptr, true);
@@ -88,7 +88,7 @@ Element *Element::addTouchDownEvent(TouchDownEventType &&callBack, RemoveEventCa
 }
 
 
-Element *Element::dispatchTouchDownEvent(int windowX, int windowY, int typeIndex) {
+ElementView *ElementView::dispatchTouchDownEvent(int windowX, int windowY, int typeIndex) {
     printf("RUN dispatchTouchDownEvent() X:%d, Y: %d \n", windowX, windowY);
 
     if (PositionIsOver(windowX, windowY)) {
@@ -104,7 +104,7 @@ Element *Element::dispatchTouchDownEvent(int windowX, int windowY, int typeIndex
 
 /// TOUCH UP //
 template<typename RemoveEventCallBack>
-Element *Element::addTouchUpEvent(TouchUpEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addTouchUpEvent(TouchUpEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     printf("RUN addTouchUpEvent()");
 
     addChainFunction(TouchUpEventChain, callBack, removeEventCallBack, TouchUpEventChain == nullptr, true);
@@ -113,7 +113,7 @@ Element *Element::addTouchUpEvent(TouchUpEventType &&callBack, RemoveEventCallBa
 }
 
 
-Element *Element::dispatchTouchUpEvent(int windowX, int windowY, int typeIndex) {
+ElementView *ElementView::dispatchTouchUpEvent(int windowX, int windowY, int typeIndex) {
     printf("RUN dispatchTouchUpEvent() X:%d, Y: %d \n", windowX, windowY);
 
     if (PositionIsOver(windowX, windowY)) {
@@ -128,7 +128,7 @@ Element *Element::dispatchTouchUpEvent(int windowX, int windowY, int typeIndex) 
 
 /// TOUCH ///
 template<typename RemoveEventCallBack>
-Element *Element::addTouchEvent(TouchEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addTouchEvent(TouchEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     printf("RUN addTouchEvent()");
 
     addChainFunction(TouchEventChain, callBack, removeEventCallBack, TouchEventChain == nullptr, true);
@@ -137,7 +137,7 @@ Element *Element::addTouchEvent(TouchEventType &&callBack, RemoveEventCallBack &
 }
 
 
-Element *Element::dispatchTouchEvent(int windowX, int windowY, int typeIndex) {
+ElementView *ElementView::dispatchTouchEvent(int windowX, int windowY, int typeIndex) {
     printf("RUN dispatchTouchUpEvent() X:%d, Y: %d \n", windowX, windowY);
 
     if (PositionIsOver(windowX, windowY)) {
@@ -154,14 +154,14 @@ Element *Element::dispatchTouchEvent(int windowX, int windowY, int typeIndex) {
 
 /// KEY DOWN //
 template<typename RemoveEventCallBack>
-Element *Element::addKeyDownEvent(KeyDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addKeyDownEvent(KeyDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     printf("RUN addKeyDownEvent()");
 
     addChainFunction(KeyDownEventChain, callBack, removeEventCallBack, KeyDownEventChain == nullptr, true);
     return this;
 }
 
-Element *Element::dispatchKeyDownEvent(int keyIndex) {
+ElementView *ElementView::dispatchKeyDownEvent(int keyIndex) {
 
     dispatchChainFunction(KeyDownEventChain, this, keyIndex);
 
@@ -170,14 +170,14 @@ Element *Element::dispatchKeyDownEvent(int keyIndex) {
 
 /// KEY Up //
 template<typename RemoveEventCallBack>
-Element *Element::addKeyUpEvent(KeyUpEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addKeyUpEvent(KeyUpEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     printf("RUN addKeyUpEvent()");
 
     addChainFunction(KeyUpEventChain, callBack, removeEventCallBack, KeyUpEventChain == nullptr, true);
     return this;
 }
 
-Element *Element::dispatchKeyUpEvent(int keyIndex) {
+ElementView *ElementView::dispatchKeyUpEvent(int keyIndex) {
 
     dispatchChainFunction(KeyUpEventChain, this, keyIndex);
 
@@ -190,14 +190,14 @@ Element *Element::dispatchKeyUpEvent(int keyIndex) {
  * */
 /// KEY ///
 template<typename RemoveEventCallBack>
-Element *Element::addKeyEvent(KeyEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addKeyEvent(KeyEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     printf("RUN addKeyDownEvent()");
 
     addChainFunction(KeyEventChain, callBack, removeEventCallBack, KeyEventChain == nullptr, true);
     return this;
 }
 
-Element *Element::dispatchKeyEvent(int keyIndex) {
+ElementView *ElementView::dispatchKeyEvent(int keyIndex) {
 
     dispatchChainFunction(KeyEventChain, this, keyIndex);
 
@@ -206,12 +206,12 @@ Element *Element::dispatchKeyEvent(int keyIndex) {
 
 /// DRAW ///
 template<typename RemoveEventCallBack>
-Element *Element::addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     addChainFunction(DrawEventChain, callBack, removeEventCallBack, DrawEventChain == nullptr, true);
     return this;
 };
 
-Element *Element::dispatchDrawEvent(SkCanvas *canvas, SkPaint *painter) {
+ElementView *ElementView::dispatchDrawEvent(SkCanvas *canvas, SkPaint *painter) {
     dispatchChainFunction(DrawEventChain, this, canvas, painter);
 
     for (auto &child: children) {
@@ -223,24 +223,24 @@ Element *Element::dispatchDrawEvent(SkCanvas *canvas, SkPaint *painter) {
 
 /// Set Paints ///
 template<typename RemoveEventCallBack>
-Element *Element::addSetPaintsEvent(SetPaintsEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addSetPaintsEvent(SetPaintsEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     addChainFunction(SetPaintsEventChain, callBack, removeEventCallBack, SetPaintsEventChain == nullptr, true);
     return this;
 };
 
-Element *Element::dispatchSetPaintsEvent() {
+ElementView *ElementView::dispatchSetPaintsEvent() {
     dispatchChainFunction(SetPaintsEventChain, this);
     return this;
 };
 
 /// Resize ///
 template<typename RemoveEventCallBack>
-Element *Element::addResizeEvent(ResizeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addResizeEvent(ResizeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     addChainFunction(ResizeEventChain, callBack, removeEventCallBack, ResizeEventChain == nullptr, true);
     return this;
 };
 
-Element *Element::dispatchResizeEvent(float width, float height) {
+ElementView *ElementView::dispatchResizeEvent(float width, float height) {
     dispatchChainFunction(ResizeEventChain, this, width, height);
 
     for (auto &child: children) {
@@ -252,25 +252,25 @@ Element *Element::dispatchResizeEvent(float width, float height) {
 
 /// ADD CHILD
 template<typename RemoveEventCallBack>
-Element *Element::addAddChildEvent(AddChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addAddChildEvent(AddChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
 
     addChainFunction(AddChildEventChain, callBack, removeEventCallBack, AddChildEventChain == nullptr, true);
     return this;
 };
 
-Element *Element::dispatchAddChildEvent(Element *newChild) {
+ElementView *ElementView::dispatchAddChildEvent(ElementView *newChild) {
     dispatchChainFunction(AddChildEventChain, this, newChild);
     return this;
 };
 
 /// REMOVE CHILD
 template<typename RemoveEventCallBack>
-Element *Element::addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     addChainFunction(RemoveChildEventChain, callBack, removeEventCallBack, RemoveChildEventChain == nullptr, true);
     return this;
 };
 
-Element *Element::dispatchRemoveChildEvent(int removeIndex, int count) {
+ElementView *ElementView::dispatchRemoveChildEvent(int removeIndex, int count) {
     dispatchChainFunction(RemoveChildEventChain, this, removeIndex, count);
     return this;
 };
@@ -278,12 +278,12 @@ Element *Element::dispatchRemoveChildEvent(int removeIndex, int count) {
 
 /// REPLACE CHILD
 template<typename RemoveEventCallBack>
-Element *Element::addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     addChainFunction(ReplaceChildEventChain, callBack, removeEventCallBack, ReplaceChildEventChain == nullptr, true);
     return this;
 };
 
-Element *Element::dispatchReplaceChildEvent(int replaceIndex, Element *oldChild, Element *newChild) {
+ElementView *ElementView::dispatchReplaceChildEvent(int replaceIndex, ElementView *oldChild, ElementView *newChild) {
     dispatchChainFunction(ReplaceChildEventChain, this, replaceIndex, oldChild, newChild);
     return this;
 };

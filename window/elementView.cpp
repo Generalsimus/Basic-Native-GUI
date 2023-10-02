@@ -2,12 +2,12 @@
 // Created by PC on 9/3/2023.
 //
 
-#include "element.h"
+#include "elementView.h"
 #include "./utils.cpp"
 #include "./events.cpp"
 #include "./asyncTaskController.cpp"
 
-void Element::replaceChild(int replaceAtIndex, Element *newChild) {
+void ElementView::replaceChild(int replaceAtIndex, ElementView *newChild) {
     if (replaceAtIndex >= 0 && replaceAtIndex < children.size()) {
         auto oldValue = children[replaceAtIndex];
         children[replaceAtIndex] = newChild;
@@ -17,7 +17,7 @@ void Element::replaceChild(int replaceAtIndex, Element *newChild) {
     }
 }
 
-void Element::removeChild(int startIndex, int removeCount) {
+void ElementView::removeChild(int startIndex, int removeCount) {
     int endIndex = startIndex + removeCount;
     // Check if the indices are valid
     if (startIndex >= 0 && endIndex >= startIndex && endIndex < children.size()) {
@@ -34,12 +34,12 @@ void Element::removeChild(int startIndex, int removeCount) {
     this->dispatchRemoveChildEvent(startIndex, removeCount);
 }
 
-Element *Element::addChild() {
+ElementView *ElementView::addChild() {
     return this;
 };
 
 template<typename... Chi>
-Element *Element::addChild(Element *child, Chi... rest) {
+ElementView *ElementView::addChild(ElementView *child, Chi... rest) {
     printf("RUN addChild\n");
 
     this->children.push_back(child);
@@ -49,19 +49,19 @@ Element *Element::addChild(Element *child, Chi... rest) {
     return this->addChild(rest...);
 };
 
-Element::Element() : x(0), y(0) {
+ElementView::ElementView() : x(0), y(0) {
     printf("RUN Element() NO CHILD\n");
     this->InitCustomEventListeners();
 };
 
 
-void Element::InitCustomEventListeners() {
+void ElementView::InitCustomEventListeners() {
     int downTypeNum = -1;
     auto self = this;
-    this->addTouchDownEvent([&downTypeNum](Element *element, int windowX, int windowY, int typeIndex) {
+    this->addTouchDownEvent([&downTypeNum](ElementView *element, int windowX, int windowY, int typeIndex) {
         downTypeNum = typeIndex;
     });
-    this->addTouchUpEvent([&downTypeNum, self](Element *element, int windowX, int windowY, int typeIndex) {
+    this->addTouchUpEvent([&downTypeNum, self](ElementView *element, int windowX, int windowY, int typeIndex) {
         if (downTypeNum == typeIndex) {
             self->dispatchTouchEvent(windowX, windowY, typeIndex);
             downTypeNum = -1;
@@ -69,14 +69,15 @@ void Element::InitCustomEventListeners() {
     });
 
 
-    this->addTouchMoveEvent([self](Element *element, int windowX, int windowY) {
+    this->addTouchMoveEvent([self](ElementView *element, int windowX, int windowY) {
         self->dispatchTouchOverEvent();
     });
 
 }
 
+
 template<typename... Args>
-Element::Element(Element *first, Args... rest):x(0), y(0) {
+ElementView::ElementView(ElementView *first, Args... rest):x(0), y(0) {
     printf("RUN Element() WITH CHILD\n");
 
 
@@ -86,7 +87,7 @@ Element::Element(Element *first, Args... rest):x(0), y(0) {
 
 
 template<typename CallBackFunction, typename RemoveChainFunction>
-void Element::addChainFunction(CallBackFunction &chainFunc, CallBackFunction &callBack,
+void ElementView::addChainFunction(CallBackFunction &chainFunc, CallBackFunction &callBack,
                                RemoveChainFunction &removeChainFunction,
                                bool startFromNewPoint,
                                bool callAsync) {
@@ -160,7 +161,7 @@ void Element::addChainFunction(CallBackFunction &chainFunc, CallBackFunction &ca
 
 
 template<class ChainFunc, class... Args>
-void Element::dispatchChainFunction(ChainFunc &chainFunc, Args &&... args) {
+void ElementView::dispatchChainFunction(ChainFunc &chainFunc, Args &&... args) {
 //    printf("RUN dispatchChainFunction()\n");
 
     if (chainFunc != nullptr) {
@@ -170,16 +171,16 @@ void Element::dispatchChainFunction(ChainFunc &chainFunc, Args &&... args) {
 }
 
 
-bool Element::PositionIsOver(int windowX, int windowY) {
+bool ElementView::PositionIsOver(int windowX, int windowY) {
     return ((windowX > this->x) && (windowX < (this->x + this->width)) && (windowY > this->y) &&
             (windowY < (this->y + this->height)));
 }
 
-void Element::SetEachPainters() {
+void ElementView::SetEachPainters() {
 
 };
 
 template<typename PaintFunction, typename... Args>
-void Element::SetEachPainters(PaintFunction paintCallback, Args... args) {
+void ElementView::SetEachPainters(PaintFunction paintCallback, Args... args) {
     paintCallback(this);
 };

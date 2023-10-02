@@ -2,18 +2,18 @@
 
 
 auto BoxPx(float width, float height) {
-    return [width, height](Element *element) {
+    return [width, height](ElementView *element) {
         std::function < void() > *removeEvent = new std::function<void()>;
         *removeEvent = []() {
 
         };
-        element->addDrawEvent([width, height](Element *element, SkCanvas *canvas, SkPaint *paint) {
+        element->addDrawEvent([width, height](ElementView *element, SkCanvas *canvas, SkPaint *paint) {
 
             paint->setColor(SK_ColorRED);
             canvas->drawRect(SkRect::MakeXYWH(element->x, element->y, width, height), *paint);
 
         }, *removeEvent);
-        element->addSetPaintsEvent([removeEvent](Element *element) {
+        element->addSetPaintsEvent([removeEvent](ElementView *element) {
             (*removeEvent)();
             delete removeEvent;
         }, *removeEvent);
@@ -21,18 +21,18 @@ auto BoxPx(float width, float height) {
 };
 
 auto BoxPercent(float percentWidth, float percentHeight) {
-    return [percentWidth, percentHeight](Element *element) {
+    return [percentWidth, percentHeight](ElementView *element) {
         std::function < void() > *removeEvent = new std::function<void()>;
         *removeEvent = []() {
 
         };
-        element->addDrawEvent([percentWidth, percentHeight](Element *element, SkCanvas *canvas, SkPaint *paint) {
+        element->addDrawEvent([percentWidth, percentHeight](ElementView *element, SkCanvas *canvas, SkPaint *paint) {
 
             paint->setColor(SK_ColorRED);
             canvas->drawRect(SkRect::MakeXYWH(element->x, element->y, (percentWidth / 100.0f) * element->width,
                                               (percentHeight / 100.0f) * element->height), *paint);
         }, *removeEvent);
-        element->addSetPaintsEvent([removeEvent](Element *element) {
+        element->addSetPaintsEvent([removeEvent](ElementView *element) {
             (*removeEvent)();
             delete removeEvent;
         }, *removeEvent);
@@ -40,17 +40,17 @@ auto BoxPercent(float percentWidth, float percentHeight) {
 };
 
 auto FullBox() {
-    return [](Element *element) {
+    return [](ElementView *element) {
         std::function < void() > *removeEvent = new std::function<void()>;
         *removeEvent = []() {
 
         };
-        element->addDrawEvent([](Element *element, SkCanvas *canvas, SkPaint *paint) {
+        element->addDrawEvent([](ElementView *element, SkCanvas *canvas, SkPaint *paint) {
 
             paint->setColor(SK_ColorWHITE);
             canvas->drawRect(SkRect::MakeXYWH(element->x, element->y, element->width, element->height), *paint);
         }, *removeEvent);
-        element->addSetPaintsEvent([removeEvent](Element *element) {
+        element->addSetPaintsEvent([removeEvent](ElementView *element) {
             (*removeEvent)();
             delete removeEvent;
         }, *removeEvent);
@@ -58,28 +58,28 @@ auto FullBox() {
 };
 
 auto DirectionRow() {
-    return [](Element *element) {
+    return [](ElementView *element) {
         std::function < void() > *removeEvent = new std::function<void()>;
         *removeEvent = []() {
 
         };
 
-        sss = [](Element *element){
-            for (Element *child: element->children){
+        std::function<void(ElementView *element)> makeAlignmend = [](ElementView *element){
+            float startAt = element->x;
 
+            for (ElementView *child: element->children){
+                child->x = startAt;
+                child->y = element->y;
+                startAt = startAt+ element->width;
             }
         };
-        element->addAddChildEvent([](Element *element, Element *newChild) {
-
-//            paint->setColor(SK_ColorWHITE);
-//            canvas->drawRect(SkRect::MakeXYWH(element->x, element->y, element->width, element->height), *paint);
+        element->addAddChildEvent([makeAlignmend](ElementView *element, ElementView *newChild) {
+            makeAlignmend(element);
         }, *removeEvent);
-        element->addResizeEvent([](Element *element, float width, float height) {
-
-//            paint->setColor(SK_ColorWHITE);
-//            canvas->drawRect(SkRect::MakeXYWH(element->x, element->y, element->width, element->height), *paint);
+        element->addResizeEvent([makeAlignmend](ElementView *element, float width, float height) {
+            makeAlignmend(element);
         }, *removeEvent);
-        element->addSetPaintsEvent([removeEvent](Element *element) {
+        element->addSetPaintsEvent([removeEvent](ElementView *element) {
             (*removeEvent)();
             delete removeEvent;
         }, *removeEvent);

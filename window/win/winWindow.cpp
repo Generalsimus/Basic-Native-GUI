@@ -28,7 +28,7 @@ winWindow::winWindow(const std::string &title, float width, float height) : Wind
     this->addAsyncTask(CreateWindowsWindows, title, width, height, this);
 
     auto self = this;
-    this->addResizeEvent([self](Element *element, float width, float height) {
+    this->addResizeEvent([self](ElementView *element, float width, float height) {
 //        SkPixmap pixels;
 
 //        surface->peekPixels(&pixels);

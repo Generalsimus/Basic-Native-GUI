@@ -14,10 +14,10 @@
 #include <string>
 #include <cstddef>
 #include <cstdlib>
-#include "element.h"
+#include "elementView.h"
 
 
-class Window : public Element {
+class Window : public ElementView {
 private:
 
 public:
