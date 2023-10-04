@@ -34,7 +34,7 @@ void AsyncTaskController::awaitAll() {
 }
 
 void AsyncTaskController::awaitStartEndAt(int start, int end) {
-//    printf("ASYNC AWAIT START AT: %d, END AT: %d\n", start, end);
+    printf("ASYNC AWAIT START AT: %d, END AT: %d\n", start, end);
 
     int startAt = start;
     while (startAt < end) {
@@ -48,17 +48,20 @@ void AsyncTaskController::awaitStartEndAt(int start, int end) {
     };
 
 
-    std::vector<std::future<void>>::iterator removeAt = (this->tasks_.end() - (end-start));
+    std::vector<std::future<void>>::iterator removeAt = (this->tasks_.end() - (end - start));
 
     // Erase the last 5 elements
     this->tasks_.erase(removeAt, this->tasks_.end());
 }
 
 auto AsyncTaskController::CreateAwaitGroup() {
+    std::lock_guard<std::mutex> lock(mutex_);
+
     int startTasksCountAt = tasks_.size();
     auto self = this;
 
     return [startTasksCountAt, self]() {
         self->awaitStartEndAt(startTasksCountAt, self->tasks_.size());
+
     };
 };

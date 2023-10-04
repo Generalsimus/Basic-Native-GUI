@@ -1,5 +1,5 @@
 
-/// EVENTS LIST ////////////////////////////////////////////////////////////////////////////////////////
+/// ELEMENT EVENTS LIST ////////////////////////////////////////////////////////////////////////////////////////
 
 #include "elementView.h"
 
@@ -206,19 +206,28 @@ ElementView *ElementView::dispatchKeyEvent(int keyIndex) {
 }
 
 /// DRAW ///
-template<typename RemoveEventCallBack>
-ElementView *ElementView::addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
-    addChainFunction(DrawEventChain, callBack, removeEventCallBack, DrawEventChain == nullptr, true);
+template<typename... ARGS>
+ElementView *ElementView::addDrawEvent(ARGS... args) {
+    window->addDrawEvent(std::forward<ARGS>(args)...);
     return this;
 };
 
-ElementView *ElementView::dispatchDrawEvent(SkCanvas *canvas, SkPaint *painter) {
-    dispatchChainFunction(DrawEventChain, this, canvas, painter);
+template<typename... ARGS>
+ElementView *ElementView::dispatchDrawEvent(ARGS... args) {
+    window->dispatchDrawEvent(std::forward<ARGS>(args)...);
+    return this;
+};
 
-    for (auto &child: children) {
-        child->dispatchDrawEvent(canvas, painter);
-    }
+/// Resize ///
+template<typename... ARGS>
+ElementView *ElementView::addResizeEvent(ARGS... args){
+    window->addResizeEvent(std::forward<ARGS>(args)...);
+    return this;
+};
 
+template<typename... ARGS>
+ElementView *ElementView::dispatchResizeEvent(ARGS... args){
+    window->dispatchResizeEvent(std::forward<ARGS>(args)...);
     return this;
 };
 
@@ -234,23 +243,6 @@ ElementView *ElementView::dispatchSetPaintsEvent() {
     dispatchChainFunction(SetPaintsEventChain, this);
     return this;
 };
-
-/// Resize ///
-template<typename RemoveEventCallBack>
-ElementView *ElementView::addResizeEvent(ResizeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
-    addChainFunction(ResizeEventChain, callBack, removeEventCallBack, ResizeEventChain == nullptr, true);
-    return this;
-};
-
-ElementView *ElementView::dispatchResizeEvent(float width, float height) {
-    dispatchChainFunction(ResizeEventChain, this, width, height);
-
-    for (auto &child: children) {
-        child->dispatchResizeEvent(width, height);
-    }
-    return this;
-};
-
 
 /// ADD CHILD
 template<typename RemoveEventCallBack>
@@ -281,7 +273,8 @@ ElementView *ElementView::dispatchRemoveChildEvent(int removeIndex, int count) {
 
 /// REPLACE CHILD
 template<typename RemoveEventCallBack>
-ElementView *ElementView::addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *
+ElementView::addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     addChainFunction(ReplaceChildEventChain, callBack, removeEventCallBack, ReplaceChildEventChain == nullptr, true);
     return this;
 };
@@ -294,8 +287,10 @@ ElementView *ElementView::dispatchReplaceChildEvent(int replaceIndex, ElementVie
 
 /// SetBackground
 template<typename RemoveEventCallBack>
-ElementView *ElementView::addSetBackgroundColorEvent(SetBackgroundColorEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
-    addChainFunction(SetBackgroundColorEventChain, callBack, removeEventCallBack, SetBackgroundColorEventChain == nullptr, true);
+ElementView *ElementView::addSetBackgroundColorEvent(SetBackgroundColorEventType &&callBack,
+                                                     RemoveEventCallBack &&removeEventCallBack) {
+    addChainFunction(SetBackgroundColorEventChain, callBack, removeEventCallBack,
+                     SetBackgroundColorEventChain == nullptr, true);
     return this;
 };
 
@@ -303,4 +298,30 @@ ElementView *ElementView::dispatchSetBackgroundColorEvent(SkColor newColor) {
     dispatchChainFunction(SetBackgroundColorEventChain, this, newColor);
     return this;
 };
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/// WINDOW EVENTS LIST ////////////////////////////////////////////////////////////////////////////////////////
+/// DRAW ///
+template<typename RemoveEventCallBack>
+Window *Window::addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+    addChainFunction(DrawEventChain, callBack, removeEventCallBack, DrawEventChain == nullptr, false);
+    return this;
+};
+
+Window *Window::dispatchDrawEvent(SkCanvas *canvas, SkPaint *painter) {
+    dispatchChainFunction(DrawEventChain, this, canvas, painter);
+    return this;
+};
+
+/// Resize ///
+template<typename RemoveEventCallBack>
+Window *Window::addResizeEvent(ResizeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+    addChainFunction(ResizeEventChain, callBack, removeEventCallBack, ResizeEventChain == nullptr, true);
+    return this;
+};
+
+Window *Window::dispatchResizeEvent(float width, float height) {
+    dispatchChainFunction(ResizeEventChain, this, width, height);
+    return this;
+};
+///////////////////////////////////////////////////////////////////////////////////////////////////////////

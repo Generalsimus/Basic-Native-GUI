@@ -32,7 +32,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         case WM_PAINT: {
             printf("WM_PAINT\n");
-
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
             SkGraphics::Init();
@@ -46,9 +45,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             // Draw something on the SkCanvas
             SkPaint paint;
 
-            auto awaitProcess = window->CreateAwaitGroup();
+//            auto awaitProcess = window->CreateAwaitGroup();
+
             window->dispatchDrawEvent(canvas, &paint);
-            awaitProcess();
+
+//            awaitProcess();
 
             window->WinSetDIBitsToDevice(hdc);
 
@@ -58,10 +59,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         };
         case WM_SIZING: {
             printf("WM_SIZING\n");
+            auto awaitProcess = window->CreateAwaitGroup();
 
             RECT *rect2 = reinterpret_cast<RECT *>(lParam);
 
-            auto awaitProcess = window->CreateAwaitGroup();
             window->dispatchResizeEvent(static_cast<float>(rect2->right - rect2->left), static_cast<float>(rect2->bottom - rect2->top));
             awaitProcess();
 

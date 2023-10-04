@@ -10,6 +10,7 @@ auto BoxPx(float width, float height) {
         element->addDrawEvent([width, height](ElementView *element, SkCanvas *canvas, SkPaint *paint) {
 
             paint->setColor(SK_ColorRED);
+            paint->setStyle(SkPaint::kStrokeAndFill_Style);
             canvas->drawRect(SkRect::MakeXYWH(element->x, element->y, width, height), *paint);
 
         }, *removeEvent);
@@ -35,7 +36,8 @@ auto BoxPercent(float percentWidth, float percentHeight) {
                 [percentWidth, percentHeight, bgColor](ElementView *element, SkCanvas *canvas, SkPaint *paint) {
 
                     paint->setColor(*bgColor);
-                    paint->setStyle(SkPaint::kFill_Style);
+
+                    paint->setStyle(SkPaint::kStrokeAndFill_Style);
                     canvas->drawRect(
                             SkRect::MakeXYWH(element->x, element->y, (percentWidth / 100.0f) * element->parent->width,
                                              (percentHeight / 100.0f) * element->parent->height), *paint);
@@ -64,6 +66,7 @@ auto FullBox() {
 
             paint->setColor(*bgColor);
 
+//            paint->setStyle(SkPaint::kFill_Style);
             canvas->drawRect(SkRect::MakeXYWH(element->x, element->y, element->parent->width, element->parent->height),
                              *paint);
         }, *removeEvent);

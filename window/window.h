@@ -19,14 +19,27 @@
 
 class Window : public ElementView {
 private:
+    DrawEventType DrawEventChain = nullptr;
 
+    ResizeEventType ResizeEventChain = nullptr;
 public:
     SkPixmap pixels;
     sk_sp<SkSurface> surface;
+    SkPaint paint;
 
     virtual void refreshFrame();
 
+    /// Draw
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Window *addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
+    Window *dispatchDrawEvent(SkCanvas *canvas, SkPaint *paint);
+
+    /// RESIZE ELEMENT
+    template<typename RemoveEventCallBack = std::function<void()>>
+    Window *addResizeEvent(ResizeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+
+    Window *dispatchResizeEvent(float windowWidth, float windowHeight);
 
 protected:
     Window(const std::string &title, float width, float height);

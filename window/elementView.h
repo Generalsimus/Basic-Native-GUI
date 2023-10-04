@@ -117,22 +117,25 @@ public:
     ElementView *dispatchKeyEvent(int keyIndex);
 
     /// Draw
-    template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    template<typename... ARGS>
+    ElementView * addDrawEvent(ARGS... args);
 
-    ElementView *dispatchDrawEvent(SkCanvas *canvas, SkPaint *paint);
+    template<typename... ARGS>
+    ElementView *dispatchDrawEvent(ARGS... args);
+
+    /// RESIZE ELEMENT
+    template<typename... ARGS>
+    ElementView *addResizeEvent(ARGS... args);
+
+    template<typename... ARGS>
+    ElementView *dispatchResizeEvent(ARGS... args);
+
 
     /// Set Paints
     template<typename RemoveEventCallBack = std::function<void()>>
     ElementView *addSetPaintsEvent(SetPaintsEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     ElementView *dispatchSetPaintsEvent();
-
-    /// RESIZE ELEMENT
-    template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addResizeEvent(ResizeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
-
-    ElementView *dispatchResizeEvent(float windowWidth, float windowHeight);
 
     /// ADD CHILD
     template<typename RemoveEventCallBack = std::function<void()>>
@@ -180,11 +183,9 @@ private:
     KeyUpEventType KeyUpEventChain = nullptr;
     KeyEventType KeyEventChain = nullptr;
 
-    DrawEventType DrawEventChain = nullptr;
-
     SetPaintsEventType SetPaintsEventChain = nullptr;
 
-    ResizeEventType ResizeEventChain = nullptr;
+
 
     AddChildEventType AddChildEventChain = nullptr;
     RemoveChildEventType RemoveChildEventChain = nullptr;
