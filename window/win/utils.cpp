@@ -1,4 +1,5 @@
 
+#include "include/core/SkGraphics.h"
 
 
 BITMAPINFO CreateBitmapInfo(int width, int height) {
@@ -14,17 +15,6 @@ BITMAPINFO CreateBitmapInfo(int width, int height) {
 
     return bmi;
 };
-
-
-typedef void (*SetEventActiveStatus)(bool status);
-
-template<typename CallMe>
-using AddEventCallBackType = SetEventActiveStatus (*)(CallMe callBack);
-
-
-typedef void (*OnPaintEventType)();
-
-//AddEventCallBackType<OnPaintEventType> addEventListener = CreateEventChain<OnPaintEventType>();
 
 
 
@@ -45,6 +35,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hwnd, &ps);
+            SkGraphics::Init();
 
 //            RECT rect;
 //            GetWindowRect(hwnd, &rect);
@@ -240,10 +231,10 @@ void CreateWindowsWindows(const std::string &title, float width, float height, w
 
     while (GetMessage(&msg, hwnd, 0, 0)) {
 
-        auto awaitProcess = window->CreateAwaitGroup();
+//        auto awaitProcess = window->CreateAwaitGroup();
         //std::cout << "Async lambda function running.222" << std::endl;
         TranslateMessage(&msg);
         DispatchMessage(&msg);
-        awaitProcess();
+//        awaitProcess();
     };
 }

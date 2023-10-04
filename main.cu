@@ -65,16 +65,16 @@ int main() {
 
     printf("eeerrrrrrrrrrtttttttttttttttttt");
     window.addChild(
-            Element(
-                    Element()->setPaints(FullBox(), DirectionRow()),
-                    Element()
-            )
+            Element()->setPaints(BoxPercent(50, 50))
+//            ,
+//            Element()->setPaints(BoxPercent(50, 100))
     )->setPaints(
-            FullBox(),
+            BoxPercent(50, 100),
             DirectionRow()
-    );
-//    window.setPaints(DrawBox(20, 10));
+    )->dispatchSetBackgroundColorEvent(SkColorSetARGB(201, 105, 0, 0));
 
+//    window.refreshFrame();
+//    window.setPaints(DrawBox(20, 10));
 //    window.addTouchDownEvent([](Element *element, int x, int y, int typeIndex) {
 //        printf("\nTOUCH DOWN: x: %d, y: %d typeIndex: %d\n", x, y, typeIndex);
 //    });

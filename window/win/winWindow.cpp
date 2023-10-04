@@ -47,6 +47,7 @@ winWindow::winWindow(const std::string &title, float width, float height) : Wind
 
 void winWindow::refreshFrame() {
     printf("refreshFrame");
+    UpdateWindow(hwnd);
 }
 
 void winWindow::WinSetDIBitsToDevice(HDC hdc) {

@@ -17,7 +17,8 @@ Window::Window(const std::string &title, float width, float height) : ElementVie
     this->surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(width, height));
 
     this->surface->peekPixels(&this->pixels);
-
+    this->window = this;
+    this->parent = this;
     auto self = this;
     this->addResizeEvent([self](ElementView *element, float width, float height) {
         self->width = width;

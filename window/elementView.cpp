@@ -41,6 +41,8 @@ ElementView *ElementView::addChild() {
 template<typename... Chi>
 ElementView *ElementView::addChild(ElementView *child, Chi... rest) {
     printf("RUN addChild\n");
+    child->parent = this;
+    child->window = this->window;
 
     this->children.push_back(child);
 

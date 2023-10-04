@@ -44,4 +44,8 @@ using AddChildEventType = EventDefaultType<ElementView *>;
 using RemoveChildEventType = EventDefaultType<int, int>;
 using ReplaceChildEventType = EventDefaultType<int, ElementView *, ElementView *>;
 
+/// SetBackground
+using SetBackgroundColorEventType = EventDefaultType<SkColor>;
+
+
 /////////////////

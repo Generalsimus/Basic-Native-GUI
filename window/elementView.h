@@ -16,7 +16,7 @@
 #include "./eventsType.h"
 #include "./asyncTaskController.h"
 
-
+class Window;
 class ElementView : public AsyncTaskController {
 public:
 
@@ -26,7 +26,8 @@ public:
     float height;
 
 
-//    Element *parent;
+    ElementView *parent;
+    Window *window;
     /// START CHILD OPTIONS //
     std::vector<ElementView *> children;
 
@@ -80,7 +81,6 @@ public:
     ElementView *dispatchTouchLeaveEvent();
 
     /// TOUCH DOWN
-
     template<typename RemoveEventCallBack = std::function<void()>>
     ElementView *addTouchDownEvent(TouchDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
@@ -149,12 +149,15 @@ public:
 
     /// REPLACE CHILD
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *
-    addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView * addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     ElementView *dispatchReplaceChildEvent(int replaceIndex, ElementView *oldChild, ElementView *newChild);
 
+    /// SetBackground
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addSetBackgroundColorEvent(SetBackgroundColorEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
+    ElementView *dispatchSetBackgroundColorEvent(SkColor newColor);
 
     /// EVENTS LIST END /////////////////////////////////////////////////
 
@@ -186,6 +189,10 @@ private:
     AddChildEventType AddChildEventChain = nullptr;
     RemoveChildEventType RemoveChildEventChain = nullptr;
     ReplaceChildEventType ReplaceChildEventChain = nullptr;
+
+
+    SetBackgroundColorEventType SetBackgroundColorEventChain = nullptr;
+
     /// EVENTS CHAIN END
 
 

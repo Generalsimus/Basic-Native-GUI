@@ -30,7 +30,8 @@ ElementView *ElementView::dispatchTouchOverEvent() {
 
 /// TOUCH LEAVE //
 template<typename RemoveEventCallBack>
-ElementView *ElementView::addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *
+ElementView::addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     printf("RUN addTouchOverEvent()");
 
     addChainFunction(TouchLeaveEventChain, callBack, removeEventCallBack, TouchLeaveEventChain == nullptr, true);
@@ -217,6 +218,7 @@ ElementView *ElementView::dispatchDrawEvent(SkCanvas *canvas, SkPaint *painter) 
     for (auto &child: children) {
         child->dispatchDrawEvent(canvas, painter);
     }
+
     return this;
 };
 
@@ -265,7 +267,8 @@ ElementView *ElementView::dispatchAddChildEvent(ElementView *newChild) {
 
 /// REMOVE CHILD
 template<typename RemoveEventCallBack>
-ElementView *ElementView::addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *
+ElementView::addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     addChainFunction(RemoveChildEventChain, callBack, removeEventCallBack, RemoveChildEventChain == nullptr, true);
     return this;
 };
@@ -285,6 +288,19 @@ ElementView *ElementView::addReplaceChildEvent(ReplaceChildEventType &&callBack,
 
 ElementView *ElementView::dispatchReplaceChildEvent(int replaceIndex, ElementView *oldChild, ElementView *newChild) {
     dispatchChainFunction(ReplaceChildEventChain, this, replaceIndex, oldChild, newChild);
+    return this;
+};
+
+
+/// SetBackground
+template<typename RemoveEventCallBack>
+ElementView *ElementView::addSetBackgroundColorEvent(SetBackgroundColorEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+    addChainFunction(SetBackgroundColorEventChain, callBack, removeEventCallBack, SetBackgroundColorEventChain == nullptr, true);
+    return this;
+};
+
+ElementView *ElementView::dispatchSetBackgroundColorEvent(SkColor newColor) {
+    dispatchChainFunction(SetBackgroundColorEventChain, this, newColor);
     return this;
 };
 /////////////////////////////////////////////////////////////////////////////////////////////////////
