@@ -8,51 +8,61 @@
 #include "utils.cpp"
 
 
-winWindow::winWindow(const std::string &title, float width, float height) : Window(title, width, height) {
-    printf("\nRUN winWindow\n");
-    this->width = width;
-    this->height = height;
+winWindow::winWindow(const std::string &title, float windowWidth, float windowHeight) : Window(title, windowWidth,
+                                                                                               windowHeight) {
+    // printf("\nRUN winWindow\n");
+
     ///////////////////////////
-
-//    SkPixmap pixels;
-
-//    surface->peekPixels(&pixels);/
-
-//    pixelsAddr = pixels.addr();
-
-    bmi = CreateBitmapInfo(width, height);
-
-
-    /////////////////////
-
-    this->addAsyncTask(CreateWindowsWindows, title, width, height, this);
-
+    this->width = windowWidth;
+    this->height = windowHeight;
     auto self = this;
-    this->addResizeEvent([self](ElementView *element, float width, float height) {
-//        SkPixmap pixels;
 
-//        surface->peekPixels(&pixels);
+    this->bmi = CreateBitmapInfo(static_cast<int>(windowWidth), static_cast<int>(windowHeight));
 
-//        pixelsAddr = pixels.addr();
-
-        self->bmi = CreateBitmapInfo(static_cast<int>(width), static_cast<int>(height));
+    this->addResizeEvent([self](ElementView *element, float elementWidth, float elementHeight) {
+        self->bmi.bmiHeader.biWidth = static_cast<int>(elementWidth);
+        self->bmi.bmiHeader.biHeight = -static_cast<int>(elementHeight);
     });
-    printf("\nASYNC WINDOWWWWWWWWWWWWWWW\n");
+
+    runAsyncTask(CreateWindowsWindows, title, windowWidth, windowHeight, this);
+
+    while (this->surface == nullptr) {
+
+    };
 
 };
 
-//winWindow::winWindow(const std::string &title, float width, float height) {
-//
-//};
-
-void winWindow::refreshFrame() {
-    printf("refreshFrame");
-    UpdateWindow(hwnd);
+std::function<void()> winWindow::setCursor(ElementView *cursor) {
+    auto UndoSetCursor = this->setCursorInsiderFunc;
+    return UndoSetCursor;
 }
 
-void winWindow::WinSetDIBitsToDevice(HDC hdc) {
+std::function<void()> winWindow::setCursor(Cursor cursor) {
+    printf("setCursor %d\n", cursor);
+    auto UndoSetCursor = this->setCursorInsiderFunc;
+    switch (cursor) {
+        case Cursor::Arrow:
+            this->setCursorInsiderFunc = []() {
+                SetCursor(LoadCursor(nullptr, IDC_ARROW));
+            };
+            break;
+        case Cursor::Text:
+            this->setCursorInsiderFunc = []() {
+                SetCursor(LoadCursor(nullptr, IDC_IBEAM));
+            };
+            break;
+        case Cursor::Wait:
+            this->setCursorInsiderFunc = []() {
+                SetCursor(LoadCursor(nullptr, IDC_WAIT));
+            };
+            break;
+        case Cursor::None:
+            this->setCursorInsiderFunc = []() {
+                ShowCursor(FALSE);
+            };
+            break;
 
-//    printf("\nღღღღღღღღღღღღღღღღღღღღღღღ: width: %.2f, height: %.2f \n", this->width, this->height);
-    SetDIBitsToDevice(hdc, 0, 0, this->width, this->height, 0, 0, 0, this->height, this->pixels.addr(),
-                      &bmi, DIB_RGB_COLORS);
-}
+    }
+    this->setCursorInsiderFunc();
+    return UndoSetCursor;
+};

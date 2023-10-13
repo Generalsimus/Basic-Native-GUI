@@ -1,5 +1,4 @@
 
-#include "include/core/SkGraphics.h"
 
 
 BITMAPINFO CreateBitmapInfo(int width, int height) {
@@ -17,8 +16,6 @@ BITMAPINFO CreateBitmapInfo(int width, int height) {
 };
 
 
-
-
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     winWindow *window = (winWindow *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
@@ -26,45 +23,39 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     switch (msg) {
         case WH_KEYBOARD_LL: {
-            printf("WH_KEYBOARD_LL\n");
+          //  printf("WH_KEYBOARD_LL\n");
 
             return 0;
-        }
+        };
         case WM_PAINT: {
-            printf("WM_PAINT\n");
+           // printf("refreshFrame\n");
             PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
-            SkGraphics::Init();
 
-//            RECT rect;
-//            GetWindowRect(hwnd, &rect);
+            HDC hdc = BeginPaint(window->hwnd, &ps);
 
-
-            SkCanvas *canvas = window->surface->getCanvas();
-
-            // Draw something on the SkCanvas
-            SkPaint paint;
-
-//            auto awaitProcess = window->CreateAwaitGroup();
-
-            window->dispatchDrawEvent(canvas, &paint);
-
-//            awaitProcess();
-
-            window->WinSetDIBitsToDevice(hdc);
-
+            SetDIBitsToDevice(hdc, 0, 0, window->width, window->height, 0, 0, 0, window->height, window->pixels.addr(),
+                              &window->bmi, DIB_RGB_COLORS);
             // Clean up
             EndPaint(hwnd, &ps);
             return 0;
         };
-        case WM_SIZING: {
-            printf("WM_SIZING\n");
-            auto awaitProcess = window->CreateAwaitGroup();
+        case WM_SIZE: {
+           // printf("WM_SIZE\n");
+            float width = static_cast<float>(LOWORD(lParam));
+            float height = static_cast<float>(HIWORD(lParam));
+//            printf("width: %d,height: %d\n", width, height);
+            if (width < 1) {
+                width = 1;
+            }
+            if (height < 1) {
+                height = 1;
+            }
+            auto awaitProcess = CreateAsyncAwaitGroup();
 
-            RECT *rect2 = reinterpret_cast<RECT *>(lParam);
-
-            window->dispatchResizeEvent(static_cast<float>(rect2->right - rect2->left), static_cast<float>(rect2->bottom - rect2->top));
+            window->dispatchResizeEvent(width, height);
             awaitProcess();
+
+            window->dispatchDrawEvent();
 
             return 0;
         }
@@ -100,12 +91,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 //        case WM_CHAR:
             // Handle character input event (e.g., typed characters)
         case WM_KEYDOWN:
-            printf("WM_KEYDOWN  \n");
+            // printf("WM_KEYDOWN  \n");
             // Handle keydown event
             window->dispatchKeyDownEvent(static_cast<int>(wParam));
             return 0;
         case WM_KEYUP: {
-            printf("WM_KEYUP  \n");
+            // printf("WM_KEYUP  \n");
             // Handle keydown event
 //            wchar_t wstr = static_cast<wchar_t>(wParam);
 ////            printf("WRITE: %s \n", static_cast<wchar_t>(wParam));
@@ -120,7 +111,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             return 0;
         }
         case WM_MOUSELEAVE: {
-            printf("WM_MOUSELEAVE\n");
+            // printf("WM_MOUSELEAVE\n");
             window->dispatchTouchLeaveEvent();
 
             return 0;
@@ -131,16 +122,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 //                  return 0;
 //              };*/
         case WM_SETFOCUS:
-            printf("WM_SETFOCUS\n");
+            // printf("WM_SETFOCUS\n");
             return 0;
         case WM_KILLFOCUS:
-            printf("WM_KILLFOCUS\n");
+            //printf("WM_KILLFOCUS\n");
             return 0;
         case WM_MOUSEMOVE: {
             // printf("WM_MOUSEMOVE\n");
-
+//            window->isMouseOver = true;
             window->dispatchTouchMoveEvent(LOWORD(lParam), HIWORD(lParam));
-
+            window->dispatchTouchOverEvent();
 //            return 0;
 
 ////////////////////////////////////
@@ -161,12 +152,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             return 0;
         };
         case WM_CLOSE: {
-            printf("WM_CLOSE\n");
+            // ("WM_CLOSE\n");
             DestroyWindow(hwnd);
             return 0;
         };
         case WM_DESTROY:
-            printf("WM_DESTROY\n");
+            //printf("WM_DESTROY\n");
 
             PostQuitMessage(0);
             return 0;
@@ -211,11 +202,12 @@ WNDCLASS CreateWNDCLASS(const std::string &title) {
 };
 
 
-void CreateWindowsWindows(const std::string &title, float width, float height, winWindow *window) {
+void CreateWindowsWindows(const std::string &title, float windowWidth, float windowHeight, winWindow *window) {
     WNDCLASS wc = CreateWNDCLASS(title);
-    HWND hwnd = CreateWindow(title.c_str(), title.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
-                             static_cast<int>(width),
-                             static_cast<int>(height), NULL, NULL, wc.hInstance, NULL);
+    HWND hwnd = CreateWindow(title.c_str(), title.c_str(), WS_OVERLAPPEDWINDOW | WS_SIZEBOX, CW_USEDEFAULT,
+                             CW_USEDEFAULT,
+                             static_cast<int>(windowWidth),
+                             static_cast<int>(windowHeight), NULL, NULL, wc.hInstance, NULL);
 
 //    static_cast<int>(width) static_cast<int>(width)
     if (!hwnd) {
@@ -228,10 +220,19 @@ void CreateWindowsWindows(const std::string &title, float width, float height, w
 
     ShowWindow(hwnd, SW_SHOW);
 
+////
+//    RECT clientRect;
+//    GetClientRect(hwnd, &clientRect);
+//
+//    auto awaitGroup = CreateAsyncAwaitGroup();
+//
+//    window->dispatchResizeEvent(static_cast<float>(clientRect.right - clientRect.left),
+//                                static_cast<float>(clientRect.bottom - clientRect.top));
+//    awaitGroup();
+//    window->dispatchDrawEvent();
+
     MSG msg;
-
     while (GetMessage(&msg, hwnd, 0, 0)) {
-
 //        auto awaitProcess = window->CreateAwaitGroup();
         //std::cout << "Async lambda function running.222" << std::endl;
         TranslateMessage(&msg);

@@ -9,12 +9,12 @@ template<typename... Args>
 using EventDefaultType = std::function<void(ElementView *, Args... args)>;
 
 /// Touch EVENTS //
-using TouchMoveEventType = EventDefaultType<int, int>;
+using TouchMoveEventType = EventDefaultType<float, float>;
 using TouchOverEventType = EventDefaultType<>;
 using TouchLeaveEventType = EventDefaultType<>;
 
 
-using TouchEvent = EventDefaultType<int, int, int>;
+using TouchEvent = EventDefaultType<float, float, int>;
 using TouchDownEventType = TouchEvent;
 using TouchUpEventType = TouchEvent;
 using TouchEventType = TouchEvent;
@@ -46,6 +46,10 @@ using ReplaceChildEventType = EventDefaultType<int, ElementView *, ElementView *
 
 /// SetBackground
 using SetBackgroundColorEventType = EventDefaultType<SkColor>;
+
+/// MountOnThree
+using MountOnThreeEventType = EventDefaultType<ElementView *>;
+using UnmountOnThreeEventType = EventDefaultType<ElementView *>;
 
 
 /////////////////

@@ -2,46 +2,7 @@
 #include "./window/win/winWindow.cpp"
 #include "./Painters.cpp"
 
-class El;
 
-class El {
-public:
-    El();
-
-//    template<typename Elem>
-//    El(Elem &&first);
-
-//    El(El &&first);
-    template<typename... Args>
-    void add(Args... rest);
-
-
-    void print();
-};
-
-El::El() {
-    printf("RUN Element() No CHILD\n");
-}
-
-//template<typename Elem>
-//El::El(Elem &&first) {
-//    printf("RUN Element() WITH CHILwwwD\n");
-//}
-
-//template<typename... Args>
-//void El::add(Args... &rest) {
-//    printf("RUN Element() WITH CHILD\n");
-//
-//}
-
-//El::El(El first) {
-//    printf("RUN Element() WITH CHILD\n");
-//
-//}
-
-//void El::print() {
-//    printf("PRINT");
-//}
 auto Element() {
     return new ElementView();
 }
@@ -52,7 +13,6 @@ auto Element(ElementView *first, Args... args) {
 
     return new ElementView(first, std::forward<Args>(args)...);
 }
-//Element
 
 int main() {
 //    auto mainElement3233 = Element(
@@ -61,59 +21,25 @@ int main() {
 //    );
 
     printf("EEEEE");
-    winWindow window("My Custom Window", 900.0f, 600.0f);
+    auto windowObj = new winWindow("My Custom Window", 900.0f, 600.0f);
 
     printf("eeerrrrrrrrrrtttttttttttttttttt");
-    window.addChild(
-            Element()->setPaints(BoxPercent(50, 50))
-//            ,
-//            Element()->setPaints(BoxPercent(50, 100))
+    windowObj->addChild(
+            Element()->setPaints(
+                    BoxPercent(100, 50)
+            ),
+            Element()->setPaints(
+                    BoxPercent(100, 100)
+            )
     )->setPaints(
-            BoxPercent(50, 100),
-            DirectionRow()
-    )->dispatchSetBackgroundColorEvent(SkColorSetARGB(201, 105, 0, 0));
-
-//    window.refreshFrame();
-//    window.setPaints(DrawBox(20, 10));
-//    window.addTouchDownEvent([](Element *element, int x, int y, int typeIndex) {
-//        printf("\nTOUCH DOWN: x: %d, y: %d typeIndex: %d\n", x, y, typeIndex);
-//    });
-//    window.addTouchUpEvent([](Element *element, int x, int y, int typeIndex) {
-//        printf("\nTOUCH UP: x: %d, y: %d typeIndex: %d\n", x, y, typeIndex);
-//    });
-
-//    window.addTouchEvent([](Element *element, int x, int y, int typeIndex) {
-//        printf("\nTOUCH EVENT: x: %d, y: %d typeIndex: %d\n", x, y, typeIndex);
-//    });
-//
-//    window.addKeyDownEvent([](Element *element, int keyIndex) {
-//        printf("\nKEY DOWN EVENT: KeyIndex: %d\n", keyIndex);
-//    });
-//
-//    window.addKeyUpEvent([](Element *element, int keyIndex) {
-//        printf("\nKEY UP EVENT: KeyIndex: %d\n", keyIndex);
-//    });
-
-//    window.addTouchOverEvent([](Element *element) {
-//        printf("\nTOUCH addTouchOverEvent: \n");
-//    });
-
-//    window.dispatchTouchDownEvent(2, 5, 1);
-
-//    std::function < void() > removeEvent = []() {
-//
-//    };
-
-//    window.addTouchDownEvent([](Element *element, int x, int y, int typeIndex) {
-//        printf("\nTOUCH DOWN: x: %d, y: %d typeIndex: %d\n", x, y, typeIndex);
-//    }, removeEvent);
-//
-//    window.addTouchEvent([&removeEvent](Element *element, int x, int y, int typeIndex) {
-//        removeEvent();
-//        printf("\nTOUCH EVENT: x: %d, y: %d typeIndex: %d\n", x, y, typeIndex);
-//    });
+            BoxPercent(50, 98),
+            DirectionRow(),
+            Cursor(Cursor::Arrow)
+//            ,
+//            Cursor(Cursor::Arrow)
+    )->dispatchSetBackgroundColorEvent(SkColorSetARGB(255, 0, 128, 0));
 
 
-    window.awaitAll();
+    awaitAllAsyncTasks();
     return 0;
 }

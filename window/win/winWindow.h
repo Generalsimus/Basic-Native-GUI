@@ -16,21 +16,40 @@
 #include <cstddef>
 #include <cstdlib>
 
+//class Cursor{
+//
+//};
+
+
 class winWindow : public Window {
 public:
 //    const void *pixelsAddr;
     BITMAPINFO bmi;
 
 
-    winWindow(const std::string &title, float width, float height);
-
-    void refreshFrame() override;
+    winWindow(const std::string &title, float windowWidth, float WindowHeight);
 
     HWND hwnd;
 
-    void WinSetDIBitsToDevice(HDC hdc);
 
-private:
+    std::function<void()> setCursorInsiderFunc = []() {
+        SetCursor(LoadCursor(nullptr, IDC_ARROW));
+//        ShowCursor(FALSE);
+    };
+
+    std::function<void()> setCursor(ElementView *cursorElement);
+    std::function<void()> setCursor(Cursor cursor);
+
+//    void SetCursor() {
+//
+//    }
+//    SetCursor(ElementView* customcursor){
+//
+//    };
+
+
+//    void WinSetDIBitsToDevice(HDC hdc,float width,float height);
+//    void refreshFrame() const;
 
 };
 

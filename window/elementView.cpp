@@ -5,13 +5,14 @@
 #include "elementView.h"
 #include "./utils.cpp"
 #include "./events.cpp"
-#include "./asyncTaskController.cpp"
+
 
 void ElementView::replaceChild(int replaceAtIndex, ElementView *newChild) {
     if (replaceAtIndex >= 0 && replaceAtIndex < children.size()) {
         auto oldValue = children[replaceAtIndex];
         children[replaceAtIndex] = newChild;
         this->dispatchReplaceChildEvent(replaceAtIndex, oldValue, newChild);
+        oldValue->dispatchUnmountOnThreeEvent(this);
     } else {
         std::cout << "Invalid index." << std::endl;
     }
@@ -21,12 +22,20 @@ void ElementView::removeChild(int startIndex, int removeCount) {
     int endIndex = startIndex + removeCount;
     // Check if the indices are valid
     if (startIndex >= 0 && endIndex >= startIndex && endIndex < children.size()) {
+        std::vector<ElementView *> removedElements;
+
+        for (int i = startIndex; i < endIndex; i++) {
+            removedElements.push_back(children[i]);
+        };
         // Calculate iterators for the elements to remove
         auto firstToRemove = children.begin() + startIndex;
         auto lastToRemove = children.begin() + endIndex + 1; // Add 1 to include the element at endIndex
 
         // Erase the elements between startIndex and endIndex
         children.erase(firstToRemove, lastToRemove);
+        for (ElementView *element: removedElements) {
+            element->dispatchUnmountOnThreeEvent(this);
+        }
     } else {
         // Handle the case where the indices are invalid
         std::cout << "Invalid indices." << std::endl;
@@ -40,19 +49,20 @@ ElementView *ElementView::addChild() {
 
 template<typename... Chi>
 ElementView *ElementView::addChild(ElementView *child, Chi... rest) {
-    printf("RUN addChild\n");
+    // printf("RUN addChild\n");
     child->parent = this;
     child->window = this->window;
 
     this->children.push_back(child);
 
     this->dispatchAddChildEvent(child);
+    child->dispatchMountOnThreeEvent(this);
 
     return this->addChild(rest...);
 };
 
-ElementView::ElementView() : x(0), y(0) {
-    printf("RUN Element() NO CHILD\n");
+ElementView::ElementView() {
+    // printf("RUN Element() NO CHILD\n");
     this->InitCustomEventListeners();
 };
 
@@ -71,29 +81,72 @@ void ElementView::InitCustomEventListeners() {
     });
 
 
-    this->addTouchMoveEvent([self](ElementView *element, int windowX, int windowY) {
-        self->dispatchTouchOverEvent();
+    this->addResizeEvent([](ElementView *element, float newWidth, float newHeight) mutable {
+        element->width = newWidth;
+        element->height = newHeight;
+
     });
 
 }
 
 
+template<typename CallBackFunc>
+void ElementView::callSafeOnMountThree(CallBackFunc callback) {
+    if (this->window == nullptr || this->parent == nullptr) {
+        callback(this, this->parent, this->window);
+    } else {
+        std::function < void() > removeMounterEvent = []() {
+
+        };
+        this->addMountOnThreeEvent(
+                [callback, removeMounterEvent](ElementView *element, ElementView *parentElement) mutable {
+                    callback(element, element->parent, element->window);
+                    removeMounterEvent();
+                }, removeMounterEvent);
+    }
+}
+
+
 template<typename... Args>
-ElementView::ElementView(ElementView *first, Args... rest):x(0), y(0) {
-    printf("RUN Element() WITH CHILD\n");
+ElementView::ElementView(ElementView *first, Args... rest) {
+    ///  printf("RUN Element() WITH CHILD\n");
 
 
     addChild(first);
     addChild(rest...);
 }
 
+template<typename PaintFunction, typename... Args>
+ElementView *ElementView::setPaints(PaintFunction paintCallback, Args... args) {
+    auto awaitAsyncGroup = CreateAsyncAwaitGroup();
+    SetEachPainters(std::forward<PaintFunction>(paintCallback), std::forward<Args>(args)...);
+
+    dispatchSetPaintsEvent();
+
+    awaitAsyncGroup();
+
+//    if (this->parent == nullptr) {
+//        std::function<void()> removeMounter = []() {
+//
+//        };
+//
+//        this->addMountOnThreeEvent([removeMounter](ElementView *element, ElementView *parent) mutable {
+//            element->dispatchDrawEvent();
+//            removeMounter();
+//        }, removeMounter);
+//    } else {
+//        this->dispatchDrawEvent();
+//    }
+
+    return this;
+};
 
 template<typename CallBackFunction, typename RemoveChainFunction>
 void ElementView::addChainFunction(CallBackFunction &chainFunc, CallBackFunction &callBack,
-                               RemoveChainFunction &removeChainFunction,
-                               bool startFromNewPoint,
-                               bool callAsync) {
-    printf("\nRUN addChainFunction() %d\n", startFromNewPoint);
+                                   RemoveChainFunction &removeChainFunction,
+                                   bool startFromNewPoint,
+                                   bool callAsync) {
+    //  printf("\nRUN addChainFunction() %d\n", startFromNewPoint);
 
 
 //    CallBackFunction &&currentConnector = nullptr;
@@ -107,7 +160,7 @@ void ElementView::addChainFunction(CallBackFunction &chainFunc, CallBackFunction
     if (startFromNewPoint) {
         if (callAsync) {
             *currentConnector = [currentCallBack, self]<typename... Args>(Args &&... args) {
-                self->addAsyncTask(currentCallBack, std::forward<Args>(args)...);
+                runAsyncTask(currentCallBack, std::forward<Args>(args)...);
             };
         } else {
             *currentConnector = currentCallBack;
@@ -116,7 +169,7 @@ void ElementView::addChainFunction(CallBackFunction &chainFunc, CallBackFunction
         if (removeChainFunction != nullptr) {
             RemoveChainFunction currentRemoveChainFunction = std::move(removeChainFunction);
             removeChainFunction = [currentRemoveChainFunction, &currentConnector]<typename... Args>(Args &&... args) {
-                printf("REMOVE");
+                //   printf("REMOVE");
                 *currentConnector = nullptr;
                 return currentRemoveChainFunction(std::forward<Args>(args)...);
             };
@@ -135,7 +188,7 @@ void ElementView::addChainFunction(CallBackFunction &chainFunc, CallBackFunction
             *currentConnector = [currentCallBack, currentChainFunc, self]<typename... Args>(Args &&... args) {
                 currentChainFunc(std::forward<Args>(args)...);
 
-                self->addAsyncTask(currentCallBack, std::forward<Args>(args)...);
+                runAsyncTask(currentCallBack, std::forward<Args>(args)...);
             };
         } else {
             *currentConnector = [currentCallBack, currentChainFunc, &self]<typename... Args>(Args &&... args) {
@@ -173,10 +226,9 @@ void ElementView::dispatchChainFunction(ChainFunc &chainFunc, Args &&... args) {
 }
 
 
-bool ElementView::PositionIsOver(int windowX, int windowY) {
-    return ((windowX > this->x) && (windowX < (this->x + this->width)) && (windowY > this->y) &&
-            (windowY < (this->y + this->height)));
-}
+//bool ElementView::PositionIsOver(int windowX, int windowY) {
+//    return true;
+//}
 
 void ElementView::SetEachPainters() {
 
@@ -185,4 +237,5 @@ void ElementView::SetEachPainters() {
 template<typename PaintFunction, typename... Args>
 void ElementView::SetEachPainters(PaintFunction paintCallback, Args... args) {
     paintCallback(this);
+    SetEachPainters(args...);
 };
