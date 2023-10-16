@@ -64,6 +64,7 @@ ElementView *ElementView::addChild(ElementView *child, Chi... rest) {
 ElementView::ElementView() {
     // printf("RUN Element() NO CHILD\n");
     this->InitCustomEventListeners();
+    this->resetContainFn();
 };
 
 
@@ -118,6 +119,7 @@ ElementView::ElementView(ElementView *first, Args... rest) {
 
 template<typename PaintFunction, typename... Args>
 ElementView *ElementView::setPaints(PaintFunction paintCallback, Args... args) {
+    this->resetContainFn();
     auto awaitAsyncGroup = CreateAsyncAwaitGroup();
     SetEachPainters(std::forward<PaintFunction>(paintCallback), std::forward<Args>(args)...);
 
@@ -139,6 +141,15 @@ ElementView *ElementView::setPaints(PaintFunction paintCallback, Args... args) {
 //    }
 
     return this;
+};
+void ElementView::SetEachPainters() {
+
+}
+
+template<typename PaintFunction, typename... Args>
+void ElementView::SetEachPainters(PaintFunction paintCallback, Args... args) {
+    paintCallback(this);
+    SetEachPainters(args...);
 };
 
 template<typename CallBackFunction, typename RemoveChainFunction>
@@ -226,16 +237,25 @@ void ElementView::dispatchChainFunction(ChainFunc &chainFunc, Args &&... args) {
 }
 
 
-//bool ElementView::PositionIsOver(int windowX, int windowY) {
-//    return true;
-//}
+/// START Coordinates Contain Check //
+ElementView *ElementView::resetContainFn() {
+    this->contains = [this](float x, float y) {
+        return (
+                (x > this->x) &&
+                (x < (this->x + this->width)) &&
+                (y > this->y) &&
+                (y < (this->y + this->height))
+        );
+    };
+    return this;
+}
 
-void ElementView::SetEachPainters() {
-
-};
-
-template<typename PaintFunction, typename... Args>
-void ElementView::SetEachPainters(PaintFunction paintCallback, Args... args) {
-    paintCallback(this);
-    SetEachPainters(args...);
-};
+template<class CallBackCheck>
+ElementView *ElementView::addContainsFn(CallBackCheck &&callBack) {
+    auto currentContains = this->contains;
+    this->contains = [currentContains, callBack](float x, float y) mutable {
+        return (currentContains(x, y) && callBack(x, y));
+    };
+    return this;
+}
+/// END Coordinates Contain Check //

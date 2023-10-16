@@ -181,7 +181,10 @@ auto DirectionRow() {
                 auto child = element->children[childIndex];
                 child->x = element->x + childIndex * itemWidth;
                 child->y = element->y;
+
+//                auto awaitProcess = CreateAsyncAwaitGroup();
                 child->dispatchResizeEvent(itemWidth, height);
+//                awaitProcess();
             };
         };
 
@@ -212,13 +215,22 @@ auto Cursor(Cursor cursor) {
         element->addTouchOverEvent([cursor, ejectCallBack](ElementView *element) mutable {
             auto undoCursor = element->window->setCursor(cursor);
             printf("MOUSE OVER\n");
+//            element->dispatchSetBackgroundColorEvent(SK_ColorRED);
+//            element->parent->dispatchDrawEvent();
+
             element->addTouchLeaveEvent([cursor, undoCursor](ElementView *element) mutable {
+//                element->dispatchSetBackgroundColorEvent(SkColorSetARGB(255, 0, 128, 0));
+//                element->parent->dispatchDrawEvent();
+
                 undoCursor();
             }, undoCursor);
 
         }, ejectCallBack);
     });
 }
+
+//std::mutex mutex2_;
+std::mutex localMutex;
 
 auto BoxPercent(float percentWidth, float percentHeight) {
     return CreatePainterWithOption([percentWidth, percentHeight](
@@ -228,50 +240,46 @@ auto BoxPercent(float percentWidth, float percentHeight) {
             auto paint,
             auto ejectCallBack
     ) {
-        std::function<bool(float, float)> containerFn = [](float x,float y){
-//            printf("CONTAIN222 \n");
-            return false;
-        };
-        SkColor *bgColor = new SkColor;
-        *bgColor = SK_ColorWHITE;
-        auto paintFunc = [element, percentWidth, percentHeight, bgColor, containerFn](SkCanvas *canvas, SkPaint *paint) mutable {
+
+        std::shared_ptr<SkRect> sharedRect = std::make_shared<SkRect>(
+                SkRect::MakeXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
+                                 (element->height * (percentHeight / 100))));
+
+
+        std::shared_ptr<SkColor> bgColor = std::make_shared<SkColor>(SK_ColorWHITE);
+
+        auto paintFunc = [element, percentWidth, percentHeight, bgColor,sharedRect](SkCanvas *canvas,
+                                                                               SkPaint *paint) {
             paint->setColor(*bgColor);
-            paint->setStyle(SkPaint::kStrokeAndFill_Style);
-            auto rect = SkRect::MakeXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
-                                         (element->height * (percentHeight / 100)));
-            containerFn = [rect](float x,float y){
-                printf("CONTAIN\n");
-                return rect.contains(x, y);
-            };
-            canvas->drawRect(rect, *paint);
+//
+            sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
+                         (element->height * (percentHeight / 100)));
+
+            canvas->drawRect(*sharedRect, *paint);
 
         };
+        element->addResizeEvent([percentWidth, percentHeight, sharedRect](ElementView *element, float newWidth, float newHeight) {
+
+//            sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
+//                         (element->height * (percentHeight / 100)));
+        }, ejectCallBack);
+
         element->addSetBackgroundColorEvent([bgColor](ElementView *element, SkColor color) {
             *bgColor = color;
+
             element->dispatchDrawEvent();
         }, ejectCallBack);
 
-        element->addDrawEvent([paintFunc](ElementView *element, SkCanvas *canvas, SkPaint *paint) mutable {
+        element->addDrawEvent([paintFunc](ElementView *element, SkCanvas *canvas, SkPaint *paint)   {
             paintFunc(canvas, paint);
         }, ejectCallBack);
-//        contains()
-        parentElement->addTouchMoveEvent([element, containerFn](ElementView *el, float windowX, float windowY) mutable {
-            printf("CONTAIN333 \n");
-            if (containerFn(windowX, windowY)) {
-//                    (windowX > element->x) &&
-//                    (windowX < (element->x + element->width)) &&
-//                    (windowY > element->y) &&
-//                    (windowY < (element->y + element->height))
-
-
-                element->dispatchTouchOverEvent();
-            }
-        }, ejectCallBack);
-//        element->addSetPaintsEvent([bgColor](ElementView *element) {
-////            delete bgColor;
-//        }, ejectCallBack);
 
         paintFunc(canvas, paint);
+
+        element->addContainsFn([sharedRect](float x, float y) mutable {
+            return sharedRect->contains(x, y);
+        });
+
     });
 
 }

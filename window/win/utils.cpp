@@ -51,12 +51,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 height = 1;
             }
             auto awaitProcess = CreateAsyncAwaitGroup();
-
+//m
             window->dispatchResizeEvent(width, height);
+//
             awaitProcess();
+//
 
+
+            auto awaitProcess2 = CreateAsyncAwaitGroup();
+//
             window->dispatchDrawEvent();
-
+//
+            awaitProcess2();
             return 0;
         }
 //////////////////////////////
@@ -131,7 +137,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             // printf("WM_MOUSEMOVE\n");
 //            window->isMouseOver = true;
             window->dispatchTouchMoveEvent(LOWORD(lParam), HIWORD(lParam));
-            window->dispatchTouchOverEvent();
+//            window->dispatchTouchOverEvent();
 //            return 0;
 
 ////////////////////////////////////
@@ -233,7 +239,7 @@ void CreateWindowsWindows(const std::string &title, float windowWidth, float win
 
     MSG msg;
     while (GetMessage(&msg, hwnd, 0, 0)) {
-//        auto awaitProcess = window->CreateAwaitGroup();
+//        auto awaitProcess = CreateAsyncAwaitGroup();
         //std::cout << "Async lambda function running.222" << std::endl;
         TranslateMessage(&msg);
         DispatchMessage(&msg);

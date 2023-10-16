@@ -62,7 +62,8 @@ public:
     template<typename RemoveEventCallBack = std::function<void()>>
     ElementView *addTouchMoveEvent(TouchMoveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-    ElementView *dispatchTouchMoveEvent(float windowX, float windowY, bool isAsync = true, bool useTouchOverChild = true);
+    ElementView *
+    dispatchTouchMoveEvent(float windowX, float windowY, bool isAsync = true, bool useTouchOverChild = true);
 
     /// TOUCH OVER
     template<typename RemoveEventCallBack = std::function<void()>>
@@ -142,14 +143,16 @@ public:
 
     /// REMOVE CHILD
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *
+    addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     ElementView *dispatchRemoveChildEvent(int removeIndex, int count = 1);
 
 
     /// REPLACE CHILD
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *
+    addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
 
     ElementView *dispatchReplaceChildEvent(int replaceIndex, ElementView *oldChild, ElementView *newChild);
 
@@ -176,6 +179,15 @@ public:
 
     /// EVENTS LIST END /////////////////////////////////////////////////
 
+
+
+    /// START Coordinates Contain Check //
+    std::function<bool(float, float)> contains = nullptr;
+    ElementView *resetContainFn();
+
+    template<class CallBackCheck = std::function<bool(float, float)>>
+    ElementView *addContainsFn(CallBackCheck &&callBack);
+    /// END Coordinates Contain Check //
 
 private:
 
@@ -230,6 +242,7 @@ private:
 
     template<typename CallBackFunc>
     void callSafeOnMountThree(CallBackFunc callback);
+
 protected:
     template<typename CallBackFunction, typename RemoveEventCallBack>
     void addChainFunction(CallBackFunction &chainFunc, CallBackFunction &callBack,

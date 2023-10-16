@@ -7,7 +7,7 @@
 /// TOUCH OVER //
 template<typename RemoveEventCallBack>
 ElementView *ElementView::addTouchOverEvent(TouchOverEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
-   // printf("RUN addTouchOverEvent()");
+    // printf("RUN addTouchOverEvent()");
 //    auto rem = std::function([]() {});
     addChainFunction(TouchOverEventChain, callBack, removeEventCallBack, TouchOverEventChain == nullptr, false);
 
@@ -19,15 +19,15 @@ ElementView *ElementView::dispatchTouchOverEvent() {
         this->isMouseOver = true;
 
         dispatchChainFunction(TouchOverEventChain, this);
-
     }
     return this;
 };
 
 /// TOUCH LEAVE //
 template<typename RemoveEventCallBack>
-ElementView *ElementView::addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
-   // printf("RUN addTouchOverEvent()");
+ElementView *
+ElementView::addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+    // printf("RUN addTouchOverEvent()");
 
     addChainFunction(TouchLeaveEventChain, callBack, removeEventCallBack, TouchLeaveEventChain == nullptr, true);
 
@@ -60,15 +60,17 @@ ElementView *ElementView::addTouchMoveEvent(TouchMoveEventType &&callBack, Remov
 
 
 ElementView *ElementView::dispatchTouchMoveEvent(float windowX, float windowY, bool isAsync, bool useTouchOverChild) {
-//    printf("RUN dispatchTouchDownEvent() X:%d, Y: %d \n", windowX, windowY);
 
-    if (this->isMouseOver) {
+//    printf("addContainsFn %.3f %.3f \n",windowX, windowY);
+    if (this->contains(windowX, windowY)) {
+        this->dispatchTouchOverEvent();
+
         dispatchChainFunction(TouchMoveEventChain, this, windowX, windowY);
-
-//        for (auto &child: children) {
-//            child->dispatchTouchMoveEvent(windowX, windowY);
-//        }
+        for (auto &child: children) {
+            child->dispatchTouchMoveEvent(windowX, windowY);
+        }
     }
+
     return this;
 };
 
@@ -110,7 +112,7 @@ ElementView *ElementView::addTouchUpEvent(TouchUpEventType &&callBack, RemoveEve
 
 
 ElementView *ElementView::dispatchTouchUpEvent(float windowX, float windowY, int typeIndex) {
-   // printf("RUN dispatchTouchUpEvent() X:%d, Y: %d \n", windowX, windowY);
+    // printf("RUN dispatchTouchUpEvent() X:%d, Y: %d \n", windowX, windowY);
 
     if (this->isMouseOver) {
         dispatchChainFunction(TouchUpEventChain, this, windowX, windowY, typeIndex);
@@ -134,15 +136,15 @@ ElementView *ElementView::addTouchEvent(TouchEventType &&callBack, RemoveEventCa
 
 
 ElementView *ElementView::dispatchTouchEvent(float windowX, float windowY, int typeIndex) {
-   // printf("RUN dispatchTouchUpEvent() X:%d, Y: %d \n", windowX, windowY);
+    // printf("RUN dispatchTouchUpEvent() X:%d, Y: %d \n", windowX, windowY);
 
 //    if (PositionIsOver(windowX, windowY)) {
 
-        dispatchChainFunction(TouchEventChain, this, windowX, windowY, typeIndex);
+    dispatchChainFunction(TouchEventChain, this, windowX, windowY, typeIndex);
 
-        for (auto &child: children) {
-            child->dispatchTouchEvent(windowX, windowY, typeIndex);
-        }
+    for (auto &child: children) {
+        child->dispatchTouchEvent(windowX, windowY, typeIndex);
+    }
 //    }
 
     return this;
@@ -151,7 +153,7 @@ ElementView *ElementView::dispatchTouchEvent(float windowX, float windowY, int t
 /// KEY DOWN //
 template<typename RemoveEventCallBack>
 ElementView *ElementView::addKeyDownEvent(KeyDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
-   // printf("RUN addKeyDownEvent()");
+    // printf("RUN addKeyDownEvent()");
 
     addChainFunction(KeyDownEventChain, callBack, removeEventCallBack, KeyDownEventChain == nullptr, true);
     return this;
@@ -167,7 +169,7 @@ ElementView *ElementView::dispatchKeyDownEvent(int keyIndex) {
 /// KEY Up //
 template<typename RemoveEventCallBack>
 ElementView *ElementView::addKeyUpEvent(KeyUpEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
-   // printf("RUN addKeyUpEvent()");
+    // printf("RUN addKeyUpEvent()");
 
     addChainFunction(KeyUpEventChain, callBack, removeEventCallBack, KeyUpEventChain == nullptr, true);
     return this;
@@ -183,7 +185,7 @@ ElementView *ElementView::dispatchKeyUpEvent(int keyIndex) {
 /// KEY ///
 template<typename RemoveEventCallBack>
 ElementView *ElementView::addKeyEvent(KeyEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
-   // printf("RUN addKeyDownEvent()");
+    // printf("RUN addKeyDownEvent()");
 
     addChainFunction(KeyEventChain, callBack, removeEventCallBack, KeyEventChain == nullptr, true);
     return this;
@@ -199,7 +201,7 @@ ElementView *ElementView::dispatchKeyEvent(int keyIndex) {
 /// DRAW ///
 template<typename RemoveEventCallBack>
 ElementView *ElementView::addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
-   // printf("WINDOW ADD DRAWER\n");
+    // printf("WINDOW ADD DRAWER\n");
 
     this->addChainFunction(DrawEventChain, callBack, removeEventCallBack, DrawEventChain == nullptr, false);
     return this;
@@ -207,6 +209,9 @@ ElementView *ElementView::addDrawEvent(DrawEventType &&callBack, RemoveEventCall
 
 ElementView *ElementView::dispatchDrawEvent() {
 //    printf("RUNNNNNNNNN SS2\n");
+
+    auto awaitProcess2 = CreateAsyncAwaitGroup();
+//    auto awaitProcess = CreateAsyncAwaitGroup();
     if (this->window == nullptr) {
         std::function < void() > removeEvent = []() {
 
@@ -222,7 +227,7 @@ ElementView *ElementView::dispatchDrawEvent() {
 //        this->window->refreshFrame();
     }
 
-
+    awaitProcess2();
     return this;
 };
 
@@ -243,8 +248,8 @@ ElementView *ElementView::addResizeEvent(ResizeEventType &&callBack, RemoveEvent
     return this;
 };
 
-ElementView *ElementView::dispatchResizeEvent(float newWidth, float newHeight) {
-    this->dispatchChainFunction(ResizeEventChain, this, newWidth, newHeight);
+ElementView *ElementView::dispatchResizeEvent(float elementWidth, float elementHeight) {
+    this->dispatchChainFunction(ResizeEventChain, this, elementWidth, elementHeight);
 
     return this;
 };
@@ -276,8 +281,7 @@ ElementView *ElementView::dispatchAddChildEvent(ElementView *newChild) {
 
 /// REMOVE CHILD
 template<typename RemoveEventCallBack>
-ElementView *
-ElementView::addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     addChainFunction(RemoveChildEventChain, callBack, removeEventCallBack, RemoveChildEventChain == nullptr, true);
     return this;
 };
@@ -290,8 +294,7 @@ ElementView *ElementView::dispatchRemoveChildEvent(int removeIndex, int count) {
 
 /// REPLACE CHILD
 template<typename RemoveEventCallBack>
-ElementView *
-ElementView::addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     addChainFunction(ReplaceChildEventChain, callBack, removeEventCallBack, ReplaceChildEventChain == nullptr, true);
     return this;
 };
@@ -320,8 +323,7 @@ ElementView *ElementView::dispatchSetBackgroundColorEvent(SkColor newColor) {
 
 /// MountOnThree
 template<typename RemoveEventCallBack>
-ElementView *
-ElementView::addMountOnThreeEvent(MountOnThreeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addMountOnThreeEvent(MountOnThreeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     addChainFunction(MountOnThreeEventChain, callBack, removeEventCallBack, MountOnThreeEventChain == nullptr, true);
     return this;
 };
@@ -333,8 +335,7 @@ ElementView *ElementView::dispatchMountOnThreeEvent(ElementView *parentElement) 
 
 /// UnmountOnThree
 template<typename RemoveEventCallBack>
-ElementView *
-ElementView::addUnmountOnThreeEvent(UnmountOnThreeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addUnmountOnThreeEvent(UnmountOnThreeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     addChainFunction(UnmountOnThreeChain, callBack, removeEventCallBack, UnmountOnThreeChain == nullptr, true);
     return this;
 };
@@ -344,7 +345,3 @@ ElementView *ElementView::dispatchUnmountOnThreeEvent(ElementView *parentElement
     return this;
 };
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/// WINDOW EVENTS LIST ////////////////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////
