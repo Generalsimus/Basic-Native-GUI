@@ -25,8 +25,7 @@ ElementView *ElementView::dispatchTouchOverEvent() {
 
 /// TOUCH LEAVE //
 template<typename RemoveEventCallBack>
-ElementView *
-ElementView::addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
+ElementView *ElementView::addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     // printf("RUN addTouchOverEvent()");
 
     addChainFunction(TouchLeaveEventChain, callBack, removeEventCallBack, TouchLeaveEventChain == nullptr, true);

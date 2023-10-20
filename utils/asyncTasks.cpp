@@ -1,48 +1,89 @@
 
+#include <mutex>
+#include <thread>
 
+std::mutex vectorMutex;
+std::vector<std::thread> _threads;
 
-std::vector<std::future<void>> tasks_;
-std::mutex mutex_;
+unsigned int maxThreadLimit = std::thread::hardware_concurrency();
 
-template<typename Func, typename... Args>
-void runAsyncTask(Func &&func, Args &&... args) {
-//    std::lock_guard<std::mutex> lock(mutex_);
-    tasks_.emplace_back(std::async(std::launch::async, std::forward<Func>(func), std::forward<Args>(args)...));
+template <typename Func, typename... Args>
+auto runAsyncTask(Func &&func, Args &&...args) {
+  //  vectorMutex.lock();
 
+  std::unique_lock<std::mutex> mutexLock(vectorMutex);
+
+  _threads.emplace_back(([&func, args...]() {
+    func(args...);
+  }));
+
+  mutexLock.unlock();
+
+  return []() {
+    //        _awaitTasksList.at(threadIndex)();
+    //    if (threadPtr->joinable()) {
+    //      threadPtr->join();
+    //    }
+    //    currentThread->join();
+    //    return *returnValue;
+  };
 };
 
+// std::mutex awaitAllAsyncTasksMutex;
 void awaitAllAsyncTasks() {
-//    std::lock_guard<std::mutex> lock(mutex_);
-    while (tasks_.size() != 0) {
-        const std::future<void> &task = tasks_[0];
-        if (task.valid()) {
-            task.wait();
-        }
-//        std::lock_guard<std::mutex> lock(mutex_);
-        tasks_.erase(tasks_.begin() + 0);
-    };
-    tasks_.clear();
-}
+  //  std::unique_lock<std::mutex> mutexLock(vectorMutex);
+  //  std::scoped_lock<std::mutex> mutexLock(vectorMutex);
+  //  std::lock_guard<std::mutex> mutexLock(vectorMutex);
+  //    auto mutexLock = vectorMutex;
+
+  vectorMutex.lock();
+
+  while (_threads.size() != 0) {
+    std::thread threadProcess = std::move(*_threads.begin());
+
+    if (threadProcess.joinable()) {
+      _threads.erase(_threads.begin());
+
+      vectorMutex.unlock();
+      threadProcess.join();
+      vectorMutex.lock();
+    } else {
+      _threads.erase(_threads.begin());
+    }
+  };
+  _threads.clear();
+
+  vectorMutex.unlock();
+};
 
 auto CreateAsyncAwaitGroup() {
-//    std::lock_guard<std::mutex> lock(mutex_);
-    int startIndex = tasks_.size();
+  std::unique_lock<std::mutex> mutexLock(vectorMutex);
+  int startIndex = _threads.size();
+  mutexLock.unlock();
+  return [&startIndex]() {
+    std::unique_lock<std::mutex> mutexLock(vectorMutex);
+    int endIndex = _threads.size();
 
+    int size = _threads.size();
+    int size2 = startIndex;
+    while (startIndex != endIndex && startIndex < _threads.size()) {
 
-    return [startIndex]() {
-//        std::lock_guard<std::mutex> lock(mutex_);
-        while (startIndex < tasks_.size()) {
+      printf("startIndexE: %zu, endIndex: %zu, size: %zu\n ", startIndex,
+             endIndex, _threads.size());
+      std::thread &threadProcess = _threads.at(startIndex);
+      //
+      if (threadProcess.joinable()) {
+        _threads.erase(_threads.begin() + startIndex);
 
-            const std::future<void> &task = tasks_[startIndex];
-            if (task.valid()) {
-                task.wait();
-            };
-//            std::lock_guard<std::mutex> lock(mutex_);
-            tasks_.erase(tasks_.begin() + startIndex);
-            int currentSize = tasks_.size();
-            printf("StartIndex: %d, CurrentSize: %d\n", startIndex, currentSize);
-        };
-
-//        std::lock_guard<std::mutex> unlock(mutex_);
+        mutexLock.unlock();
+        threadProcess.join();
+        mutexLock.lock();
+      } else {
+        _threads.erase(_threads.begin() + startIndex);
+      };
+      endIndex--;
     };
-};
+    mutexLock.unlock();
+    printf("END SIZE: %zu\n ", _threads.size());
+  };
+}

@@ -1,6 +1,7 @@
 
 
 #include "include/core/SkCanvas.h"
+#include <functional>
 
 
 class ElementView;

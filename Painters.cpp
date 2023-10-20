@@ -148,7 +148,10 @@ public:
 template<typename CalBackPaint>
 auto CreatePainterWithOption(CalBackPaint &&callBack) {
     return [callBack](ElementView *element) mutable {
-        std::function < void() > *ejectFunction = new std::function<void()>;
+//      std::shared_ptr<std::function<void()>> ejectFunction = std::make_shared<std::function<void()>>([](){});
+        std::function<void()> *ejectFunction = new std::function<void()>;
+
+        *ejectFunction = [](){};
         if (element->parent == nullptr) {
             element->addMountOnThreeEvent([ejectFunction, callBack](ElementView *element, ElementView *parent) mutable {
                 callBack(element, parent, element->window->surface->getCanvas(), &element->window->paint,
@@ -160,7 +163,7 @@ auto CreatePainterWithOption(CalBackPaint &&callBack) {
         }
         element->addSetPaintsEvent([ejectFunction](ElementView *element) {
             (*ejectFunction)();
-            delete ejectFunction;
+//            delete ejectFunction;
         }, *ejectFunction);
     };
 }
@@ -182,9 +185,9 @@ auto DirectionRow() {
                 child->x = element->x + childIndex * itemWidth;
                 child->y = element->y;
 
-//                auto awaitProcess = CreateAsyncAwaitGroup();
+                auto awaitProcess = CreateAsyncAwaitGroup();
                 child->dispatchResizeEvent(itemWidth, height);
-//                awaitProcess();
+                awaitProcess();
             };
         };
 
@@ -252,16 +255,16 @@ auto BoxPercent(float percentWidth, float percentHeight) {
                                                                                SkPaint *paint) {
             paint->setColor(*bgColor);
 //
-            sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
-                         (element->height * (percentHeight / 100)));
+//            sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
+//                         (element->height * (percentHeight / 100)));
 
             canvas->drawRect(*sharedRect, *paint);
 
         };
         element->addResizeEvent([percentWidth, percentHeight, sharedRect](ElementView *element, float newWidth, float newHeight) {
 
-//            sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
-//                         (element->height * (percentHeight / 100)));
+            sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
+                         (element->height * (percentHeight / 100)));
         }, ejectCallBack);
 
         element->addSetBackgroundColorEvent([bgColor](ElementView *element, SkColor color) {

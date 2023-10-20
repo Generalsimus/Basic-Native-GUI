@@ -123,9 +123,11 @@ ElementView *ElementView::setPaints(PaintFunction paintCallback, Args... args) {
     auto awaitAsyncGroup = CreateAsyncAwaitGroup();
     SetEachPainters(std::forward<PaintFunction>(paintCallback), std::forward<Args>(args)...);
 
-    dispatchSetPaintsEvent();
-
     awaitAsyncGroup();
+
+    auto awaitAsyncGroup2 = CreateAsyncAwaitGroup();
+    dispatchSetPaintsEvent();
+    awaitAsyncGroup2();
 
 //    if (this->parent == nullptr) {
 //        std::function<void()> removeMounter = []() {
@@ -162,7 +164,8 @@ void ElementView::addChainFunction(CallBackFunction &chainFunc, CallBackFunction
 
 //    CallBackFunction &&currentConnector = nullptr;
     CallBackFunction *currentConnector = new CallBackFunction;
-//    *dynamicInt = originalInt;
+//    std::shared_ptr<CallBackFunction> currentConnector = std::make_shared<CallBackFunction>([](){});
+
 
 
     auto self = this;
@@ -181,7 +184,7 @@ void ElementView::addChainFunction(CallBackFunction &chainFunc, CallBackFunction
             RemoveChainFunction currentRemoveChainFunction = std::move(removeChainFunction);
             removeChainFunction = [currentRemoveChainFunction, &currentConnector]<typename... Args>(Args &&... args) {
                 //   printf("REMOVE");
-                *currentConnector = nullptr;
+//                *currentConnector = nullptr;
                 return currentRemoveChainFunction(std::forward<Args>(args)...);
             };
         };
