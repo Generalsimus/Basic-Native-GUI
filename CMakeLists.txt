@@ -5,6 +5,8 @@ set(CMAKE_CUDA_STANDARD 20)
 
 
 add_executable(cuda_neu main.cu
+        utils/Chain.cpp
+        utils/Chain.h
 )
 
 set_target_properties(cuda_neu PROPERTIES

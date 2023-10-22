@@ -159,71 +159,77 @@ void ElementView::addChainFunction(CallBackFunction &chainFunc, CallBackFunction
                                    RemoveChainFunction &removeChainFunction,
                                    bool startFromNewPoint,
                                    bool callAsync) {
+
+//    if(){
+//
+//    }else {
+//
+//    }
     //  printf("\nRUN addChainFunction() %d\n", startFromNewPoint);
 
 
 //    CallBackFunction &&currentConnector = nullptr;
-    CallBackFunction *currentConnector = new CallBackFunction;
-//    std::shared_ptr<CallBackFunction> currentConnector = std::make_shared<CallBackFunction>([](){});
-
-
-
-    auto self = this;
-    auto currentCallBack = std::move(callBack);
-
-    if (startFromNewPoint) {
-        if (callAsync) {
-            *currentConnector = [currentCallBack, self]<typename... Args>(Args &&... args) {
-                runAsyncTask(currentCallBack, std::forward<Args>(args)...);
-            };
-        } else {
-            *currentConnector = currentCallBack;
-        }
-
-        if (removeChainFunction != nullptr) {
-            RemoveChainFunction currentRemoveChainFunction = std::move(removeChainFunction);
-            removeChainFunction = [currentRemoveChainFunction, &currentConnector]<typename... Args>(Args &&... args) {
-                //   printf("REMOVE");
-//                *currentConnector = nullptr;
-                return currentRemoveChainFunction(std::forward<Args>(args)...);
-            };
-        };
-
-
-        chainFunc = [currentConnector]<typename... Args>(Args &&... args) {
-            if (*currentConnector != nullptr) {
-                (*currentConnector)(std::forward<Args>(args)...);
-            }
-        };
-    } else {
-        auto currentChainFunc = std::move(chainFunc);
-
-        if (callAsync) {
-            *currentConnector = [currentCallBack, currentChainFunc, self]<typename... Args>(Args &&... args) {
-                currentChainFunc(std::forward<Args>(args)...);
-
-                runAsyncTask(currentCallBack, std::forward<Args>(args)...);
-            };
-        } else {
-            *currentConnector = [currentCallBack, currentChainFunc, &self]<typename... Args>(Args &&... args) {
-                currentChainFunc(std::forward<Args>(args)...);
-                currentCallBack(std::forward<Args>(args)...);
-            };
-        }
-
-        if (removeChainFunction != nullptr) {
-            RemoveChainFunction currentRemoveChainFunction = std::move(removeChainFunction);
-            removeChainFunction = [currentRemoveChainFunction, currentChainFunc, currentConnector]<typename... Args>(
-                    Args &&... args) {
-                *currentConnector = currentChainFunc;
-                return currentRemoveChainFunction(std::forward<Args>(args)...);
-            };
-        };
-
-        chainFunc = [currentConnector]<typename... Args>(Args &&... args) {
-            (*currentConnector)(std::forward<Args>(args)...);
-        };
-    };
+//    CallBackFunction *currentConnector = new CallBackFunction;
+////    std::shared_ptr<CallBackFunction> currentConnector = std::make_shared<CallBackFunction>([](){});
+//
+//
+//
+//    auto self = this;
+//    auto currentCallBack = std::move(callBack);
+//
+//    if (startFromNewPoint) {
+//        if (callAsync) {
+//            *currentConnector = [currentCallBack, self]<typename... Args>(Args &&... args) {
+//                runAsyncTask(currentCallBack, std::forward<Args>(args)...);
+//            };
+//        } else {
+//            *currentConnector = currentCallBack;
+//        }
+//
+//        if (removeChainFunction != nullptr) {
+//            RemoveChainFunction currentRemoveChainFunction = std::move(removeChainFunction);
+//            removeChainFunction = [currentRemoveChainFunction, &currentConnector]<typename... Args>(Args &&... args) {
+//                //   printf("REMOVE");
+////                *currentConnector = nullptr;
+//                return currentRemoveChainFunction(std::forward<Args>(args)...);
+//            };
+//        };
+//
+//
+//        chainFunc = [currentConnector]<typename... Args>(Args &&... args) {
+//            if (*currentConnector != nullptr) {
+//                (*currentConnector)(std::forward<Args>(args)...);
+//            }
+//        };
+//    } else {
+//        auto currentChainFunc = std::move(chainFunc);
+//
+//        if (callAsync) {
+//            *currentConnector = [currentCallBack, currentChainFunc, self]<typename... Args>(Args &&... args) {
+//                currentChainFunc(std::forward<Args>(args)...);
+//
+//                runAsyncTask(currentCallBack, std::forward<Args>(args)...);
+//            };
+//        } else {
+//            *currentConnector = [currentCallBack, currentChainFunc, &self]<typename... Args>(Args &&... args) {
+//                currentChainFunc(std::forward<Args>(args)...);
+//                currentCallBack(std::forward<Args>(args)...);
+//            };
+//        }
+//
+//        if (removeChainFunction != nullptr) {
+//            RemoveChainFunction currentRemoveChainFunction = std::move(removeChainFunction);
+//            removeChainFunction = [currentRemoveChainFunction, currentChainFunc, currentConnector]<typename... Args>(
+//                    Args &&... args) {
+//                *currentConnector = currentChainFunc;
+//                return currentRemoveChainFunction(std::forward<Args>(args)...);
+//            };
+//        };
+//
+//        chainFunc = [currentConnector]<typename... Args>(Args &&... args) {
+//            (*currentConnector)(std::forward<Args>(args)...);
+//        };
+//    };
 
 
 };

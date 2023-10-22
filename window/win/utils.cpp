@@ -20,6 +20,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     winWindow *window = (winWindow *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
+//  printf("WndProc\n");
 
     switch (msg) {
         case WH_KEYBOARD_LL: {
@@ -60,7 +61,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             auto awaitProcess2 = CreateAsyncAwaitGroup();
 //
-            window->dispatchDrawEvent();
+//            window->draw();
 //
             awaitProcess2();
             return 0;
@@ -237,8 +238,10 @@ void CreateWindowsWindows(const std::string &title, float windowWidth, float win
 //    awaitGroup();
 //    window->dispatchDrawEvent();
 
+//        printf("WINDOW WHILE 111\n");
     MSG msg;
     while (GetMessage(&msg, hwnd, 0, 0)) {
+//        printf("WINDOW WHILE \n");
 //        auto awaitProcess = CreateAsyncAwaitGroup();
         //std::cout << "Async lambda function running.222" << std::endl;
         TranslateMessage(&msg);

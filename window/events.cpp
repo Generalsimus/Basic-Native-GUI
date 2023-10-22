@@ -206,9 +206,18 @@ ElementView *ElementView::addDrawEvent(DrawEventType &&callBack, RemoveEventCall
     return this;
 };
 
-ElementView *ElementView::dispatchDrawEvent() {
-//    printf("RUNNNNNNNNN SS2\n");
+ElementView *ElementView::dispatchDrawEvent(SkCanvas *canvas, SkPaint *painter) {
+    //printf("RUNNNNNNNNN SS2\n");
+    this->dispatchChainFunction(DrawEventChain, this, canvas, painter);
+    for (auto &child: children) {
+        child->dispatchDrawEvent(canvas, painter);
+    }
+    return this;
+};
 
+ElementView *ElementView::draw() {
+    return  this;
+//    printf("RUNNNNNNNNN SS2\n");
     auto awaitProcess2 = CreateAsyncAwaitGroup();
 //    auto awaitProcess = CreateAsyncAwaitGroup();
     if (this->window == nullptr) {
@@ -216,26 +225,19 @@ ElementView *ElementView::dispatchDrawEvent() {
 
         };
         this->addMountOnThreeEvent([removeEvent](ElementView *element, ElementView *parentElement) mutable {
-            element->dispatchHierarchyDrawEvent(element->window->surface->getCanvas(), &element->window->paint);
+            element->dispatchDrawEvent(element->window->surface->getCanvas(), &element->window->paint);
 //            element->window->refreshFrame();
 
             removeEvent();
         }, removeEvent);
     } else {
-        this->dispatchHierarchyDrawEvent(this->window->surface->getCanvas(), &this->window->paint);
+
+        this->dispatchDrawEvent(this->window->surface->getCanvas(), &this->window->paint);
 //        this->window->refreshFrame();
+
     }
 
     awaitProcess2();
-    return this;
-};
-
-ElementView *ElementView::dispatchHierarchyDrawEvent(SkCanvas *canvas, SkPaint *painter) {
-    //printf("RUNNNNNNNNN SS2\n");
-    this->dispatchChainFunction(DrawEventChain, this, canvas, painter);
-    for (auto &child: children) {
-        child->dispatchHierarchyDrawEvent(canvas, painter);
-    }
     return this;
 };
 
@@ -328,6 +330,7 @@ ElementView *ElementView::addMountOnThreeEvent(MountOnThreeEventType &&callBack,
 };
 
 ElementView *ElementView::dispatchMountOnThreeEvent(ElementView *parentElement) {
+    printf("RUN RUN MOUNT CHAINT\n");
     dispatchChainFunction(MountOnThreeEventChain, this, parentElement);
     return this;
 };

@@ -133,14 +133,12 @@ public:
 
   /// Draw
   template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addDrawEvent(DrawEventType &&callBack,
+  ElementView *addDrawEvent(DrawEventType &&callBack,
                RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchDrawEvent();
+  ElementView *dispatchDrawEvent(SkCanvas *canvas, SkPaint *paint);
 
-  ElementView *dispatchHierarchyDrawEvent(SkCanvas *canvas, SkPaint *paint);
-
+  ElementView *draw();
   /// RESIZE ELEMENT
   template <typename RemoveEventCallBack = std::function<void()>>
   ElementView *

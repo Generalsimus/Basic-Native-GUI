@@ -148,18 +148,19 @@ public:
 template<typename CalBackPaint>
 auto CreatePainterWithOption(CalBackPaint &&callBack) {
     return [callBack](ElementView *element) mutable {
-//      std::shared_ptr<std::function<void()>> ejectFunction = std::make_shared<std::function<void()>>([](){});
-        std::function<void()> *ejectFunction = new std::function<void()>;
-
-        *ejectFunction = [](){};
+//      return ;
+      std::shared_ptr<std::function<void()>> ejectFunction = std::make_shared<std::function<void()>>([](){});
+//        std::function<void()> *ejectFunction = new std::function<void()>([](){});
+//
+//        *ejectFunction = [](){};
         if (element->parent == nullptr) {
             element->addMountOnThreeEvent([ejectFunction, callBack](ElementView *element, ElementView *parent) mutable {
-                callBack(element, parent, element->window->surface->getCanvas(), &element->window->paint,
-                         *ejectFunction);
+//                callBack(element, parent, element->window->surface->getCanvas(), &element->window->paint,
+//                         *ejectFunction);
             }, *ejectFunction);
         } else {
-            callBack(element, element->parent, element->window->surface->getCanvas(), &element->window->paint,
-                     *ejectFunction);
+//            callBack(element, element->parent, element->window->surface->getCanvas(), &element->window->paint,
+//                     *ejectFunction);
         }
         element->addSetPaintsEvent([ejectFunction](ElementView *element) {
             (*ejectFunction)();
@@ -236,6 +237,9 @@ auto Cursor(Cursor cursor) {
 std::mutex localMutex;
 
 auto BoxPercent(float percentWidth, float percentHeight) {
+//    return  [](  ElementView *element){
+//
+//    };
     return CreatePainterWithOption([percentWidth, percentHeight](
             ElementView *element,
             ElementView *parentElement,
@@ -244,44 +248,44 @@ auto BoxPercent(float percentWidth, float percentHeight) {
             auto ejectCallBack
     ) {
 
-        std::shared_ptr<SkRect> sharedRect = std::make_shared<SkRect>(
-                SkRect::MakeXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
-                                 (element->height * (percentHeight / 100))));
-
-
-        std::shared_ptr<SkColor> bgColor = std::make_shared<SkColor>(SK_ColorWHITE);
-
-        auto paintFunc = [element, percentWidth, percentHeight, bgColor,sharedRect](SkCanvas *canvas,
-                                                                               SkPaint *paint) {
-            paint->setColor(*bgColor);
+//        std::shared_ptr<SkRect> sharedRect = std::make_shared<SkRect>(
+//                SkRect::MakeXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
+//                                 (element->height * (percentHeight / 100))));
+//
+//
+//        std::shared_ptr<SkColor> bgColor = std::make_shared<SkColor>(SK_ColorWHITE);
+//
+//        auto paintFunc = [element, percentWidth, percentHeight, bgColor,sharedRect](SkCanvas *canvas,
+//                                                                               SkPaint *paint) {
+//            paint->setColor(*bgColor);
+////
+////            sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
+////                         (element->height * (percentHeight / 100)));
+//
+//            canvas->drawRect(*sharedRect, *paint);
+//
+//        };
+//        element->addResizeEvent([percentWidth, percentHeight, sharedRect](ElementView *element, float newWidth, float newHeight) {
 //
 //            sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
 //                         (element->height * (percentHeight / 100)));
-
-            canvas->drawRect(*sharedRect, *paint);
-
-        };
-        element->addResizeEvent([percentWidth, percentHeight, sharedRect](ElementView *element, float newWidth, float newHeight) {
-
-            sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
-                         (element->height * (percentHeight / 100)));
-        }, ejectCallBack);
-
-        element->addSetBackgroundColorEvent([bgColor](ElementView *element, SkColor color) {
-            *bgColor = color;
-
-            element->dispatchDrawEvent();
-        }, ejectCallBack);
-
-        element->addDrawEvent([paintFunc](ElementView *element, SkCanvas *canvas, SkPaint *paint)   {
-            paintFunc(canvas, paint);
-        }, ejectCallBack);
-
-        paintFunc(canvas, paint);
-
-        element->addContainsFn([sharedRect](float x, float y) mutable {
-            return sharedRect->contains(x, y);
-        });
+//        }, ejectCallBack);
+//
+////        element->addSetBackgroundColorEvent([bgColor](ElementView *element, SkColor color) {
+////            *bgColor = color;
+////
+////            element->dispatchDrawEvent();
+////        }, ejectCallBack);
+//
+//        element->addDrawEvent([paintFunc](ElementView *element, SkCanvas *canvas, SkPaint *paint)   {
+//            paintFunc(canvas, paint);
+//        }, ejectCallBack);
+//
+//        paintFunc(canvas, paint);
+//
+//        element->addContainsFn([sharedRect](float x, float y) mutable {
+//            return sharedRect->contains(x, y);
+//        });
 
     });
 

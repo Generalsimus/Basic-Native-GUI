@@ -27,12 +27,13 @@ int main() {
             Element()->setPaints(
                     BoxPercent(100, 100)
             )
-    )->setPaints(
-            BoxPercent(100, 98),
-            DirectionRow()
-//            ,
-//            Cursor(Cursor::Arrow)
-    )->dispatchSetBackgroundColorEvent(SkColorSetARGB(255, 0, 128, 0));
+    );
+//        ->setPaints(
+//            BoxPercent(100, 98),
+//            DirectionRow()
+////            ,
+////            Cursor(Cursor::Arrow)
+//    )->dispatchSetBackgroundColorEvent(SkColorSetARGB(255, 0, 128, 0));
 
 //    while(true){
 //
