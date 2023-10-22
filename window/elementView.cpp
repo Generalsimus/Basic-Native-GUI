@@ -160,6 +160,7 @@ void ElementView::addChainFunction(CallBackFunction &chainFunc, CallBackFunction
                                    bool startFromNewPoint,
                                    bool callAsync) {
 
+
 //    if(){
 //
 //    }else {
@@ -239,9 +240,13 @@ template<class ChainFunc, class... Args>
 void ElementView::dispatchChainFunction(ChainFunc &chainFunc, Args &&... args) {
 //    printf("RUN dispatchChainFunction()\n");
 
-    if (chainFunc != nullptr) {
-        chainFunc(std::forward<Args>(args)...);
-    }
+//    if (chainFunc != nullptr) {
+////        chainFunc = chainFunc.
+////        chainFunc.c
+////        chainFunc(std::forward<Args>(args)...);
+//    }else {
+//
+//    }
 
 }
 

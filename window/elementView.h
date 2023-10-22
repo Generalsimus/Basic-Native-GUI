@@ -133,7 +133,8 @@ public:
 
   /// Draw
   template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *addDrawEvent(DrawEventType &&callBack,
+  ElementView *
+  addDrawEvent(DrawEventType &&callBack,
                RemoveEventCallBack &&removeEventCallBack = nullptr);
 
   ElementView *dispatchDrawEvent(SkCanvas *canvas, SkPaint *paint);
@@ -220,32 +221,32 @@ private:
   std::function<void(ElementView *)> DrawStylesChain = nullptr;
 
   /// EVENTS CHAIN START
-  TouchOverEventType TouchOverEventChain = nullptr;
-  TouchLeaveEventType TouchLeaveEventChain = nullptr;
+  TouchOverEventType TouchOverEventChain;
+  TouchLeaveEventType TouchLeaveEventChain;
 
-  TouchMoveEventType TouchMoveEventChain = nullptr;
-  TouchDownEventType TouchDownEventChain = nullptr;
-  TouchUpEventType TouchUpEventChain = nullptr;
-  TouchEventType TouchEventChain = nullptr;
+  TouchMoveEventType TouchMoveEventChain;
+  TouchDownEventType TouchDownEventChain;
+  TouchUpEventType TouchUpEventChain;
+  TouchEventType TouchEventChain;
 
-  KeyDownEventType KeyDownEventChain = nullptr;
-  KeyUpEventType KeyUpEventChain = nullptr;
-  KeyEventType KeyEventChain = nullptr;
+  KeyDownEventType KeyDownEventChain;
+  KeyUpEventType KeyUpEventChain;
+  KeyEventType KeyEventChain;
 
-  SetPaintsEventType SetPaintsEventChain = nullptr;
+  SetPaintsEventType SetPaintsEventChain;
 
-  AddChildEventType AddChildEventChain = nullptr;
-  RemoveChildEventType RemoveChildEventChain = nullptr;
-  ReplaceChildEventType ReplaceChildEventChain = nullptr;
+  AddChildEventType AddChildEventChain;
+  RemoveChildEventType RemoveChildEventChain;
+  ReplaceChildEventType ReplaceChildEventChain;
 
-  SetBackgroundColorEventType SetBackgroundColorEventChain = nullptr;
+  SetBackgroundColorEventType SetBackgroundColorEventChain;
 
-  UnmountOnThreeEventType UnmountOnThreeChain = nullptr;
-  MountOnThreeEventType MountOnThreeEventChain = nullptr;
+  UnmountOnThreeEventType UnmountOnThreeChain;
+  MountOnThreeEventType MountOnThreeEventChain;
 
-  DrawEventType DrawEventChain = nullptr;
+  DrawEventType DrawEventChain;
 
-  ResizeEventType ResizeEventChain = nullptr;
+  ResizeEventType ResizeEventChain;
   /// EVENTS CHAIN END
 
   /// START DRAWER PRIVATE OPTIONS  //

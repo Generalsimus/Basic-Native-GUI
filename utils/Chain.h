@@ -7,38 +7,30 @@
 
 template <typename... Args> class Chain {
 private:
-  using ChainCallFunctionType = std::function<Args...>;
-  ChainCallFunctionType callBackFunc;
+  using ChainCallFunctionType = std::function<void(Args &&...)>;
+  ChainCallFunctionType callBackFunc = nullptr;
   Chain<Args...> *before = nullptr;
   Chain<Args...> *after = nullptr;
 
-  //  using ChainCallFunctionType = std::function<Args...>;
-  //  ChainCallFunctionType callBackFunc;
-  //
-  //  Chain<Args...> *before = nullptr;
-  //  Chain<Args...> *after = nullptr;
-
 public:
-  Chain(ChainCallFunctionType &&callBackFunc, bool isAsync = false);
+  Chain();
+  explicit Chain(ChainCallFunctionType &&callBackFunc, bool isAsync = false);
   ~Chain();
 
   void callAfter(Args &&...args);
-
   void callBefore(Args &&...args);
 
   void SetCallBackFunction(ChainCallFunctionType &&afterCallBackFunc,
                            bool isAsync = false);
 
-  void setAfter(Event<Args...> newAfterPoint);
-
-  void CreateNewAfter(ChainCallFunctionType &&afterCallBackFunc,
-                      bool isAsync = false);
+  void setAfter(Chain<Args...> newAfterPoint);
+  void setBefore(Chain<Args...> newBeforePoint);
 
   void CreateNewAfter(ChainCallFunctionType &&afterCallBackFunc,
                       bool isAsync = false);
 
   void CreateNewBefore(ChainCallFunctionType &&BeforeCallBackFunc,
-                         bool isAsync = false);
+                       bool isAsync = false);
   //  explicit Chain(ChainCallFunctionType &&callBackFunc, bool isAsync = false)
   //  {
   //    this->SetCallBackFunction(callBackFunc, isAsync);

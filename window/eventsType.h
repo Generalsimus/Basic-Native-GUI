@@ -2,8 +2,9 @@
 
 #include "include/core/SkCanvas.h"
 #include <functional>
-
-
+#include "../utils/Chain.h"
+//
+//Chain
 
 // template <typename... Args> class Event {
 //   Event() {}
@@ -12,7 +13,8 @@
 class ElementView;
 
 template <typename... Args>
-using EventDefaultType = std::function<void(ElementView *, Args... args)>;
+using EventDefaultType = Chain<ElementView *, Args &&...>;
+//    std::function<void(ElementView *, Args... args)>;
 
 /// Touch EVENTS //
 using TouchMoveEventType = EventDefaultType<float, float>;
