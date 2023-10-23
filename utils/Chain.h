@@ -5,74 +5,84 @@
 #ifndef CUDA_NEU_CHAIN_H
 #define CUDA_NEU_CHAIN_H
 
-template <typename... Args> class Chain {
-private:
-  using ChainCallFunctionType = std::function<void(Args &&...)>;
-  ChainCallFunctionType callBackFunc = nullptr;
-  Chain<Args...> *before = nullptr;
-  Chain<Args...> *after = nullptr;
-
+template<typename... Args>
+class Chain {
 public:
-  Chain();
-  explicit Chain(ChainCallFunctionType &&callBackFunc, bool isAsync = false);
-  ~Chain();
+    using ChainCallFunctionType = std::function<void(Args &&...)>;
 
-  void callAfter(Args &&...args);
-  void callBefore(Args &&...args);
+    Chain() {};
 
-  void SetCallBackFunction(ChainCallFunctionType &&afterCallBackFunc,
-                           bool isAsync = false);
+    explicit Chain(ChainCallFunctionType &&callBackFunc, bool isAsync = false) {
 
-  void setAfter(Chain<Args...> newAfterPoint);
-  void setBefore(Chain<Args...> newBeforePoint);
+    };
 
-  void CreateNewAfter(ChainCallFunctionType &&afterCallBackFunc,
-                      bool isAsync = false);
+    ~Chain() {
 
-  void CreateNewBefore(ChainCallFunctionType &&BeforeCallBackFunc,
-                       bool isAsync = false);
-  //  explicit Chain(ChainCallFunctionType &&callBackFunc, bool isAsync = false)
-  //  {
-  //    this->SetCallBackFunction(callBackFunc, isAsync);
-  //  }
-  //  ~Chain() {
-  //    delete before;
-  //    delete after;
-  //  }
-  //  void callAfter(Args &&...args) {
-  //    this->callBackFunc(std::forward<Args>(args)...);
-  //    if (this->after != nullptr) {
-  //      this->before->callAfter(std::forward<Args>(args)...);
-  //    }
-  //  };
-  //  void callBefore(Args &&...args) {
-  //    this->callBackFunc(std::forward<Args>(args)...);
-  //    if (this->before != nullptr) {
-  //      this->before->callBefore(std::forward<Args>(args)...);
-  //    }
-  //  };
-  //  void SetCallBackFunction(ChainCallFunctionType &&afterCallBackFunc,
-  //                           bool isAsync = false) {
-  //    if (isAsync) {
-  //      this->callBackFunc = []<typename... Args>(Args &&...args) {
-  //        runAsyncTask(afterCallBackFunc, std::forward<Args>(args)...);
-  //      }
-  //    } else {
-  //      this->callBackFunc = afterCallBackFunc;
-  //    }
-  //  }
-  //  void setAfter(Event<Args...> newAfterPoint) { this->after = newAfterPoint;
-  //  } void setBefore(Event<Args...> newBeforePoint) {
-  //    this->before = newBeforePoint;
-  //  }
-  //  void CreateNewAfter(ChainCallFunctionType &&afterCallBackFunc,
-  //                      bool isAsync = false) {
-  //    this->after = new Chain<Args...>(afterCallBackFunc, isAsync);
-  //  }
-  //  void CreateNewBefore(ChainCallFunctionType &&BeforeCallBackFunc,
-  //                       bool isAsync = false) {
-  //    this->before = new Chain<Args...>(BeforeCallBackFunc, isAsync);
-  //  }
+    };
+
+    void callAfter(Args &&... args) {
+
+    };
+
+    void callBefore(Args &&... args) {
+
+    };
+
+
+    Chain<Args...> *addNewAfter(ChainCallFunctionType &&afterCallBackFunc, bool isAsync = false) {
+        auto newAfterChain = new Chain<Args...>(std::forward<ChainCallFunctionType>(afterCallBackFunc),
+                                                std::forward<bool>(isAsync));
+
+        return newAfterChain;
+    };
+
+    Chain<Args...> *addNewBefore(ChainCallFunctionType &&afterCallBackFunc, bool isAsync = false) {
+        auto newBeforeChain = new Chain<Args...>(std::forward<ChainCallFunctionType>(afterCallBackFunc),
+                                                 std::forward<bool>(isAsync));
+
+        return newBeforeChain;
+    };
+
+//    Chain<Args...> *SetCallBackFunction(ChainCallFunctionType &&afterCallBackFunc,
+//                                        bool isAsync = false);
+//
+//
+//
+//
+//    Chain<Args...> *setAfter(Chain<Args...> &&newAfterPoint);
+//
+//    Chain<Args...> *setBefore(Chain<Args...> &&newBeforePoint);
+//
+//
+//    Chain<Args...> *SetCallBackFunction(ChainCallFunctionType &&afterCallBackFunc,
+//                                        bool isAsync = false);
+//
+//
+//    Chain<Args...> *CreateNewAfter(ChainCallFunctionType &&afterCallBackFunc,
+//                                   bool isAsync = false);
+//
+////    Chain<Args...> *CreateNewAfter(ChainCallFunctionType &afterCallBackFunc,
+////                                   bool isAsync = false);
+//
+////    Chain<Args...> *CreateNewBefore(ChainCallFunctionType &&&BeforeCallBackFunc,
+////                                    bool isAsync = false);
+//
+//    Chain<Args...> *CreateNewBefore(ChainCallFunctionType &&BeforeCallBackFunc,
+//                                    bool isAsync = false);
+//
+////    template<class RemoveFunction>
+////    void invokeRemoveFunction(RemoveFunction &&removeCallBackFunc);
+
+//    void remove();
+
+private:
+    ChainCallFunctionType callBackFunc = nullptr;
+    Chain<Args...> *before = nullptr;
+    Chain<Args...> *after = nullptr;
+
+    Chain<Args...> *first = this;
+    Chain<Args...> *last = this;
 };
+
 
 #endif // CUDA_NEU_CHAIN_H

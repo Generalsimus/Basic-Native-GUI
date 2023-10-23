@@ -4,18 +4,15 @@ project(cuda_neu CUDA)
 set(CMAKE_CUDA_STANDARD 20)
 
 
-add_executable(cuda_neu main.cu
-        utils/Chain.cpp
-        utils/Chain.h
-)
+add_executable(cuda_neu main.cu)
 
 set_target_properties(cuda_neu PROPERTIES
         CUDA_SEPARABLE_COMPILATION ON)
- 
 
- 
+
+
 add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
- 
+
 
 
 #SKIA

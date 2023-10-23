@@ -186,9 +186,9 @@ auto DirectionRow() {
                 child->x = element->x + childIndex * itemWidth;
                 child->y = element->y;
 
-                auto awaitProcess = CreateAsyncAwaitGroup();
+//                auto awaitProcess = CreateAsyncAwaitGroup();
                 child->dispatchResizeEvent(itemWidth, height);
-                awaitProcess();
+//                awaitProcess();
             };
         };
 

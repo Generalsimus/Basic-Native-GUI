@@ -15,21 +15,31 @@ BITMAPINFO CreateBitmapInfo(int width, int height) {
     return bmi;
 };
 
+int inccc = 0;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     winWindow *window = (winWindow *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
-//  printf("WndProc\n");
+    if (msg == WM_LBUTTONDOWN) {
+        printf("WM_LBUTTONDOWN: %zu \n", WM_LBUTTONDOWN);
 
+    } else {
+        printf("NOO : %zu \n", msg);
+
+        return DefWindowProc(hwnd, msg, wParam, lParam);
+    }
+//    printf("WndProc: %zu \n", msg == WM_LBUTTONDOWN);
+
+    return DefWindowProc(hwnd, msg, wParam, lParam);
     switch (msg) {
         case WH_KEYBOARD_LL: {
-          //  printf("WH_KEYBOARD_LL\n");
+            //  printf("WH_KEYBOARD_LL\n");
 
             return 0;
         };
         case WM_PAINT: {
-           // printf("refreshFrame\n");
+            // printf("refreshFrame\n");
             PAINTSTRUCT ps;
 
             HDC hdc = BeginPaint(window->hwnd, &ps);
@@ -41,7 +51,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             return 0;
         };
         case WM_SIZE: {
-           // printf("WM_SIZE\n");
+            // printf("WM_SIZE\n");
             float width = static_cast<float>(LOWORD(lParam));
             float height = static_cast<float>(HIWORD(lParam));
 //            printf("width: %d,height: %d\n", width, height);
@@ -51,23 +61,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             if (height < 1) {
                 height = 1;
             }
-            auto awaitProcess = CreateAsyncAwaitGroup();
+//            auto awaitProcess = CreateAsyncAwaitGroup();
 //m
-            window->dispatchResizeEvent(width, height);
+//            window->dispatchResizeEvent(width, height);
 //
-            awaitProcess();
+//            awaitProcess();
 //
 
 
-            auto awaitProcess2 = CreateAsyncAwaitGroup();
+//            auto awaitProcess2 = CreateAsyncAwaitGroup();
 //
 //            window->draw();
 //
-            awaitProcess2();
+//            awaitProcess2();
             return 0;
         }
 //////////////////////////////
         case WM_LBUTTONDOWN:
+            printf("WM_LBUTTONDOWN\n");
             window->dispatchTouchDownEvent(LOWORD(lParam), HIWORD(lParam), 0);
             return 0;
         case WM_MBUTTONDOWN:
@@ -191,6 +202,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             return DefWindowProc(hwnd, msg, wParam, lParam);
     }
+
 };
 
 
@@ -212,9 +224,8 @@ WNDCLASS CreateWNDCLASS(const std::string &title) {
 void CreateWindowsWindows(const std::string &title, float windowWidth, float windowHeight, winWindow *window) {
     WNDCLASS wc = CreateWNDCLASS(title);
     HWND hwnd = CreateWindow(title.c_str(), title.c_str(), WS_OVERLAPPEDWINDOW | WS_SIZEBOX, CW_USEDEFAULT,
-                             CW_USEDEFAULT,
-                             static_cast<int>(windowWidth),
-                             static_cast<int>(windowHeight), NULL, NULL, wc.hInstance, NULL);
+                             CW_USEDEFAULT, static_cast<int>(windowWidth), static_cast<int>(windowHeight), NULL, NULL,
+                             wc.hInstance, NULL);
 
 //    static_cast<int>(width) static_cast<int>(width)
     if (!hwnd) {

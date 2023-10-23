@@ -19,260 +19,257 @@ class Window;
 
 class ElementView {
 public:
-  float x = 0;
-  float y = 0;
-  float width = 0;
-  float height = 0;
-  ElementView *parent = nullptr;
-  Window *window = nullptr;
-  bool isMouseOver = false;
-  /// START CHILD OPTIONS //
-  std::vector<ElementView *> children;
+    float x = 0;
+    float y = 0;
+    float width = 0;
+    float height = 0;
+    ElementView *parent = nullptr;
+    Window *window = nullptr;
+    bool isMouseOver = false;
+    /// START CHILD OPTIONS //
+    std::vector<ElementView *> children;
 
-  ElementView *addChild();
+    ElementView *addChild();
 
-  template <typename... Chi>
-  ElementView *addChild(ElementView *child, Chi... rest);
+    template<typename... Chi>
+    ElementView *addChild(ElementView *child, Chi... rest);
 
-  void replaceChild(int replaceAtIndex, ElementView *newChild);
+    void replaceChild(int replaceAtIndex, ElementView *newChild);
 
-  void removeChild(int startIndex, int removeCount = 1);
+    void removeChild(int startIndex, int removeCount = 1);
 
-  /// END CHILD OPTIONS //
+    /// END CHILD OPTIONS //
 
-  //    bool PositionIsOver(int x, int y);
+    //    bool PositionIsOver(int x, int y);
 
-  ElementView();
+    ElementView();
 
-  template <typename... Args>
-  explicit ElementView(ElementView *first, Args... rest);
+    template<typename... Args>
+    explicit ElementView(ElementView *first, Args... rest);
 
-  /// START ADD PAINT FIGuRES //
+    /// START ADD PAINT FIGuRES //
 
-  template <typename PaintFunction, typename... Args>
-  ElementView *setPaints(PaintFunction paintCallback, Args... args);
+    template<typename PaintFunction, typename... Args>
+    ElementView *setPaints(PaintFunction paintCallback, Args... args);
 
-  /// End ADD PAINT FIGuRES //
+    /// End ADD PAINT FIGuRES //
 
-  /// EVENTS LIST //////////////////////////////////////////////////
-  /// TOUCH MOVIE
+    /// EVENTS LIST //////////////////////////////////////////////////
+    /// TOUCH MOVIE
 
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addTouchMoveEvent(TouchMoveEventType &&callBack,
-                    RemoveEventCallBack &&removeEventCallBack = nullptr);
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addTouchMoveEvent(TouchMoveEventType &&callBack,
+                                   RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchTouchMoveEvent(float windowX, float windowY,
-                                      bool isAsync = true,
-                                      bool useTouchOverChild = true);
+    template<typename... Args>
+    ElementView *dispatchTouchMoveEvent(Args &&... args);
 
-  /// TOUCH OVER
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addTouchOverEvent(TouchOverEventType &&callBack,
-                    RemoveEventCallBack &&removeEventCallBack = nullptr);
+//      bool isAsync = true,
+//           bool useTouchOverChild = true
+    /// TOUCH OVER
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addTouchOverEvent(TouchOverEventType &&callBack,
+                                   RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchTouchOverEvent();
+    ElementView *dispatchTouchOverEvent();
 
-  /// TOUCH LEAVE
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addTouchLeaveEvent(TouchLeaveEventType &&callBack,
-                     RemoveEventCallBack &&removeEventCallBack = nullptr);
+    /// TOUCH LEAVE
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addTouchLeaveEvent(TouchLeaveEventType &&callBack,
+                                    RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchTouchLeaveEvent();
+    ElementView *dispatchTouchLeaveEvent();
 
-  /// TOUCH DOWN
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addTouchDownEvent(TouchDownEventType &&callBack,
-                    RemoveEventCallBack &&removeEventCallBack = nullptr);
+    /// TOUCH DOWN
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addTouchDownEvent(TouchDownEventType &&callBack,
+                                   RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchTouchDownEvent(float windowX, float windowY,
-                                      int typeIndex);
 
-  /// TOUCH UP
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addTouchUpEvent(TouchUpEventType &&callBack,
-                  RemoveEventCallBack &&removeEventCallBack = nullptr);
+    template<typename... Args>
+    ElementView *dispatchTouchDownEvent(Args &&... args);
 
-  ElementView *dispatchTouchUpEvent(float windowX, float windowY,
-                                    int typeIndex);
+    /// TOUCH UP
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addTouchUpEvent(TouchUpEventType &&callBack,
+                                 RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  /// TOUCH
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addTouchEvent(TouchEventType &&callBack,
-                RemoveEventCallBack &&removeEventCallBack = nullptr);
+    template<typename... Args>
+    ElementView *dispatchTouchUpEvent(Args &&... args);
 
-  ElementView *dispatchTouchEvent(float windowX, float windowY, int typeIndex);
+    /// TOUCH
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addTouchEvent(TouchEventType &&callBack,
+                               RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  /// KEY DOWN
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addKeyDownEvent(KeyDownEventType &&callBack,
-                  RemoveEventCallBack &&removeEventCallBack = nullptr);
+    template<typename... Args>
+    ElementView *dispatchTouchEvent(Args &... args);
 
-  ElementView *dispatchKeyDownEvent(int keyIndex);
+    /// KEY DOWN
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addKeyDownEvent(KeyDownEventType &&callBack,
+                                 RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  /// KEY Up
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addKeyUpEvent(KeyUpEventType &&callBack,
-                RemoveEventCallBack &&removeEventCallBack = nullptr);
+    template<typename... Args>
+    ElementView *dispatchKeyDownEvent(Args &&... args);
 
-  ElementView *dispatchKeyUpEvent(int keyIndex);
+    /// KEY Up
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addKeyUpEvent(KeyUpEventType &&callBack,
+                               RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  /// KEY
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *addKeyEvent(KeyEventType &&callBack,
-                           RemoveEventCallBack &&removeEventCallBack = nullptr);
+    template<typename... Args>
+    ElementView *dispatchKeyUpEvent(Args &&... args);
 
-  ElementView *dispatchKeyEvent(int keyIndex);
+    /// KEY
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addKeyEvent(KeyEventType &&callBack,
+                             RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  /// Draw
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addDrawEvent(DrawEventType &&callBack,
-               RemoveEventCallBack &&removeEventCallBack = nullptr);
+    template<typename... Args>
+    ElementView *dispatchKeyEvent(Args &&... args);
 
-  ElementView *dispatchDrawEvent(SkCanvas *canvas, SkPaint *paint);
+    /// Draw
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addDrawEvent(DrawEventType &&callBack,
+                              RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *draw();
-  /// RESIZE ELEMENT
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addResizeEvent(ResizeEventType &&callBack,
-                 RemoveEventCallBack &&removeEventCallBack = nullptr);
+    template<typename... Args>
+    ElementView *dispatchDrawEvent(Args &&... args);
 
-  ElementView *dispatchResizeEvent(float windowWidth, float windowHeight);
+    ElementView *draw();
 
-  /// Set Paints
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addSetPaintsEvent(SetPaintsEventType &&callBack,
-                    RemoveEventCallBack &&removeEventCallBack = nullptr);
+    /// RESIZE ELEMENT
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addResizeEvent(ResizeEventType &&callBack,
+                                RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchSetPaintsEvent();
+    template<typename... Args>
+    ElementView *dispatchResizeEvent(Args &... args);
 
-  /// ADD CHILD
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addAddChildEvent(AddChildEventType &&callBack,
-                   RemoveEventCallBack &&removeEventCallBack = nullptr);
+    /// Set Paints
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addSetPaintsEvent(SetPaintsEventType &&callBack,
+                                   RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchAddChildEvent(ElementView *newChild);
+    ElementView *dispatchSetPaintsEvent();
 
-  /// REMOVE CHILD
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addRemoveChildEvent(RemoveChildEventType &&callBack,
-                      RemoveEventCallBack &&removeEventCallBack = nullptr);
+    /// ADD CHILD
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addAddChildEvent(AddChildEventType &&callBack,
+                                  RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchRemoveChildEvent(int removeIndex, int count = 1);
+    template<typename... Args>
+    ElementView *dispatchAddChildEvent(Args &... args);
 
-  /// REPLACE CHILD
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addReplaceChildEvent(ReplaceChildEventType &&callBack,
-                       RemoveEventCallBack &&removeEventCallBack = nullptr);
+    /// REMOVE CHILD
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addRemoveChildEvent(RemoveChildEventType &&callBack,
+                                     RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchReplaceChildEvent(int replaceIndex,
-                                         ElementView *oldChild,
-                                         ElementView *newChild);
+    template<typename... Args>
+    ElementView *dispatchRemoveChildEvent(Args &... args);
 
-  /// SetBackground
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *addSetBackgroundColorEvent(
-      SetBackgroundColorEventType &&callBack,
-      RemoveEventCallBack &&removeEventCallBack = nullptr);
+    /// REPLACE CHILD
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addReplaceChildEvent(ReplaceChildEventType &&callBack,
+                                      RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchSetBackgroundColorEvent(SkColor newColor);
+    template<typename... Args>
+    ElementView *dispatchReplaceChildEvent(Args &... args);
 
-  /// MountOnThree
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addMountOnThreeEvent(MountOnThreeEventType &&callBack,
-                       RemoveEventCallBack &&removeEventCallBack = nullptr);
+    /// SetBackground
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addSetBackgroundColorEvent(SetBackgroundColorEventType &&callBack,
+                                            RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchMountOnThreeEvent(ElementView *parentElement);
+    template<typename... Args>
+    ElementView *dispatchSetBackgroundColorEvent(Args &&... args);
 
-  /// UnmountOnThree
-  template <typename RemoveEventCallBack = std::function<void()>>
-  ElementView *
-  addUnmountOnThreeEvent(UnmountOnThreeEventType &&callBack,
-                         RemoveEventCallBack &&removeEventCallBack = nullptr);
+    /// MountOnThree
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addMountOnThreeEvent(MountOnThreeEventType &&callBack,
+                                      RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  ElementView *dispatchUnmountOnThreeEvent(ElementView *parentElement);
+    template<typename... Args>
+    ElementView *dispatchMountOnThreeEvent(Args &&... args);
 
-  /// EVENTS LIST END /////////////////////////////////////////////////
+    /// UnmountOnThree
+    template<typename RemoveEventCallBack = std::function<void()>>
+    ElementView *addUnmountOnThreeEvent(UnmountOnThreeEventType &&callBack,
+                                        RemoveEventCallBack &&removeEventCallBack = nullptr);
 
-  /// START Coordinates Contain Check //
-  std::function<bool(float, float)> contains = nullptr;
-  ElementView *resetContainFn();
+    template<typename... Args>
+    ElementView *dispatchUnmountOnThreeEvent(Args &&... args);
 
-  template <class CallBackCheck = std::function<bool(float, float)>>
-  ElementView *addContainsFn(CallBackCheck &&callBack);
-  /// END Coordinates Contain Check //
+    /// EVENTS LIST END /////////////////////////////////////////////////
+
+    /// START Coordinates Contain Check //
+    std::function<bool(float, float)> contains = nullptr;
+
+    ElementView *resetContainFn();
+
+    template<class CallBackCheck = std::function<bool(float, float)>>
+    ElementView *addContainsFn(CallBackCheck &&callBack);
+    /// END Coordinates Contain Check //
 
 private:
-  /// CHAIN FOR DEFAULT STYLES
-  std::function<void(ElementView *)> DrawStylesChain = nullptr;
+    /// CHAIN FOR DEFAULT STYLES
+    std::function<void(ElementView *)> DrawStylesChain = nullptr;
 
-  /// EVENTS CHAIN START
-  TouchOverEventType TouchOverEventChain;
-  TouchLeaveEventType TouchLeaveEventChain;
+    /// EVENTS CHAIN START
+    TouchOverEventChain TouchOverEventChainValue;
+    TouchLeaveEventChain TouchLeaveEventChainValue;
 
-  TouchMoveEventType TouchMoveEventChain;
-  TouchDownEventType TouchDownEventChain;
-  TouchUpEventType TouchUpEventChain;
-  TouchEventType TouchEventChain;
+    TouchMoveEventChain TouchMoveEventChainValue;
+    TouchDownEventChain TouchDownEventChainValue;
+    TouchUpEventChain TouchUpEventChainValue;
+    TouchEventChain TouchEventChainValue;
 
-  KeyDownEventType KeyDownEventChain;
-  KeyUpEventType KeyUpEventChain;
-  KeyEventType KeyEventChain;
+    KeyDownEventChain KeyDownEventChainValue;
+    KeyUpEventChain KeyUpEventChainValue;
+    KeyEventChain KeyEventChainValue;
 
-  SetPaintsEventType SetPaintsEventChain;
+    SetPaintsEventChain SetPaintsEventChainValue;
 
-  AddChildEventType AddChildEventChain;
-  RemoveChildEventType RemoveChildEventChain;
-  ReplaceChildEventType ReplaceChildEventChain;
+    AddChildEventChain AddChildEventChainValue;
+    RemoveChildEventChain RemoveChildEventChainValue;
+    ReplaceChildEventChain ReplaceChildEventChainValue;
 
-  SetBackgroundColorEventType SetBackgroundColorEventChain;
+    SetBackgroundColorEventChain SetBackgroundColorEventChainValue;
 
-  UnmountOnThreeEventType UnmountOnThreeChain;
-  MountOnThreeEventType MountOnThreeEventChain;
+    UnmountOnThreeEventChain UnmountOnThreeEventChainValue;
+    MountOnThreeEventChain MountOnThreeEventChainValue;
 
-  DrawEventType DrawEventChain;
+    DrawEventChain DrawEventChainValue;
 
-  ResizeEventType ResizeEventChain;
-  /// EVENTS CHAIN END
+    ResizeEventChain ResizeEventChainValue;
+    /// EVENTS CHAIN END
 
-  /// START DRAWER PRIVATE OPTIONS  //
+    /// START DRAWER PRIVATE OPTIONS  //
 
-  void SetEachPainters();
+    void SetEachPainters();
 
-  template <typename PaintFunction, typename... Args>
-  void SetEachPainters(PaintFunction paintCallback, Args... args);
-  /// END DRAWER PRIVATE OPTIONS  //
+    template<typename PaintFunction, typename... Args>
+    void SetEachPainters(PaintFunction paintCallback, Args... args);
+    /// END DRAWER PRIVATE OPTIONS  //
 
-  template <typename CallBackFunc>
-  void callSafeOnMountThree(CallBackFunc callback);
+    template<typename CallBackFunc>
+    void callSafeOnMountThree(CallBackFunc callback);
 
 protected:
-  template <typename CallBackFunction, typename RemoveEventCallBack>
-  void addChainFunction(CallBackFunction &chainFunc, CallBackFunction &callBack,
-                        RemoveEventCallBack &removeChainFunction = nullptr,
-                        bool startFromNewPoint = false, bool callAsync = true);
+    template<typename CallBackFunction, typename RemoveEventCallBack>
+    void addChainFunction(CallBackFunction &chainFunc, CallBackFunction &callBack,
+                          RemoveEventCallBack &removeChainFunction = nullptr,
+                          bool startFromNewPoint = false, bool callAsync = true);
 
-  //    template<typename ChainFunc, typename... Args>
-  template <class ChainFunc, class... Args>
-  void dispatchChainFunction(ChainFunc &chainFunc, Args &&...args);
+    //    template<typename ChainFunc, typename... Args>
+    template<class ChainFunc, class... Args>
+    void dispatchChainFunction(ChainFunc &chainFunc, Args &&...args);
 
-  void InitCustomEventListeners();
+    void InitCustomEventListeners();
 
-  void drawMe() { return; };
+    void drawMe() { return; };
 };
 
 #endif // CUDA_NEU_ELEMENTVIEW_H

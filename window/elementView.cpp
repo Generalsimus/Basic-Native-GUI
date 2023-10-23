@@ -5,6 +5,7 @@
 #include "elementView.h"
 #include "./utils.cpp"
 #include "./events.cpp"
+#include "../utils/Chain.cpp"
 
 
 void ElementView::replaceChild(int replaceAtIndex, ElementView *newChild) {
@@ -63,18 +64,20 @@ ElementView *ElementView::addChild(ElementView *child, Chi... rest) {
 
 ElementView::ElementView() {
     // printf("RUN Element() NO CHILD\n");
-    this->InitCustomEventListeners();
-    this->resetContainFn();
+//    this->InitCustomEventListeners();
+//    this->resetContainFn();
 };
 
 
 void ElementView::InitCustomEventListeners() {
     int downTypeNum = -1;
     auto self = this;
-    this->addTouchDownEvent([&downTypeNum](ElementView *element, int windowX, int windowY, int typeIndex) {
+    this->addTouchDownEvent([&downTypeNum](ElementView *element, float windowX, float windowY, int typeIndex) {
+        printf("DOWNWWW CUST\n");
         downTypeNum = typeIndex;
     });
-    this->addTouchUpEvent([&downTypeNum, self](ElementView *element, int windowX, int windowY, int typeIndex) {
+    this->addTouchUpEvent([&downTypeNum, self](ElementView *element, float windowX, float windowY, int typeIndex) {
+        printf("UUUPP CUST\n");
         if (downTypeNum == typeIndex) {
             self->dispatchTouchEvent(windowX, windowY, typeIndex);
             downTypeNum = -1;
@@ -120,14 +123,14 @@ ElementView::ElementView(ElementView *first, Args... rest) {
 template<typename PaintFunction, typename... Args>
 ElementView *ElementView::setPaints(PaintFunction paintCallback, Args... args) {
     this->resetContainFn();
-    auto awaitAsyncGroup = CreateAsyncAwaitGroup();
+//    auto awaitAsyncGroup = CreateAsyncAwaitGroup();
     SetEachPainters(std::forward<PaintFunction>(paintCallback), std::forward<Args>(args)...);
 
-    awaitAsyncGroup();
+//    awaitAsyncGroup();
 
-    auto awaitAsyncGroup2 = CreateAsyncAwaitGroup();
+//    auto awaitAsyncGroup2 = CreateAsyncAwaitGroup();
     dispatchSetPaintsEvent();
-    awaitAsyncGroup2();
+//    awaitAsyncGroup2();
 
 //    if (this->parent == nullptr) {
 //        std::function<void()> removeMounter = []() {

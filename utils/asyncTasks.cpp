@@ -2,7 +2,7 @@
 #include <mutex>
 #include <thread>
 
-std::mutex vectorMutex;
+//std::mutex vectorMutex;
 std::vector<std::thread> _threads;
 
 unsigned int maxThreadLimit = std::thread::hardware_concurrency();
@@ -11,15 +11,17 @@ template <typename Func, typename... Args>
 auto runAsyncTask(Func &&func, Args &&...args) {
   //  vectorMutex.lock();
 
-  std::unique_lock<std::mutex> mutexLock(vectorMutex);
+//  std::unique_lock<std::mutex> mutexLock(vectorMutex);
 
-  _threads.emplace_back([&func, args...]() {
-        func(args...);
-  });
+//    _threads.emplace_back([&func, args...]() {
+//        func(args...);
+//    });
+    func(args...);
+//    _threads.emplace_back(std::thread(func, args...));
 
   printf("\nPROCESSS RUN AT Id: %zu\n",
          _threads.at(_threads.size() - 1).get_id());
-  mutexLock.unlock();
+//  mutexLock.unlock();
 
   return []() {
     //        _awaitTasksList.at(threadIndex)();
@@ -38,7 +40,7 @@ void awaitAllAsyncTasks() {
   //  std::lock_guard<std::mutex> mutexLock(vectorMutex);
   //    auto mutexLock = vectorMutex;
 
-  vectorMutex.lock();
+//  vectorMutex.lock();
 
   while (_threads.size() != 0) {
     //    std::unique_lock<std::mutex> mutexLock(vectorMutex);
@@ -48,9 +50,9 @@ void awaitAllAsyncTasks() {
 
       printf("\nPROCESSS END JOINABLE Id: %zu\n", threadProcess.get_id());
 
-      vectorMutex.unlock();
+//      vectorMutex.unlock();
       threadProcess.join();
-      vectorMutex.lock();
+//      vectorMutex.lock();
     } else {
       printf("\nPROCESSS END NOT JOINABLE Id: %zu\n", threadProcess.get_id());
       _threads.erase(_threads.begin());
@@ -61,12 +63,13 @@ void awaitAllAsyncTasks() {
 };
 
 auto CreateAsyncAwaitGroup() {
-  std::unique_lock<std::mutex> mutexLock(vectorMutex);
+//  std::unique_lock<std::mutex> mutexLock(vectorMutex);
   int startIndex = _threads.size();
-  mutexLock.unlock();
+//  mutexLock.unlock();
   return [&startIndex]() {
     //    return;
-    std::unique_lock<std::mutex> mutexLock(vectorMutex);
+      printf("startIndex: %zu\n ", startIndex);
+//    std::unique_lock<std::mutex> mutexLock(vectorMutex);
     int endIndex = _threads.size();
 
     //    int size = _threads.size();
@@ -80,15 +83,15 @@ auto CreateAsyncAwaitGroup() {
       if (threadProcess.joinable()) {
         _threads.erase(_threads.begin() + startIndex);
 
-        mutexLock.unlock();
+//        mutexLock.unlock();
         threadProcess.join();
-        mutexLock.lock();
+//        mutexLock.lock();
       } else {
         _threads.erase(_threads.begin() + startIndex);
       };
       endIndex--;
     };
-    mutexLock.unlock();
+//    mutexLock.unlock();
     printf("END SIZE: %zu\n ", _threads.size());
   };
 }

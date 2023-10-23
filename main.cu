@@ -3,31 +3,33 @@
 #include "./Painters.cpp"
 
 
-auto Element() {
-    return new ElementView();
-}
+//auto Element() {
+//    return new ElementView();
+//}
 
-template<typename... Args>
-auto Element(ElementView *first, Args... args) {
-    printf("RUN Elem() D\n");
-
-    return new ElementView(first, std::forward<Args>(args)...);
-}
+//template<typename... Args>
+//auto Element(ElementView *first, Args... args) {
+//    printf("RUN Elem() D\n");
+//
+//    return new ElementView(first, std::forward<Args>(args)...);
+//}
 
 int main() {
     printf("EEEEE");
-    auto windowObj = new winWindow("My Custom Window", 900.0f, 600.0f);
+//    auto windowObj = new winWindow("My Custom Window", 900.0f, 600.0f);
+    winWindow windowObj("My Custom Window", 900.0f, 600.0f);
 
+    return 0;
     printf("eeerrrrrrrrrrtttttttttttttttttt");
-    windowObj->addChild(
-            Element()->setPaints(
-                    BoxPercent(100, 50),
-                    Cursor(Cursor::Arrow)
-            ),
-            Element()->setPaints(
-                    BoxPercent(100, 100)
-            )
-    );
+//    windowObj->addChild(
+//            Element()->setPaints(
+//                    BoxPercent(100, 50),
+//                    Cursor(Cursor::Arrow)
+//            ),
+//            Element()->setPaints(
+//                    BoxPercent(100, 100)
+//            )
+//    );
 //        ->setPaints(
 //            BoxPercent(100, 98),
 //            DirectionRow()
@@ -38,6 +40,9 @@ int main() {
 //    while(true){
 //
 //    }
-    awaitAllAsyncTasks();
+//    windowObj->addTouchEvent([](ElementView *element, float x, float y, int type) {
+//        printf("CLISCK \n");
+//    });
+//    awaitAllAsyncTasks();
     return 0;
 }
