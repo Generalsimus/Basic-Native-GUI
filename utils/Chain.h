@@ -14,6 +14,7 @@ public:
 
     explicit Chain(ChainCallFunctionType &&callBackFunc, bool isAsync = false) {
 
+        this->SetCallBackFunction(std::forward<ChainCallFunctionType>(callBackFunc), std::forward<bool>(isAsync));
     };
 
     ~Chain() {
@@ -21,30 +22,54 @@ public:
     };
 
     void callAfter(Args &&... args) {
-
+        this->callChainFunction(std::forward<Args>(args)...);
+        if (this->after != nullptr) {
+            this->after->callAfter(std::forward<Args>(args)...);
+        }
     };
 
     void callBefore(Args &&... args) {
+//        printf("CAL BEFORE\n");
+        this->callChainFunction(std::forward<Args>(args)...);
 
+        if (this->before != nullptr) {
+            this->before->callBefore(std::forward<Args>(args)...);
+        }
     };
 
 
     Chain<Args...> *addNewAfter(ChainCallFunctionType &&afterCallBackFunc, bool isAsync = false) {
-        auto newAfterChain = new Chain<Args...>(std::forward<ChainCallFunctionType>(afterCallBackFunc),
+        auto *newAfterChain = new Chain<Args...>(std::forward<ChainCallFunctionType>(afterCallBackFunc),
                                                 std::forward<bool>(isAsync));
 
+        newAfterChain->after = this->after;
+        newAfterChain->before = this;
+        this->after = newAfterChain;
         return newAfterChain;
     };
 
     Chain<Args...> *addNewBefore(ChainCallFunctionType &&afterCallBackFunc, bool isAsync = false) {
-        auto newBeforeChain = new Chain<Args...>(std::forward<ChainCallFunctionType>(afterCallBackFunc),
+        auto *newBeforeChain = new Chain<Args...>(std::forward<ChainCallFunctionType>(afterCallBackFunc),
                                                  std::forward<bool>(isAsync));
+
+        newBeforeChain->before = this->before;
+        newBeforeChain->addNewAfter = this;
+        this->before = newBeforeChain;
 
         return newBeforeChain;
     };
 
-//    Chain<Args...> *SetCallBackFunction(ChainCallFunctionType &&afterCallBackFunc,
-//                                        bool isAsync = false);
+    Chain<Args...> *SetCallBackFunction(ChainCallFunctionType &&callBackFunc, bool isAsync = false) {
+        if (isAsync) {
+            this->callChainFunction = [callBackFunc]<typename... AllArgs>(AllArgs &&... args) {
+                runAsyncTask(callBackFunc, std::forward<AllArgs>(args)...);
+            };
+        } else {
+            this->callChainFunction = callBackFunc;
+        }
+        return this;
+    };
+
 //
 //
 //
@@ -70,18 +95,15 @@ public:
 //    Chain<Args...> *CreateNewBefore(ChainCallFunctionType &&BeforeCallBackFunc,
 //                                    bool isAsync = false);
 //
-////    template<class RemoveFunction>
-////    void invokeRemoveFunction(RemoveFunction &&removeCallBackFunc);
+    template<class RemoveFunction>
+    void invokeRemoveFunction(RemoveFunction &&removeCallBackFunc);
 
-//    void remove();
+    void remove();
 
 private:
-    ChainCallFunctionType callBackFunc = nullptr;
+    ChainCallFunctionType callChainFunction = [](Args &&... args) {};
     Chain<Args...> *before = nullptr;
     Chain<Args...> *after = nullptr;
-
-    Chain<Args...> *first = this;
-    Chain<Args...> *last = this;
 };
 
 

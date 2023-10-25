@@ -1,8 +1,8 @@
 
 
 template<typename MainFunc, typename InvokeFunc>
-void invokeFunction(MainFunc &mainFunction, InvokeFunc &&addFunction) {
-    MainFunc currentMainFunction = std::move(mainFunction);
+void invokeFunction(MainFunc &&mainFunction, InvokeFunc &&addFunction) {
+    MainFunc currentMainFunction = mainFunction;
     mainFunction = [currentMainFunction, addFunction]<typename... Args>(Args &&...args) {
 
         addFunction(std::forward<Args>(args)...);

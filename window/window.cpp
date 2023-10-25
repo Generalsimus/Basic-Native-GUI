@@ -19,16 +19,16 @@ Window::Window(const std::string &title, float windowWidth, float windowHeight) 
     this->parent = this;
 
 
-//    this->surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(windowWidth, windowHeight));
-//    this->surface->peekPixels(&this->pixels);
+    this->surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(windowWidth, windowHeight));
+    this->surface->peekPixels(&this->pixels);
 //
-//    auto self = this;
-//    this->addResizeEvent([self](ElementView *element, float width, float height) {
-//
-//        self->surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(width, height));
-//
-//        self->surface->peekPixels(&self->pixels);
-//    });
+    auto self = this;
+    this->addResizeEvent([self](ElementView *element, float width, float height) {
+
+        self->surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(width, height));
+
+        self->surface->peekPixels(&self->pixels);
+    });
 //
 
 //    printf("\n WINDOW ID\n");

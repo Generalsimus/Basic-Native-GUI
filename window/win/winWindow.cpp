@@ -9,7 +9,8 @@
 #include "utils.cpp"
 
 
-winWindow::winWindow(const std::string &title, float windowWidth, float windowHeight) : Window(title, windowWidth, windowHeight) {
+winWindow::winWindow(const std::string &title, float windowWidth, float windowHeight) : Window(title, windowWidth,
+                                                                                               windowHeight) {
     // printf("\nRUN winWindow\n");
 
     ///////////////////////////
@@ -19,16 +20,16 @@ winWindow::winWindow(const std::string &title, float windowWidth, float windowHe
 
     this->bmi = CreateBitmapInfo(static_cast<int>(windowWidth), static_cast<int>(windowHeight));
 
-//    this->addResizeEvent([self](ElementView *element, float elementWidth, float elementHeight) {
-//        self->bmi.bmiHeader.biWidth = static_cast<int>(elementWidth);
-//        self->bmi.bmiHeader.biHeight = -static_cast<int>(elementHeight);
-//    });
-    CreateWindowsWindows(title, windowWidth, windowHeight, this);
-//    runAsyncTask(CreateWindowsWindows, title, windowWidth, windowHeight, this);
-//
-//    while (this->surface == nullptr) {
-//
-//    };
+    this->addResizeEvent([self](ElementView *element, float elementWidth, float elementHeight) {
+        self->bmi.bmiHeader.biWidth = static_cast<int>(elementWidth);
+        self->bmi.bmiHeader.biHeight = -static_cast<int>(elementHeight);
+    });
+
+    runAsyncTask(CreateWindowsWindows, title, windowWidth, windowHeight, this);
+
+    while (this->surface == nullptr) {
+
+    };
 
 };
 

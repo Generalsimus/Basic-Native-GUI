@@ -64,8 +64,8 @@ ElementView *ElementView::addChild(ElementView *child, Chi... rest) {
 
 ElementView::ElementView() {
     // printf("RUN Element() NO CHILD\n");
-//    this->InitCustomEventListeners();
-//    this->resetContainFn();
+    this->InitCustomEventListeners();
+    this->resetContainFn();
 };
 
 

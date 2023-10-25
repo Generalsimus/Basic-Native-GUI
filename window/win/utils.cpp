@@ -1,4 +1,4 @@
-
+#include <iostream>
 
 
 BITMAPINFO CreateBitmapInfo(int width, int height) {
@@ -15,23 +15,24 @@ BITMAPINFO CreateBitmapInfo(int width, int height) {
     return bmi;
 };
 
-int inccc = 0;
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
     winWindow *window = (winWindow *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
-
-    if (msg == WM_LBUTTONDOWN) {
-        printf("WM_LBUTTONDOWN: %zu \n", WM_LBUTTONDOWN);
-
-    } else {
-        printf("NOO : %zu \n", msg);
-
-        return DefWindowProc(hwnd, msg, wParam, lParam);
-    }
-//    printf("WndProc: %zu \n", msg == WM_LBUTTONDOWN);
-
-    return DefWindowProc(hwnd, msg, wParam, lParam);
+//
+//    if (msg == WM_LBUTTONDOWN) {
+//        std::cout << "WM_LBUTTONDOWwwwaaaaN\n" << std::endl;
+//        printf("WM_LBUTTONDOWN: %zu \n", WM_LBUTTONDOWN);
+//
+//    } else {
+//        printf("NOO : %zu \n", msg);
+//
+//        return DefWindowProc(hwnd, msg, wParam, lParam);
+//    }
+//
+////    std::cout << "ENEBNTTT\n" << std::endl;
+//
+//    return DefWindowProc(hwnd, msg, wParam, lParam);
     switch (msg) {
         case WH_KEYBOARD_LL: {
             //  printf("WH_KEYBOARD_LL\n");
@@ -78,7 +79,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
 //////////////////////////////
         case WM_LBUTTONDOWN:
-            printf("WM_LBUTTONDOWN\n");
+//            std::cout << "WM_LBUTTONDOWN\n" << std::endl;
+//            printf("WM_LBUTTONDOWN\n");
             window->dispatchTouchDownEvent(LOWORD(lParam), HIWORD(lParam), 0);
             return 0;
         case WM_MBUTTONDOWN:
@@ -226,6 +228,10 @@ void CreateWindowsWindows(const std::string &title, float windowWidth, float win
     HWND hwnd = CreateWindow(title.c_str(), title.c_str(), WS_OVERLAPPEDWINDOW | WS_SIZEBOX, CW_USEDEFAULT,
                              CW_USEDEFAULT, static_cast<int>(windowWidth), static_cast<int>(windowHeight), NULL, NULL,
                              wc.hInstance, NULL);
+
+
+    std::cout << "windowWidth: " << windowWidth << "windowHeight: " << windowHeight << std::endl;
+
 
 //    static_cast<int>(width) static_cast<int>(width)
     if (!hwnd) {

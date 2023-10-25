@@ -2,8 +2,9 @@
 //// Created by PC on 10/22/2023.
 ////
 //
-//#include "Chain.h"
-//#include "./invokeFunction.cpp"
+#include "Chain.h"
+#include "./invokeFunction.cpp"
+
 //
 //template<typename... Args>
 //Chain<Args...>::Chain() {}
@@ -101,16 +102,25 @@
 ////    return newBeforePoint;
 ////}
 //////////////////////
-//
-////template<typename... Args>
-////template<class RemoveFunction>
-////void Chain<Args...>::invokeRemoveFunction(RemoveFunction &&removeCallBackFunc) {
-////
-////    auto self = this;
-////    invokeFunction(removeCallBackFunc, [&self]() {
-////        self->remove();
-////    });
-//////    return this;
-////    //  return in<Args...>();Cha
-////}
+template<typename... Args>
+void Chain<Args...>::remove() {
+    if (this->before != nullptr && this->after != nullptr) {
+        this->before->after = this->after;
+        this->after->before = this->before;
+    };
+    this->before = nullptr;
+    this->after = nullptr;
+    this->callChainFunction = [](Args &&... args) {};
+}
+
+//////////////////////
+template<typename... Args>
+template<class RemoveFunction>
+void Chain<Args...>::invokeRemoveFunction(RemoveFunction &&removeCallBackFunc) {
+
+    auto self = this;
+    invokeFunction(removeCallBackFunc, [self]() {
+        self->remove();
+    });
+}
 //////////////////////

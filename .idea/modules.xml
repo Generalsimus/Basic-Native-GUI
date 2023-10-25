@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/cuda_neu.iml" filepath="$PROJECT_DIR$/.idea/cuda_neu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/skiagui.iml" filepath="$PROJECT_DIR$/.idea/skiagui.iml" />
     </modules>
   </component>
 </project>
