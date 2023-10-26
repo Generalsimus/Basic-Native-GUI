@@ -36,19 +36,18 @@ int main() {
 //    });
     windowObj->addChild(
             Element()->setPaints(
-                    BoxPercent(100, 50),
+                    BoxPercent(100,100),
                     Cursor(Cursor::Arrow)
             ),
             Element()->setPaints(
                     BoxPercent(100, 100)
             )
-    );
-//        ->setPaints(
+    )->setPaints(
 //            BoxPercent(100, 98),
-//            DirectionRow()
-////            ,
-////            Cursor(Cursor::Arrow)
-//    )->dispatchSetBackgroundColorEvent(SkColorSetARGB(255, 0, 128, 0));
+            DirectionRow()
+//            ,
+//            Cursor(Cursor::Arrow)
+    )->dispatchSetBackgroundColorEvent(SkColorSetARGB(255, 0, 128, 0));
 
 //    while(true){
 //

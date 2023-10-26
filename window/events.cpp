@@ -253,29 +253,36 @@ ElementView *ElementView::addDrawEvent(DrawEventType &&callBack, RemoveEventCall
 template<typename... Args>
 ElementView *ElementView::dispatchDrawEvent(Args &&... args) {
     // printf("RUNNNNNNNNN SS2\n");
-    //  this->dispatchChainFunction(DrawEventChain, this, canvas, painter);
 
     DrawEventChainValue.callAfter(this, std::forward<Args>(args)...);
-    for (auto &child: children) {
-        child->dispatchDrawEvent(std::forward<Args>(args)...);
-    }
+
     return this;
 };
 
 ElementView *ElementView::draw() {
-    printf("RUNNNNNNNNN SS2\n");
+//    printf("RUNNNNNNNNN SS2\n");
     if (this->window == nullptr) {
         std::function < void() > removeEvent = []() {
 
         };
         this->addMountOnThreeEvent([removeEvent](ElementView *element, ElementView *parentElement) mutable {
-            element->dispatchDrawEvent(element->window->surface->getCanvas(), &element->window->paint);
 
+            auto awaitProcess = CreateAsyncAwaitGroup();
+            element->dispatchDrawEvent(element->window->surface->getCanvas(), &element->window->paint);
+            awaitProcess();
+            for (auto &child: element->children) {
+                element->dispatchDrawEvent(element->window->surface->getCanvas(), &element->window->paint);
+            }
             removeEvent();
         }, removeEvent);
     } else {
-
+        auto awaitProcess = CreateAsyncAwaitGroup();
         this->dispatchDrawEvent(this->window->surface->getCanvas(), &this->window->paint);
+        awaitProcess();
+        for (auto &child: this->children) {
+            child->dispatchDrawEvent(this->window->surface->getCanvas(), &this->window->paint);
+        };
+
     }
 
     return this;

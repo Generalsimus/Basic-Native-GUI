@@ -176,13 +176,14 @@ auto DirectionRow() {
                 auto resizeCallBack = [element](float width, float height) mutable {
                     int childCount = element->children.size();
                     float itemWidth = width / static_cast<float>(childCount);
-
+//                    std::cout << "childCount: " << childCount <<" "<< itemWidth << std::endl;
                     for (int childIndex = 0; childIndex < childCount; childIndex++) {
                         auto child = element->children[childIndex];
                         child->x = element->x + childIndex * itemWidth;
                         child->y = element->y;
 
 
+                        std::cout << "X: " << child->x <<" Y: " << child->y << std::endl;
                         child->dispatchResizeEvent(itemWidth, height);
                     };
                 };
@@ -194,6 +195,7 @@ auto DirectionRow() {
 
                 element->addAddChildEvent([resizeCallBack](ElementView *element, ElementView *newChild) mutable {
                     resizeCallBack(element->width, element->height);
+                    element->draw();
                 }, ejectCallBack);
 
                 resizeCallBack(element->width, element->height);
@@ -239,7 +241,7 @@ auto BoxPercent(float percentWidth, float percentHeight) {
                                                                                   float newHeight) {
                     sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
                                         (element->height * (percentHeight / 100)));
-//                    element->draw();
+
                 }, ejectCallBack);
 
                 std::shared_ptr<SkColor> bgColor = std::make_shared<SkColor>(SK_ColorWHITE);
@@ -248,10 +250,11 @@ auto BoxPercent(float percentWidth, float percentHeight) {
                     *bgColor = color;
                 }, ejectCallBack);
 
-                element->addDrawEvent([bgColor, sharedRect](ElementView *element, SkCanvas *canvas, SkPaint *paint) {
+                element->addDrawEvent([bgColor, sharedRect, percentWidth, percentHeight](ElementView *element, SkCanvas *canvas, SkPaint *paint) {
                     paint->setColor(*bgColor);
-//
+
                     canvas->drawRect(*sharedRect, *paint);
+//                    std::cout << "RUN DRAW AT: " << std::endl;
                 }, ejectCallBack);
 
                 element->addContainsFn([sharedRect](float x, float y) mutable {

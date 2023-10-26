@@ -50,6 +50,7 @@ ElementView *ElementView::addChild() {
 
 template<typename... Chi>
 ElementView *ElementView::addChild(ElementView *child, Chi... rest) {
+    auto asyncAwaitGroup = CreateAsyncAwaitGroup();
     // printf("RUN addChild\n");
     child->parent = this;
     child->window = this->window;
@@ -59,7 +60,10 @@ ElementView *ElementView::addChild(ElementView *child, Chi... rest) {
     this->dispatchAddChildEvent(child);
     child->dispatchMountOnThreeEvent(this);
 
-    return this->addChild(rest...);
+    this->addChild(rest...);
+    asyncAwaitGroup();
+
+    return this;
 };
 
 ElementView::ElementView() {
@@ -147,6 +151,7 @@ ElementView *ElementView::setPaints(PaintFunction paintCallback, Args... args) {
 
     return this;
 };
+
 void ElementView::SetEachPainters() {
 
 }
@@ -159,9 +164,7 @@ void ElementView::SetEachPainters(PaintFunction paintCallback, Args... args) {
 
 template<typename CallBackFunction, typename RemoveChainFunction>
 void ElementView::addChainFunction(CallBackFunction &chainFunc, CallBackFunction &callBack,
-                                   RemoveChainFunction &removeChainFunction,
-                                   bool startFromNewPoint,
-                                   bool callAsync) {
+                                   RemoveChainFunction &removeChainFunction, bool startFromNewPoint, bool callAsync) {
 
 
 //    if(){
@@ -257,12 +260,7 @@ void ElementView::dispatchChainFunction(ChainFunc &chainFunc, Args &&... args) {
 /// START Coordinates Contain Check //
 ElementView *ElementView::resetContainFn() {
     this->contains = [this](float x, float y) {
-        return (
-                (x > this->x) &&
-                (x < (this->x + this->width)) &&
-                (y > this->y) &&
-                (y < (this->y + this->height))
-        );
+        return ((x > this->x) && (x < (this->x + this->width)) && (y > this->y) && (y < (this->y + this->height)));
     };
     return this;
 }

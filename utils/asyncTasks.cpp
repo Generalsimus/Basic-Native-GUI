@@ -65,12 +65,15 @@ auto CreateAsyncAwaitGroup() {
     std::unique_lock<std::mutex> mutexLock(vectorMutex);
     int startIndex = _threads.size();
     mutexLock.unlock();
-    return [&startIndex]() {
+    return [startIndex]() {
+        std::cout << "startIndex: "<< startIndex << std::endl;
+        std::vector<int>::iterator lastIterator;
         //    return;
         std::unique_lock<std::mutex> mutexLock(vectorMutex);
         int endIndex = _threads.size();
+        std::cout << "endIndex: "<< endIndex << std::endl;
 
-        //    int size = _threads.size();
+        //    int size = _threads.size();y
         //    int size2 = startIndex;
         while (startIndex != endIndex && startIndex < _threads.size()) {
 
@@ -88,7 +91,8 @@ auto CreateAsyncAwaitGroup() {
             };
             endIndex--;
         };
+        std::cout << "Real endIndex: "<< _threads.size() << std::endl;
         mutexLock.unlock();
-        printf("END SIZE: %zu\n ", _threads.size());
+//        printf("END SIZE: %zu\n ", _threads.size());
     };
 }
