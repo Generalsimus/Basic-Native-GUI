@@ -68,9 +68,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             awaitProcess();
 
+            auto awaitProcess222 = CreateAsyncAwaitGroup();
             window->draw();
 
-            awaitProcess();
+            awaitProcess222();
             return 0;
         }
 //////////////////////////////
@@ -226,7 +227,7 @@ void CreateWindowsWindows(const std::string &title, float windowWidth, float win
                              wc.hInstance, NULL);
 
 
-    std::cout << "windowWidth: " << windowWidth << "windowHeight: " << windowHeight << std::endl;
+//    std::cout << "windowWidth: " << windowWidth << "windowHeight: " << windowHeight << std::endl;
 
 
 //    static_cast<int>(width) static_cast<int>(width)
