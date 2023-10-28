@@ -55,7 +55,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             // printf("WM_SIZE\n");
             float width = static_cast<float>(LOWORD(lParam));
             float height = static_cast<float>(HIWORD(lParam));
-//            printf("width: %d,height: %d\n", width, height);
+            printf("width: %.3f,height: %.3f\n", width, height);
             if (width < 1) {
                 width = 1;
             }
@@ -63,15 +63,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 height = 1;
             }
             auto awaitProcess = CreateAsyncAwaitGroup();
-//m
+//
             window->dispatchResizeEvent(width, height);
 
             awaitProcess();
-
-            auto awaitProcess222 = CreateAsyncAwaitGroup();
-            window->draw();
-
-            awaitProcess222();
+//
+//            auto awaitProcess222 = CreateAsyncAwaitGroup();
+//            window->draw();
+//
+//            awaitProcess222();
             return 0;
         }
 //////////////////////////////
@@ -227,7 +227,7 @@ void CreateWindowsWindows(const std::string &title, float windowWidth, float win
                              wc.hInstance, NULL);
 
 
-//    std::cout << "windowWidth: " << windowWidth << "windowHeight: " << windowHeight << std::endl;
+    std::cout << "window Width: " << windowWidth << ", window Height: " << windowHeight << std::endl;
 
 
 //    static_cast<int>(width) static_cast<int>(width)

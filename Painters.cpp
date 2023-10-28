@@ -122,29 +122,6 @@
 //        }, *removeEvent);
 //    };
 //};
-class CreateAPinterOptions {
-private:
-    using EjectFunction = std::function<void()>;
-    ElementView *element;
-public:
-    CreateAPinterOptions(ElementView *element) : element(element) {
-    };
-
-    EjectFunction ejectFunction = []() {};
-
-    template<typename RemoveEventCallBack = std::function<void()>>
-    void addEjectCallBack(EjectFunction &&ejectCallBack, RemoveEventCallBack &&removeEventCallBack = nullptr) {
-        this->element->addChainFunction(this->ejectFunction, ejectCallBack, removeEventCallBack,
-                                        this->ejectFunction == nullptr, false);
-    }
-
-    void eject() {
-        if (this->ejectFunction != nullptr) {
-            this->ejectFunction();
-        };
-    }
-};
-
 template<typename CalBackPaint>
 auto CreatePainterWithOption(CalBackPaint &&callBack) {
     return [callBack](ElementView *element) mutable {
@@ -183,7 +160,8 @@ auto DirectionRow() {
                         child->y = element->y;
 
 
-//                        std::cout << "X: " << child->x <<" Y: " << child->y << std::endl;
+                        std::cout << "X: " << child->x <<" Y: " << child->y << std::endl;
+                        std::cout << "itemWidth: " << itemWidth <<" height: " << height << std::endl;
                         child->dispatchResizeEvent(itemWidth, height);
                     };
                 };

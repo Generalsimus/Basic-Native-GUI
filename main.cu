@@ -16,11 +16,11 @@ auto Element(ElementView *first, Args... args) {
 }
 
 int main() {
-    printf("EEEEE");
+    printf("EEEEE\n");
 //    auto windowObj = new winWindow("My Custom Window", 900.0f, 600.0f);
     auto windowObj = new winWindow("My Custom Window", 900.0f, 600.0f);
 
-    printf("eeerrrrrrrrrrtttttttttttttttttt");
+//    printf("eeerrrrrrrrrrtttttttttttttttttt");
 
 //    std::function < void() > removeEvent = []() {
 //
@@ -36,14 +36,17 @@ int main() {
 //    });
     windowObj->addChild(
             Element()->setPaints(
-                    BoxPercent(100,100),
-                    Cursor(Cursor::Arrow)
+                    BoxPercent(80,80)
+//                    ,
+//                    Cursor(Cursor::Arrow)
             ),
             Element()->setPaints(
-                    BoxPercent(100, 100)
+                    BoxPercent(20, 10)
+//                    ,
+//                    Cursor(Cursor::Arrow)
             )
     )->setPaints(
-//            BoxPercent(100, 98),
+            BoxPercent(100, 98),
             DirectionRow()
 //            ,
 //            Cursor(Cursor::Arrow)

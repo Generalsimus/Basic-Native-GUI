@@ -51,13 +51,15 @@ ElementView *ElementView::addChild() {
 template<typename... Chi>
 ElementView *ElementView::addChild(ElementView *child, Chi... rest) {
     auto asyncAwaitGroup = CreateAsyncAwaitGroup();
-    // printf("RUN addChild\n");
+//    printf("RUN addChild\n");
+
     child->parent = this;
     child->window = this->window;
 
     this->children.push_back(child);
 
     this->dispatchAddChildEvent(child);
+//    std::cout << "dispatchMountOnThreeEvent: " << child->id << std::endl;
     child->dispatchMountOnThreeEvent(this);
 
     this->addChild(rest...);
@@ -124,16 +126,17 @@ ElementView::ElementView(ElementView *first, Args... rest) {
     addChild(rest...);
 }
 
-template<typename PaintFunction, typename... Args>
-ElementView *ElementView::setPaints(PaintFunction paintCallback, Args... args) {
+//template<typename PaintFunction, typename... Args>
+template<typename... Args>
+ElementView *ElementView::setPaints(Args... args) {
+    dispatchSetPaintsEvent();
     this->resetContainFn();
 //    auto awaitAsyncGroup = CreateAsyncAwaitGroup();
-    SetEachPainters(std::forward<PaintFunction>(paintCallback), std::forward<Args>(args)...);
+    SetEachPainters(std::forward<Args>(args)...);
 
 //    awaitAsyncGroup();
 
 //    auto awaitAsyncGroup2 = CreateAsyncAwaitGroup();
-    dispatchSetPaintsEvent();
 //    awaitAsyncGroup2();
 
 //    if (this->parent == nullptr) {
@@ -155,11 +158,10 @@ ElementView *ElementView::setPaints(PaintFunction paintCallback, Args... args) {
 void ElementView::SetEachPainters() {
 
 }
-
 template<typename PaintFunction, typename... Args>
 void ElementView::SetEachPainters(PaintFunction paintCallback, Args... args) {
     paintCallback(this);
-    SetEachPainters(args...);
+    this->SetEachPainters(args...);
 };
 
 template<typename CallBackFunction, typename RemoveChainFunction>

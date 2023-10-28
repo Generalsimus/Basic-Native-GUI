@@ -242,9 +242,6 @@ template<typename RemoveEventCallBack>
 ElementView *ElementView::addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     // printf("WINDOW ADD DRAWER\n");
 
-    //  this->addChainFunction(DrawEventChain, callBack, removeEventCallBack,
-    //                         DrawEventChain == nullptr, false);
-
     DrawEventChainValue.addNewAfter(std::forward<DrawEventType>(callBack), true)->invokeRemoveFunction(
             removeEventCallBack);
     return this;
@@ -260,29 +257,28 @@ ElementView *ElementView::dispatchDrawEvent(Args &&... args) {
 };
 
 ElementView *ElementView::draw() {
-//    printf("RUNNNNNNNNN SS2\n");
+    auto drawFunc = [](ElementView *element) {
+        auto awaitProcess1 = CreateAsyncAwaitGroup();
+        element->dispatchDrawEvent(element->window->surface->getCanvas(), &element->window->paint);
+        awaitProcess1();
+
+        auto awaitProcess2 = CreateAsyncAwaitGroup();
+        for (auto &child: element->children) {
+//            std::cout << "child IDDDDD: " << child->id << std::endl;
+            child->dispatchDrawEvent(element->window->surface->getCanvas(), &element->window->paint);
+        };
+        awaitProcess2();
+    };
     if (this->window == nullptr) {
         std::function < void() > removeEvent = []() {
 
         };
-        this->addMountOnThreeEvent([removeEvent](ElementView *element, ElementView *parentElement) mutable {
-
-            auto awaitProcess = CreateAsyncAwaitGroup();
-            element->dispatchDrawEvent(element->window->surface->getCanvas(), &element->window->paint);
-            awaitProcess();
-            for (auto &child: element->children) {
-                element->dispatchDrawEvent(element->window->surface->getCanvas(), &element->window->paint);
-            }
+        this->addMountOnThreeEvent([removeEvent, drawFunc](ElementView *element, ElementView *parentElement) mutable {
             removeEvent();
+            drawFunc(element);
         }, removeEvent);
     } else {
-        auto awaitProcess = CreateAsyncAwaitGroup();
-        this->dispatchDrawEvent(this->window->surface->getCanvas(), &this->window->paint);
-        awaitProcess();
-        for (auto &child: this->children) {
-            child->dispatchDrawEvent(this->window->surface->getCanvas(), &this->window->paint);
-        };
-
+        drawFunc(this);
     }
 
     return this;
