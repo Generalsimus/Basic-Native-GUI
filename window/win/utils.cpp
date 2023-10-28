@@ -63,15 +63,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 height = 1;
             }
             auto awaitProcess = CreateAsyncAwaitGroup();
-//
+
             window->dispatchResizeEvent(width, height);
 
             awaitProcess();
-//
-//            auto awaitProcess222 = CreateAsyncAwaitGroup();
-//            window->draw();
-//
-//            awaitProcess222();
+
+            auto awaitProcess2  = CreateAsyncAwaitGroup();
+            window->draw();
+
+            awaitProcess2();
             return 0;
         }
 //////////////////////////////

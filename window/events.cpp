@@ -242,7 +242,7 @@ template<typename RemoveEventCallBack>
 ElementView *ElementView::addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack) {
     // printf("WINDOW ADD DRAWER\n");
 
-    DrawEventChainValue.addNewAfter(std::forward<DrawEventType>(callBack), true)->invokeRemoveFunction(
+    DrawEventChainValue.addNewAfter(std::forward<DrawEventType>(callBack), false)->invokeRemoveFunction(
             removeEventCallBack);
     return this;
 };
@@ -258,16 +258,16 @@ ElementView *ElementView::dispatchDrawEvent(Args &&... args) {
 
 ElementView *ElementView::draw() {
     auto drawFunc = [](ElementView *element) {
-        auto awaitProcess1 = CreateAsyncAwaitGroup();
+//        auto awaitProcess1 = CreateAsyncAwaitGroup();
         element->dispatchDrawEvent(element->window->surface->getCanvas(), &element->window->paint);
-        awaitProcess1();
+//        awaitProcess1();
 
-        auto awaitProcess2 = CreateAsyncAwaitGroup();
+//        auto awaitProcess2 = CreateAsyncAwaitGroup();
         for (auto &child: element->children) {
 //            std::cout << "child IDDDDD: " << child->id << std::endl;
             child->dispatchDrawEvent(element->window->surface->getCanvas(), &element->window->paint);
         };
-        awaitProcess2();
+//        awaitProcess2();
     };
     if (this->window == nullptr) {
         std::function < void() > removeEvent = []() {

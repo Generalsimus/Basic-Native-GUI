@@ -160,8 +160,8 @@ auto DirectionRow() {
                         child->y = element->y;
 
 
-                        std::cout << "X: " << child->x <<" Y: " << child->y << std::endl;
-                        std::cout << "itemWidth: " << itemWidth <<" height: " << height << std::endl;
+                        std::cout << "X: " << child->x << " Y: " << child->y << std::endl;
+                        std::cout << "itemWidth: " << itemWidth << " height: " << height << std::endl;
                         child->dispatchResizeEvent(itemWidth, height);
                     };
                 };
@@ -204,12 +204,13 @@ auto Cursor(Cursor cursor) {
 }
 
 //std::mutex mutex2_;
-std::mutex localMutex;
+//std::mutex skiaMutex;
 
 auto BoxPercent(float percentWidth, float percentHeight) {
     return CreatePainterWithOption(
             [percentWidth, percentHeight](ElementView *element, ElementView *parentElement, auto canvas, auto paint,
                                           auto ejectCallBack) {
+
 
                 std::shared_ptr<SkRect> sharedRect = std::make_shared<SkRect>(
                         SkRect::MakeXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
@@ -228,12 +229,20 @@ auto BoxPercent(float percentWidth, float percentHeight) {
                     *bgColor = color;
                 }, ejectCallBack);
 
-                element->addDrawEvent([bgColor, sharedRect, percentWidth, percentHeight](ElementView *element, SkCanvas *canvas, SkPaint *paint) {
-                    paint->setColor(*bgColor);
+                element->addDrawEvent(
+                        [bgColor, sharedRect, percentWidth, percentHeight](ElementView *element, SkCanvas *canvas,
+                                                                           SkPaint *paint) {
+//                            skiaMutex.lock();
+//                            std::unique_lock lock1(skiaMutex);
 
-                    canvas->drawRect(*sharedRect, *paint);
+                            paint->setColor(*bgColor);
+
+                            canvas->drawRect(*sharedRect, *paint);
+
+//                            lock1.unlock();
+
 //                    std::cout << "RUN DRAW AT: " << std::endl;
-                }, ejectCallBack);
+                        }, ejectCallBack);
 
                 element->addContainsFn([sharedRect](float x, float y) mutable {
                     return sharedRect->contains(x, y);

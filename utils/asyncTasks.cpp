@@ -9,7 +9,7 @@
 //    }
 //};
 //std::mutex vectorMutex;
-thread_local std::vector<std::thread> _threads;
+thread_local std::vector<std::thread> *_threads = new std::vector<std::thread>();
 unsigned int maxThreadLimit = std::thread::hardware_concurrency();
 
 //TESSS testworket();
@@ -19,7 +19,7 @@ unsigned int maxThreadLimit = std::thread::hardware_concurrency();
 //
 //Ret returnValue;
 //
-//_threads.emplace_back([returnValue, func, args...]() mutable {
+//_threads->emplace_back([returnValue, func, args...]() mutable {
 //returnValue = func(std::forward<Args>(args)...);
 //});
 //
@@ -31,72 +31,50 @@ unsigned int maxThreadLimit = std::thread::hardware_concurrency();
 
 template<typename Func, typename... Args>
 void runAsyncTask(Func &&func, Args &&...args) {
-//    std::unique_lock<std::mutex> mutexLock(vectorMutex);
 
-//    vectorMutex.lock();
-//    std::unique_lock<std::mutex> mutexLock(vectorMutex);
-//    _threads.emplace_back(func, std::forward<Args>(args)...);
-//    _threads.push_back(std::thread(func, std::forward<Args>(args)...));
-    _threads.push_back(std::thread([func, args...]() mutable {
-        std::cout << "THREAD RUn" << std::endl;
+    _threads->push_back(std::thread([func, args...]() mutable {
         func(std::forward<Args>(args)...);
-        for (auto &thread: _threads) {
+        for (auto &thread: *_threads) {
             if (thread.joinable()) {
                 thread.join();
             }
         };
 
-        _threads.clear();
+        delete _threads;
+//        _threads->clear();
     }));
-//    _threads.emplace_back([func, args...]() mutable {
-//        func(std::forward<Args>(args)...);
-//        for (auto &thread: *_threads) {
-//            if (thread.joinable()) {
-//                thread.join();
-//            }
-//        };
-//        delete _threads;
-//    });
 
-//    printf("\nPROCESSS RUN AT Id: %zu\n", _threads.at(_threads.size() - 1).get_id());
-
-//    mutexLock.unlock();
 };
 
-// std::mutex awaitAllAsyncTasksMutex;
-void awaitAllAsyncTasks() {
-    while(true){
 
-    }
-    while(!_threads.empty()) {
-        std::thread &threadProcess = *_threads.begin();
+void awaitAllAsyncTasks() {
+    while (!_threads->empty()) {
+        std::thread &threadProcess = *_threads->begin();
 
         if (threadProcess.joinable()) {
             threadProcess.join();
+            _threads->erase(_threads->begin());
         }
-        _threads.erase(_threads.begin());
     };
 
-//    delete _threads;
+    delete _threads;
 };
 
 
 auto CreateAsyncAwaitGroup() {
-    int startIndex = _threads.size();
+    std::vector<std::thread> *_savedThreads = _threads;
+    std::vector<std::thread> *_newThreads = new std::vector<std::thread>();
+    _threads = _newThreads;
 
-    return [startIndex]() {
-//        return;
-        std::vector<std::thread>::iterator start = _threads.begin() + startIndex;
-        std::vector<std::thread>::iterator end = _threads.end();
+    return [_savedThreads, _newThreads]() {
+        _threads = _savedThreads;
 
-        while (start != end) {
-            std::thread &threadProcess = *start;
-
-            if (threadProcess.joinable()) {
-                threadProcess.join();
-                _threads.erase(start);
+        for (auto &thread: *_newThreads) {
+            if (thread.joinable()) {
+                thread.join();
             }
-            start++;
         };
+
+        delete _newThreads;
     };
 }
