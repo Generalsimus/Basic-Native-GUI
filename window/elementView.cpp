@@ -94,7 +94,7 @@ void ElementView::InitCustomEventListeners() {
     this->addResizeEvent([](ElementView *element, float newWidth, float newHeight) mutable {
         element->width = newWidth;
         element->height = newHeight;
-
+        std::cout << "RESIZE: " << element->id << std::endl;
     });
 
 }
@@ -158,6 +158,7 @@ ElementView *ElementView::setPaints(Args... args) {
 void ElementView::SetEachPainters() {
 
 }
+
 template<typename PaintFunction, typename... Args>
 void ElementView::SetEachPainters(PaintFunction paintCallback, Args... args) {
     paintCallback(this);

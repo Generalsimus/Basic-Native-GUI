@@ -66,4 +66,15 @@ std::function<void()> winWindow::setCursor(Cursor cursor) {
     }
     this->setCursorInsiderFunc();
     return UndoSetCursor;
+}
+
+void winWindow::refreshFrame() {
+    PAINTSTRUCT ps;
+
+    HDC hdc = BeginPaint(this->hwnd, &ps);
+
+    SetDIBitsToDevice(hdc, 0, 0, this->width, this->height, 0, 0, 0, this->height, this->pixels.addr(),
+                      &this->bmi, DIB_RGB_COLORS);
+    // Clean up
+    EndPaint(hwnd, &ps);
 };

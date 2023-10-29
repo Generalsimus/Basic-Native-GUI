@@ -38,6 +38,7 @@ public:
     };
 
     std::function<void()> setCursor(ElementView *cursorElement);
+
     std::function<void()> setCursor(Cursor cursor);
 
 //    void SetCursor() {
@@ -47,6 +48,11 @@ public:
 //
 //    };
 
+    void refreshFrame() override;
+//    winWindow *refreshFrame()  {
+//        std::cout << "Derived" << std::endl;
+//        return this;
+//    }
 
 //    void WinSetDIBitsToDevice(HDC hdc,float width,float height);
 //    void refreshFrame() const;

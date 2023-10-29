@@ -41,29 +41,18 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         };
         case WM_PAINT: {
             // printf("refreshFrame\n");
-            PAINTSTRUCT ps;
 
-            HDC hdc = BeginPaint(window->hwnd, &ps);
-
-            SetDIBitsToDevice(hdc, 0, 0, window->width, window->height, 0, 0, 0, window->height, window->pixels.addr(),
-                              &window->bmi, DIB_RGB_COLORS);
-            // Clean up
-            EndPaint(hwnd, &ps);
             return 0;
         };
         case WM_SIZE: {
             // printf("WM_SIZE\n");
             float width = static_cast<float>(LOWORD(lParam));
             float height = static_cast<float>(HIWORD(lParam));
-            printf("width: %.3f,height: %.3f\n", width, height);
-            if (width < 1) {
-                width = 1;
-            }
-            if (height < 1) {
-                height = 1;
-            }
-            auto awaitProcess = CreateAsyncAwaitGroup();
+//            printf("width: %.3f,height: %.3f\n", width, height);
 
+            auto awaitProcess = CreateAsyncAwaitGroup();
+            window->width = width;
+            window->height = height;
             window->dispatchResizeEvent(width, height);
 
             awaitProcess();
@@ -72,6 +61,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             window->draw();
 
             awaitProcess2();
+
             return 0;
         }
 //////////////////////////////

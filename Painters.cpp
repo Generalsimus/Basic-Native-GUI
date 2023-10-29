@@ -160,8 +160,8 @@ auto DirectionRow() {
                         child->y = element->y;
 
 
-                        std::cout << "X: " << child->x << " Y: " << child->y << std::endl;
-                        std::cout << "itemWidth: " << itemWidth << " height: " << height << std::endl;
+//                        std::cout << "X: " << child->x << " Y: " << child->y << std::endl;
+//                        std::cout << "itemWidth: " << itemWidth << " height: " << height << std::endl;
                         child->dispatchResizeEvent(itemWidth, height);
                     };
                 };

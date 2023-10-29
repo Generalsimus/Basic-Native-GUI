@@ -24,6 +24,8 @@ Window::Window(const std::string &title, float windowWidth, float windowHeight) 
 //
     auto self = this;
     this->addResizeEvent([self](ElementView *element, float width, float height) {
+//        std::cout << "X: " << child->x << " Y: " << child->y << std::endl;
+        std::cout << "width: " << width << ", height: " << height << std::endl;
 
         self->surface = SkSurfaces::Raster(SkImageInfo::MakeN32Premul(width, height));
 

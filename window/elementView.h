@@ -61,7 +61,7 @@ public:
     /// TOUCH MOVIE
 
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addTouchMoveEvent(TouchMoveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addTouchMoveEvent(TouchMoveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchTouchMoveEvent(Args &&... args);
@@ -70,20 +70,20 @@ public:
 //           bool useTouchOverChild = true
     /// TOUCH OVER
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addTouchOverEvent(TouchOverEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addTouchOverEvent(TouchOverEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     ElementView *dispatchTouchOverEvent();
 
     /// TOUCH LEAVE
     template<typename RemoveEventCallBack = std::function<void()>>
     ElementView *
-    addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    addTouchLeaveEvent(TouchLeaveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     ElementView *dispatchTouchLeaveEvent();
 
     /// TOUCH DOWN
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addTouchDownEvent(TouchDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addTouchDownEvent(TouchDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
 
     template<typename... Args>
@@ -91,42 +91,42 @@ public:
 
     /// TOUCH UP
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addTouchUpEvent(TouchUpEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addTouchUpEvent(TouchUpEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchTouchUpEvent(Args &&... args);
 
     /// TOUCH
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addTouchEvent(TouchEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addTouchEvent(TouchEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchTouchEvent(Args &... args);
 
     /// KEY DOWN
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addKeyDownEvent(KeyDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addKeyDownEvent(KeyDownEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchKeyDownEvent(Args &&... args);
 
     /// KEY Up
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addKeyUpEvent(KeyUpEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addKeyUpEvent(KeyUpEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchKeyUpEvent(Args &&... args);
 
     /// KEY
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addKeyEvent(KeyEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addKeyEvent(KeyEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchKeyEvent(Args &&... args);
 
     /// Draw
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addDrawEvent(DrawEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchDrawEvent(Args &&... args);
@@ -135,20 +135,20 @@ public:
 
     /// RESIZE ELEMENT
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addResizeEvent(ResizeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addResizeEvent(ResizeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchResizeEvent(Args &... args);
 
     /// Set Paints
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addSetPaintsEvent(SetPaintsEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addSetPaintsEvent(SetPaintsEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     ElementView *dispatchSetPaintsEvent();
 
     /// ADD CHILD
     template<typename RemoveEventCallBack = std::function<void()>>
-    ElementView *addAddChildEvent(AddChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    ElementView *addAddChildEvent(AddChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchAddChildEvent(Args &... args);
@@ -156,7 +156,7 @@ public:
     /// REMOVE CHILD
     template<typename RemoveEventCallBack = std::function<void()>>
     ElementView *
-    addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    addRemoveChildEvent(RemoveChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchRemoveChildEvent(Args &... args);
@@ -164,7 +164,7 @@ public:
     /// REPLACE CHILD
     template<typename RemoveEventCallBack = std::function<void()>>
     ElementView *
-    addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    addReplaceChildEvent(ReplaceChildEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchReplaceChildEvent(Args &... args);
@@ -172,7 +172,7 @@ public:
     /// SetBackground
     template<typename RemoveEventCallBack = std::function<void()>>
     ElementView *addSetBackgroundColorEvent(SetBackgroundColorEventType &&callBack,
-                                            RemoveEventCallBack &&removeEventCallBack = nullptr);
+                                            RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchSetBackgroundColorEvent(Args &&... args);
@@ -180,7 +180,7 @@ public:
     /// MountOnThree
     template<typename RemoveEventCallBack = std::function<void()>>
     ElementView *
-    addMountOnThreeEvent(MountOnThreeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    addMountOnThreeEvent(MountOnThreeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchMountOnThreeEvent(Args &&... args);
@@ -188,7 +188,7 @@ public:
     /// UnmountOnThree
     template<typename RemoveEventCallBack = std::function<void()>>
     ElementView *
-    addUnmountOnThreeEvent(UnmountOnThreeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr);
+    addUnmountOnThreeEvent(UnmountOnThreeEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchUnmountOnThreeEvent(Args &&... args);
