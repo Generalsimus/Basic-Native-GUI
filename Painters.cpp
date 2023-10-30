@@ -243,10 +243,15 @@ auto BoxPercent(float percentWidth, float percentHeight) {
 
 //                    std::cout << "RUN DRAW AT: " << std::endl;
                         }, ejectCallBack);
+//                parentElement->addTouchMoveEvent([]() {
+//
+//                });
+
 
                 element->addContainsFn([sharedRect](float x, float y) mutable {
                     return sharedRect->contains(x, y);
                 });
+//                contains
 //
 //
 //                std::shared_ptr<SkColor> bgColor = std::make_shared<SkColor>(SK_ColorWHITE);

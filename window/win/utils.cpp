@@ -118,7 +118,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             return 0;
         }
         case WM_MOUSELEAVE: {
-            // printf("WM_MOUSELEAVE\n");
+             printf("WM_MOUSELEAVE\n");
             window->dispatchTouchLeaveEvent();
 
             return 0;

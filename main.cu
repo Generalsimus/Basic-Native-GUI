@@ -32,22 +32,20 @@ int main() {
 //    }, removeEvent);
 //    windowObj->addTouchUpEvent([removeEvent](ElementView *element, float x, float y, int type) mutable {
 //        removeEvent();
-//        std::cout << "addTouchDownEventwq3116165\n" << std::endl;
+//        std::cout << "addTouchDownEventwq3116165\n" << std::endl;dispatchTouchDownEvent
 //    });
     windowObj->addChild(
             Element()->setPaints(
-                    BoxPercent(80,80)
+                    BoxPercent(80, 80)
 //                    ,
 //                    Cursor(Cursor::Arrow)
-            ),
-            Element()->setPaints(
-                    BoxPercent(20, 10)
+    ), Element()->setPaints(BoxPercent(20, 10)
 //                    ,
 //                    Cursor(Cursor::Arrow)
-            )
-    )->setPaints(
-            BoxPercent(100, 98),
-            DirectionRow()
+    )->addTouchDownEvent([](ElementView *element, float x, float y, int type) {
+        std::cout << "TOUCH DOWN ATTTT: " << element->id << std::endl;
+
+    }))->setPaints(BoxPercent(100, 98), DirectionRow()
 //            ,
 //            Cursor(Cursor::Arrow)
     )->dispatchSetBackgroundColorEvent(SkColorSetARGB(255, 0, 128, 0));

@@ -249,18 +249,8 @@ private:
     void callSafeOnMountThree(CallBackFunc callback);
 
 protected:
-    template<typename CallBackFunction, typename RemoveEventCallBack>
-    void addChainFunction(CallBackFunction &chainFunc, CallBackFunction &callBack,
-                          RemoveEventCallBack &removeChainFunction = nullptr, bool startFromNewPoint = false,
-                          bool callAsync = true);
-
-    //    template<typename ChainFunc, typename... Args>
-    template<class ChainFunc, class... Args>
-    void dispatchChainFunction(ChainFunc &chainFunc, Args &&...args);
-
     void InitCustomEventListeners();
 
-    void drawMe() { return; };
 };
 
 #endif // CUDA_NEU_ELEMENTVIEW_H
