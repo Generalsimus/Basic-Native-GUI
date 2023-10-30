@@ -79,7 +79,6 @@ void ElementView::InitCustomEventListeners() {
     int downTypeNum = -1;
     auto self = this;
     this->addTouchDownEvent([&downTypeNum](ElementView *element, float windowX, float windowY, int typeIndex) {
-        printf("DOWNWWW CUST\n");
         downTypeNum = typeIndex;
     });
     this->addTouchUpEvent([&downTypeNum, self](ElementView *element, float windowX, float windowY, int typeIndex) {
@@ -91,11 +90,11 @@ void ElementView::InitCustomEventListeners() {
     });
 
 
-    this->addResizeEvent([](ElementView *element, float newWidth, float newHeight) mutable {
-        element->width = newWidth;
-        element->height = newHeight;
-        std::cout << "RESIZE: " << element->id << std::endl;
-    });
+//    this->addResizeEvent([](ElementView *element, float newWidth, float newHeight) mutable {
+//        element->width = newWidth;
+//        element->height = newHeight;
+//        std::cout << "RESIZE: " << element->id << std::endl;
+//    });
 
 
 //    if (this->contains(std::forward<Args>(args)...)) {

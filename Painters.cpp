@@ -159,9 +159,9 @@ auto DirectionRow() {
                         child->x = element->x + childIndex * itemWidth;
                         child->y = element->y;
 
+                        child->width = itemWidth;
+                        child->height = height;
 
-//                        std::cout << "X: " << child->x << " Y: " << child->y << std::endl;
-//                        std::cout << "itemWidth: " << itemWidth << " height: " << height << std::endl;
                         child->dispatchResizeEvent(itemWidth, height);
                     };
                 };
@@ -203,8 +203,6 @@ auto Cursor(Cursor cursor) {
             });
 }
 
-//std::mutex mutex2_;
-//std::mutex skiaMutex;
 
 auto BoxPercent(float percentWidth, float percentHeight) {
     return CreatePainterWithOption(
@@ -232,63 +230,24 @@ auto BoxPercent(float percentWidth, float percentHeight) {
                 element->addDrawEvent(
                         [bgColor, sharedRect, percentWidth, percentHeight](ElementView *element, SkCanvas *canvas,
                                                                            SkPaint *paint) {
-//                            skiaMutex.lock();
-//                            std::unique_lock lock1(skiaMutex);
+
 
                             paint->setColor(*bgColor);
 
                             canvas->drawRect(*sharedRect, *paint);
 
-//                            lock1.unlock();
-
-//                    std::cout << "RUN DRAW AT: " << std::endl;
                         }, ejectCallBack);
-//                parentElement->addTouchMoveEvent([]() {
-//
-//                });
 
 
                 element->addContainsFn([sharedRect](float x, float y) mutable {
                     return sharedRect->contains(x, y);
                 });
-//                contains
-//
-//
-//                std::shared_ptr<SkColor> bgColor = std::make_shared<SkColor>(SK_ColorWHITE);
-//
-//                auto paintFunc = [element, percentWidth, percentHeight, bgColor, sharedRect](SkCanvas *canvas,
-//                                                                                             SkPaint *paint) {
-//                    paint->setColor(*bgColor);
-////
-////            sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
-////                         (element->height * (percentHeight / 100)));
-//
-//                    canvas->drawRect(*sharedRect, *paint);
-//
-//                };
-//                element->addResizeEvent([percentWidth, percentHeight, sharedRect](ElementView *element, float newWidth,
-//                                                                                  float newHeight) {
-//
-//                    sharedRect->setXYWH(element->x, element->y, (element->width * (percentWidth / 100)),
-//                                        (element->height * (percentHeight / 100)));
-//                }, ejectCallBack);
-//
-//                element->addSetBackgroundColorEvent([bgColor](ElementView *element, SkColor color) {
-//                    *bgColor = color;
-//
-//                    element->dispatchDrawEvent();
-//                }, ejectCallBack);
-//
-//                element->addDrawEvent([paintFunc](ElementView *element, SkCanvas *canvas, SkPaint *paint) {
-//                    paintFunc(canvas, paint);
-//                }, ejectCallBack);
-//
-//                paintFunc(canvas, paint);
-//
-//                element->addContainsFn([sharedRect](float x, float y) mutable {
-//                    return sharedRect->contains(x, y);
-//                });
+
 
             });
 
+}
+
+auto Box() {
+    return BoxPercent(100, 100);
 }

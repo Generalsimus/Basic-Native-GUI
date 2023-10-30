@@ -58,16 +58,14 @@ public:
     /// End ADD PAINT FIGuRES //
 
     /// EVENTS LIST //////////////////////////////////////////////////
-    /// TOUCH MOVIE
 
+    /// TOUCH MOVIE
     template<typename RemoveEventCallBack = std::function<void()>>
     ElementView *addTouchMoveEvent(TouchMoveEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);
 
     template<typename... Args>
     ElementView *dispatchTouchMoveEvent(Args &&... args);
 
-//      bool isAsync = true,
-//           bool useTouchOverChild = true
     /// TOUCH OVER
     template<typename RemoveEventCallBack = std::function<void()>>
     ElementView *addTouchOverEvent(TouchOverEventType &&callBack, RemoveEventCallBack &&removeEventCallBack = nullptr, bool isAsync = true);

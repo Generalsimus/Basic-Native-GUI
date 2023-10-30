@@ -36,10 +36,13 @@ int main() {
 //    });
     windowObj->addChild(
             Element()->setPaints(
-                    BoxPercent(80, 80)
+                    Box()
+//                    BoxPercent(100, 100)
 //                    ,
 //                    Cursor(Cursor::Arrow)
-    ), Element()->setPaints(BoxPercent(20, 10)
+    ), Element()->setPaints(
+//                    Box()
+            BoxPercent(20, 10)
 //                    ,
 //                    Cursor(Cursor::Arrow)
     )->addTouchDownEvent([](ElementView *element, float x, float y, int type) {
