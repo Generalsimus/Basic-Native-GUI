@@ -40,9 +40,6 @@ public:
 protected:
     Window(const std::string &title, float windowWidth, float WindowHeight);
 
-    std::function<void()> setCursorFunc= [](){};
-
-
 };
 
 
