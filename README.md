@@ -1,5 +1,6 @@
 ## [Basic Native GUI](https://github.com/Generalsimus/Basic-Native-GUI)
 
+###### A basic GUI application based on Google Skia.
 
 <details>
 

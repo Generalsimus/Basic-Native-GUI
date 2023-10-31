@@ -38,9 +38,11 @@ int main() {
             Element()->setPaints(
                     Box(),
                     Cursor(Cursor::Text)
+            )->dispatchSetBackgroundColorEvent(
+                    SkColorSetARGB(255, 0, 0, 255)
             ),
             Element()->setPaints(
-                    Text("EDIT"),
+                    Text("Hello"),
 //                    BoxPercent(50, 50),
                     Cursor(Cursor::Arrow)
             )->addTouchDownEvent([](ElementView *element, float x, float y, int type) {
