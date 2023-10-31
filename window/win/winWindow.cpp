@@ -30,42 +30,33 @@ winWindow::winWindow(const std::string &title, float windowWidth, float windowHe
     while (this->surface == nullptr) {
 
     };
+//    auto self = this;
+//    this->addTouchMoveEvent([self](ElementView *element, float x, float y){
+//        self->setCursorInsiderFunc();
+//    });
 
 };
 
-std::function<void()> winWindow::setCursor(ElementView *cursor) {
-    auto UndoSetCursor = this->setCursorInsiderFunc;
-    return UndoSetCursor;
+std::function<void()> winWindow::setCursor(ElementView *newCursor) {
+    return std::function([]() {
+
+    });
 }
 
-std::function<void()> winWindow::setCursor(Cursor cursor) {
-    printf("setCursor %d\n", cursor);
-    auto UndoSetCursor = this->setCursorInsiderFunc;
-    switch (cursor) {
-        case Cursor::Arrow:
-            this->setCursorInsiderFunc = []() {
-                SetCursor(LoadCursor(nullptr, IDC_ARROW));
-            };
-            break;
-        case Cursor::Text:
-            this->setCursorInsiderFunc = []() {
-                SetCursor(LoadCursor(nullptr, IDC_IBEAM));
-            };
-            break;
-        case Cursor::Wait:
-            this->setCursorInsiderFunc = []() {
-                SetCursor(LoadCursor(nullptr, IDC_WAIT));
-            };
-            break;
-        case Cursor::None:
-            this->setCursorInsiderFunc = []() {
-                ShowCursor(FALSE);
-            };
-            break;
+std::function<void()> winWindow::setCursor(Cursor newCursor) {
+    auto previousCursor = this->cursor;
+    auto self = this;
 
+    if (previousCursor == Cursor::None && newCursor != Cursor::None) {
+        ShowCursor(TRUE);
     }
-    this->setCursorInsiderFunc();
-    return UndoSetCursor;
+    this->cursor = newCursor;
+    SendMessage(self->hwnd, WM_SETCURSOR, 0, 0);
+
+    return std::function([previousCursor, self]() mutable {
+        self->cursor = previousCursor;
+        SendMessage(self->hwnd, WM_SETCURSOR, 0, 0);
+    });
 }
 
 void winWindow::refreshFrame() {
@@ -75,6 +66,6 @@ void winWindow::refreshFrame() {
 
     SetDIBitsToDevice(hdc, 0, 0, this->width, this->height, 0, 0, 0, this->height, this->pixels.addr(),
                       &this->bmi, DIB_RGB_COLORS);
-    // Clean up
+
     EndPaint(hwnd, &ps);
 };

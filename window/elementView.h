@@ -6,13 +6,9 @@
 #define CUDA_NEU_ELEMENTVIEW_H
 
 #include "./eventsType.h"
-#include "Windows.h"
 #include "functional"
 #include "include/core/SkCanvas.h"
 #include "include/core/SkPaint.h"
-#include "string"
-#include <cstddef>
-#include <future>
 #include <vector>
 
 class Window;

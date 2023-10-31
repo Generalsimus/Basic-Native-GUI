@@ -41,10 +41,6 @@ protected:
     Window(const std::string &title, float windowWidth, float WindowHeight);
 
     std::function<void()> setCursorFunc= [](){};
-    void ss() {
-//        auto originalSurfacesa = SkImageInfo::MakeN32Premul(width, height));
-//        originalSurfacesa.
-    }
 
 
 };

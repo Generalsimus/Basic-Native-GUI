@@ -81,6 +81,13 @@ ElementView *ElementView::dispatchTouchMoveEvent(Args &&... args) {
             child->dispatchTouchMoveEvent(std::forward<Args>(args)...);
         }
     } else {
+//        for (auto &child: children) {
+//            if (child->isMouseOver) {
+//                child->dispatchTouchLeaveEvent();
+//            }
+////            child->dispatchTouchMoveEvent(std::forward<Args>(args)...);
+//            child->dispatchTouchLeaveEvent();
+//        }
         this->dispatchTouchLeaveEvent();
     }
 

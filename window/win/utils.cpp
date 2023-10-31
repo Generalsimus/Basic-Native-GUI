@@ -1,4 +1,4 @@
-#include <iostream>
+
 
 
 BITMAPINFO CreateBitmapInfo(int width, int height) {
@@ -39,11 +39,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
             return 0;
         };
-        case WM_PAINT: {
-            // printf("refreshFrame\n");
-
-            return 0;
-        };
+//        case WM_PAINT: {
+//            // printf("refreshFrame\n");
+//            window->refreshFrame();
+//            return 0;
+//        };
         case WM_SIZE: {
             // printf("WM_SIZE\n");
             float width = static_cast<float>(LOWORD(lParam));
@@ -134,9 +134,26 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         case WM_KILLFOCUS:
             //printf("WM_KILLFOCUS\n");
             return 0;
+        case WM_SETCURSOR:
+//            if(window->cursor != Cursor::None && ShowCursor(TRUE) < 0){
+//                ShowCursor(TRUE);
+//            }
+            switch (window->cursor) {
+                case Cursor::Arrow:
+                    SetCursor(LoadCursor(nullptr, IDC_ARROW));
+                    break;
+                case Cursor::Text:
+                    SetCursor(LoadCursor(nullptr, IDC_IBEAM));
+                    break;
+                case Cursor::Wait:
+                    SetCursor(LoadCursor(nullptr, nullptr));
+                    break;
+                case Cursor::None:
+                    SetCursor(LoadCursor(nullptr, nullptr));
+                    break;
+            };
+            return 0;
         case WM_MOUSEMOVE: {
-            // printf("WM_MOUSEMOVE\n");
-//            window->isMouseOver = true;
             window->dispatchTouchMoveEvent(LOWORD(lParam), HIWORD(lParam));
 //            window->dispatchTouchOverEvent();
 //            return 0;
@@ -210,6 +227,7 @@ WNDCLASS CreateWNDCLASS(const std::string &title) {
 };
 
 
+
 void CreateWindowsWindows(const std::string &title, float windowWidth, float windowHeight, winWindow *window) {
     WNDCLASS wc = CreateWNDCLASS(title);
     HWND hwnd = CreateWindow(title.c_str(), title.c_str(), WS_OVERLAPPEDWINDOW | WS_SIZEBOX, CW_USEDEFAULT,
@@ -245,6 +263,9 @@ void CreateWindowsWindows(const std::string &title, float windowWidth, float win
 //        printf("WINDOW WHILE 111\n");
     MSG msg;
     while (GetMessage(&msg, hwnd, 0, 0)) {
+//        window->setCursorInsiderFunc();
+//        SetCursor(LoadCursor(nullptr, IDC_IBEAM));
+//        SetCursor(LoadCursor(nullptr, IDC_IBEAM));
 //        printf("WINDOW WHILE \n");
 //        auto awaitProcess = CreateAsyncAwaitGroup();
         //std::cout << "Async lambda function running.222" << std::endl;

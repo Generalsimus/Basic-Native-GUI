@@ -1,6 +1,5 @@
-
-
-
+//#include ".drawTextBlob"
+#include "include/core/SkTextBlob.h"
 //auto BoxPx(float width, float height) {
 //    return [width, height](ElementView *element) {
 //        std::function < void() > *removeEvent = new std::function<void()>;
@@ -186,20 +185,19 @@ auto DirectionRow() {
 auto Cursor(Cursor cursor) {
     return CreatePainterWithOption(
             [cursor](ElementView *element, ElementView *parentElement, auto canvas, auto paint, auto ejectCallBack) {
-//                element->addTouchOverEvent([cursor, ejectCallBack](ElementView *element) mutable {
-//                    auto undoCursor = element->window->setCursor(cursor);
-//                    printf("MOUSE OVER\n");
-////            element->dispatchSetBackgroundColorEvent(SK_ColorRED);
-////            element->parent->dispatchDrawEvent();
-//
-//                    element->addTouchLeaveEvent([cursor, undoCursor](ElementView *element) mutable {
-////                element->dispatchSetBackgroundColorEvent(SkColorSetARGB(255, 0, 128, 0));
-////                element->parent->dispatchDrawEvent();
-//
-//                        undoCursor();
-//                    }, undoCursor);
-//
-//                }, ejectCallBack);
+                std::shared_ptr<std::function<void()>> currentCursor = std::make_shared<std::function<void()>>(nullptr);
+
+                element->addTouchOverEvent([cursor, currentCursor](ElementView *element) {
+                    *currentCursor = element->window->setCursor(cursor);
+                }, ejectCallBack);
+
+                element->addTouchLeaveEvent([cursor, currentCursor](ElementView *element) {
+                    if (*currentCursor != nullptr) {
+                        (*currentCursor)();
+                        *currentCursor = nullptr;
+                    }
+                }, ejectCallBack);
+
             });
 }
 
@@ -250,4 +248,25 @@ auto BoxPercent(float percentWidth, float percentHeight) {
 
 auto Box() {
     return BoxPercent(100, 100);
+}
+
+
+auto Text(std::string defaultText, bool isEditable = false) {
+    return CreatePainterWithOption(
+            [defaultText, isEditable](ElementView *element, ElementView *parentElement, auto canvas, auto paint,
+                                          auto ejectCallBack) {
+
+                element->addDrawEvent([defaultText](ElementView *element, SkCanvas *canvas, SkPaint *paint) {
+
+                    paint->setAntiAlias(true);
+                    paint->setColor(SkColorSetRGB(255, 0, 0));
+                    paint->setStyle(SkPaint::kFill_Style);
+
+                    auto text = SkTextBlob::MakeFromString(defaultText.c_str(), SkFont(nullptr, 18));
+                    canvas->drawTextBlob(text.get(), element->x, element->y, *paint);
+                }, ejectCallBack);
+
+
+            });
+
 }

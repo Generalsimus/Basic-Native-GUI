@@ -12,9 +12,9 @@
 #include "include/core/SkPaint.h"
 #include "include/core/SkBitmap.h"
 #include "include/core/SkPath.h"
-#include <string>
-#include <cstddef>
-#include <cstdlib>
+//#include <string>
+//#include <cstddef>
+//#include <cstdlib>
 
 //class Cursor{
 //
@@ -31,31 +31,16 @@ public:
 
     HWND hwnd;
 
+    HCURSOR currentWinCursor = LoadCursor(nullptr, IDC_ARROW);
 
-    std::function<void()> setCursorInsiderFunc = []() {
-        SetCursor(LoadCursor(nullptr, IDC_ARROW));
-//        ShowCursor(FALSE);
-    };
 
+    Cursor cursor = Cursor::Arrow;
     std::function<void()> setCursor(ElementView *cursorElement);
 
     std::function<void()> setCursor(Cursor cursor);
 
-//    void SetCursor() {
-//
-//    }
-//    SetCursor(ElementView* customcursor){
-//
-//    };
-
     void refreshFrame() override;
-//    winWindow *refreshFrame()  {
-//        std::cout << "Derived" << std::endl;
-//        return this;
-//    }
 
-//    void WinSetDIBitsToDevice(HDC hdc,float width,float height);
-//    void refreshFrame() const;
 
 };
 

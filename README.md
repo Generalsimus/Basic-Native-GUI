@@ -1,4 +1,4 @@
-# [Skia Example](https://skia.org)
+## [Basic Native GUI](https://github.com/Generalsimus/Basic-Native-GUI)
 
 
 <details>
@@ -18,16 +18,19 @@ int main()
     windowObj->addChild(
         Element()->setPaints(
             Box(),
-            Cursor(Cursor::Pointer)
+            Cursor(Cursor::Arrow)
         ),
-        Element()->setPaints(
-                     BoxPercent(20, 10),
+        Element()->setPaints( 
+                     Text("Hello!"),
                      Cursor(Cursor::Text)
-        )->addTouchDownEvent([](ElementView *element, float x, float y, int type) {
+        )->addTouchEvent([](ElementView *element, float x, float y, int type) {
                  std::cout << "TOUCH DOWN" << std::endl;
 
         })
     );
+    
+    awaitAllAsyncTasks();
+    return 0;
 }
 ``` 
 </details>
@@ -59,14 +62,6 @@ int main()
 |    ```addUnmountOnThreeEvent(UnmountOnThreeEventType &&, RemoveEventCallBack &&, bool)```      | ```dispatchUnmountOnThreeEvent()``` | 
 |    ```addUnmountOnThreeEvent(UnmountOnThreeEventType &&, RemoveEventCallBack &&, bool)```      | ```dispatchUnmountOnThreeEvent()``` | 
 
-
-
-</details>
-
-
-<details>
-
-<summary>Element Painters</summary>
 
 
 </details>

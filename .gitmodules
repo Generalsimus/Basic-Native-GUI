@@ -1,3 +1,0 @@
-[submodule "neural"]
-	path = neural
-	url = https://github.com/Generalsimus/gpu-neural-network.git

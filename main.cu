@@ -36,22 +36,27 @@ int main() {
 //    });
     windowObj->addChild(
             Element()->setPaints(
-                    Box()
-//                    BoxPercent(100, 100)
-//                    ,
-//                    Cursor(Cursor::Arrow)
-    ), Element()->setPaints(
-//                    Box()
-            BoxPercent(20, 10)
-//                    ,
-//                    Cursor(Cursor::Arrow)
-    )->addTouchDownEvent([](ElementView *element, float x, float y, int type) {
-        std::cout << "TOUCH DOWN ATTTT: " << element->id << std::endl;
+                    Box(),
+                    Cursor(Cursor::Text)
+            ),
+            Element()->setPaints(
+                    Text("EDIT"),
+//                    BoxPercent(50, 50),
+                    Cursor(Cursor::Arrow)
+            )->addTouchDownEvent([](ElementView *element, float x, float y, int type) {
 
-    }))->setPaints(BoxPercent(100, 98), DirectionRow()
-//            ,
-//            Cursor(Cursor::Arrow)
-    )->dispatchSetBackgroundColorEvent(SkColorSetARGB(255, 0, 128, 0));
+                std::cout << "TOUCH DOWN AT: " << element->id << std::endl;
+            })
+    )->setPaints(
+            Box(),
+            Cursor(Cursor::Arrow),
+            DirectionRow()
+    )->dispatchSetBackgroundColorEvent(
+            SkColorSetARGB(255, 0, 128, 0)
+    );
+
+
+
 
 //    while(true){
 //
